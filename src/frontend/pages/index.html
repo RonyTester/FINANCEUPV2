@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Finance - Controle Financeiro</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<link rel="stylesheet" href="/styles/styles.css">
+	<link rel="stylesheet" href="/styles/pagination.css">
+	<link rel="stylesheet" href="/styles/goals.css">
+	<style>
+		/* Estilos específicos são mantidos em goals.css */
+	</style>
+</head>
+<body>
+	<div class="wrapper">
+		<!-- Sidebar -->
+		<aside class="sidebar">
+			<div class="sidebar-header">
+				<i class="fas fa-wallet"></i>
+				<h1>Finance</h1>
+			</div>
+			<div class="user-info">
+				<i class="fas fa-user-circle"></i>
+				<span id="userDisplayName">Usuário</span>
+			</div>
+			<nav class="sidebar-nav">
+				<a href="#" class="nav-item active" data-page="dashboard">
+					<i class="fas fa-chart-line"></i>
+					Dashboard
+				</a>
+				<a href="#" class="nav-item" data-page="goals">
+					<i class="fas fa-bullseye"></i>
+					Metas
+				</a>
+				<a href="#" class="nav-item" data-page="fixed-expenses">
+					<i class="fas fa-calendar-check"></i>
+					Despesas Fixas
+				</a>
+				<a href="#" class="nav-item" data-page="transactions">
+					<i class="fas fa-exchange-alt"></i>
+					Transações
+				</a>
+				<a href="#" class="nav-item" data-page="settings">
+					<i class="fas fa-cog"></i>
+					Configurações
+				</a>
+			</nav>
+			<button id="logoutBtn" class="btn btn-logout">
+				<i class="fas fa-sign-out-alt"></i>
+				Sair
+			</button>
+		</aside>
+
+		<!-- Main Content -->
+		<main class="main-content">
+			<!-- Pages -->
+			<div class="pages-container">
+				<!-- Dashboard -->
+				<section id="dashboard-page" class="page active">
+					<div class="page-header">
+						<div class="mobile-user-info">
+							<i class="fas fa-user-circle"></i>
+							<span id="mobileUserName"></span>
+						</div>
+						<h2>Dashboard</h2>
+						<div class="period-selector">
+							<select id="periodSelect" class="filter-select">
+								<option value="month">Este Mês</option>
+								<option value="year">Este Ano</option>
+								<option value="all">Todo Período</option>
+								<option value="custom">Período Personalizado</option>
+							</select>
+							<div id="customDateRange" class="date-range" style="display: none;">
+								<input type="date" id="startDate" class="filter-date">
+								<span>até</span>
+								<input type="date" id="endDate" class="filter-date">
+							</div>
+						</div>
+					</div>
+
+					<div class="dashboard-grid">
+						<div class="card">
+							<div class="card-icon income">
+								<i class="fas fa-arrow-up"></i>
+							</div>
+							<div class="card-content">
+								<h3>Receitas</h3>
+								<p id="totalIncome">R$ 0,00</p>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-icon expense">
+								<i class="fas fa-arrow-down"></i>
+							</div>
+							<div class="card-content">
+								<h3>Despesas</h3>
+								<p id="totalExpenses">R$ 0,00</p>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-icon balance">
+								<i class="fas fa-wallet"></i>
+							</div>
+							<div class="card-content">
+								<h3>Saldo</h3>
+								<p id="balance">R$ 0,00</p>
+							</div>
+						</div>
+						<div class="card">
+							<div class="card-icon savings">
+								<i class="fas fa-piggy-bank"></i>
+							</div>
+							<div class="card-content">
+								<h3>Taxa de Economia</h3>
+								<p id="savings">0%</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="charts-container">
+						<div class="chart-card">
+							<h3>Despesas por Categoria</h3>
+							<div class="chart-wrapper">
+								<canvas id="expensesByCategory"></canvas>
+							</div>
+						</div>
+						<div class="chart-card">
+							<h3>Fluxo de Caixa</h3>
+							<div class="chart-wrapper">
+								<canvas id="cashFlow"></canvas>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Transactions -->
+				<section id="transactions-page" class="page">
+					<div class="page-header">
+						<h2>Transações</h2>
+						<button id="newTransactionBtn" class="btn btn-primary">
+							<i class="fas fa-plus"></i>
+							Nova Transação
+						</button>
+					</div>
+
+					<div class="transactions-container">
+						<div class="transactions-filters">
+							<input type="text" id="searchTransaction" placeholder="Buscar transação...">
+							<select id="filterCategory">
+								<option value="">Todas as Categorias</option>
+							</select>
+							<select id="filterType">
+								<option value="">Todos os Tipos</option>
+								<option value="income">Receitas</option>
+								<option value="expense">Despesas</option>
+							</select>
+						</div>
+
+						<div class="transactions-list" id="transactionsList"></div>
+					</div>
+				</section>
+
+				<!-- Fixed Expenses -->
+				<section id="fixed-expenses-page" class="page">
+					<div class="page-header">
+						<h2>Despesas Fixas</h2>
+						<button id="newFixedExpenseBtn" class="btn btn-primary">
+							<i class="fas fa-plus"></i>
+							Nova Despesa Fixa
+						</button>
+					</div>
+
+					<div class="fixed-expenses-container">
+						<div class="progress-card">
+							<h3>Progresso do Mês</h3>
+							<div class="progress-bar">
+								<div class="progress" id="fixedExpensesProgress" style="width: 0%"></div>
+							</div>
+							<div class="progress-info">
+								<span id="paidExpensesCount">0</span> de <span id="totalExpensesCount">0</span> despesas pagas
+							</div>
+						</div>
+
+						<div class="fixed-expenses-list" id="fixedExpensesList">
+							<!-- Lista de despesas fixas será preenchida via JavaScript -->
+						</div>
+					</div>
+				</section>
+
+				<!-- Goals -->
+				<section id="goals-page" class="page">
+					<div class="page-header">
+						<h2>Minhas Metas</h2>
+						<div class="goals-actions">
+							<button id="newGoalBtn" class="btn btn-primary goal-btn individual-btn">
+								<i class="fas fa-plus-circle"></i>
+								Nova Meta
+							</button>
+							<button id="newSharedGoalBtn" class="btn btn-primary goal-btn shared-btn" onclick="toggleSharedGoalModal(true)">
+								<i class="fas fa-users"></i>
+								Nova Meta Compartilhada
+							</button>
+						</div>
+					</div>
+
+					<div class="goals-tabs">
+						<div class="tabs-header">
+							<button class="tab-btn active" data-tab="individual">Metas Individuais</button>
+							<button class="tab-btn" data-tab="shared">Metas Compartilhadas</button>
+						</div>
+						<div class="tab-content">
+							<div id="individual-tab" class="tab-pane active">
+								<div class="goals-container">
+									<div class="goals-list" id="goalsList">
+										<!-- Metas individuais serão inseridas aqui via JavaScript -->
+									</div>
+								</div>
+							</div>
+							<div id="shared-tab" class="tab-pane">
+								<div class="shared-goals-container">
+									<div class="shared-goals-list" id="sharedGoalsList">
+										<!-- Metas compartilhadas serão inseridas aqui via JavaScript -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- Settings -->
+				<section id="settings-page" class="page">
+					<div class="page-header">
+						<h2>Configurações</h2>
+					</div>
+					<div class="settings-container">
+						<form id="settingsForm">
+							<div class="settings-section">
+								<h3>Informações da Conta</h3>
+								<div class="account-info">
+									<div class="info-group">
+										<label>Nome de Usuário</label>
+										<div class="editable-field">
+											<input type="text" id="displayName" class="edit-input" maxlength="30" placeholder="Seu nome de usuário">
+										</div>
+									</div>
+									<div class="info-group">
+										<label>Email</label>
+										<p id="accountEmail"></p>
+									</div>
+									<div class="info-group">
+										<label>Membro desde</label>
+										<p id="accountCreated"></p>
+									</div>
+									<div class="account-actions">
+										<button type="button" id="deleteAccountBtn" class="btn btn-danger">
+											<i class="fas fa-trash"></i>
+											Excluir Conta
+										</button>
+									</div>
+								</div>
+							</div>
+							<div class="settings-section">
+								<h3>Preferências</h3>
+								<div class="form-group">
+									<label for="currency">Moeda</label>
+									<select id="currency" name="currency">
+										<option value="BRL">Real (R$)</option>
+										<option value="USD">Dólar ($)</option>
+										<option value="EUR">Euro (€)</option>
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="theme">Tema</label>
+									<select id="theme" name="theme">
+										<option value="light">Claro</option>
+										<option value="dark">Escuro</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-actions">
+								<button type="submit" class="btn btn-primary">Salvar Alterações</button>
+							</div>
+						</form>
+					</div>
+				</section>
+			</div>
+		</main>
+
+		<!-- Modal Nova Transação -->
+		<div id="transactionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Nova Transação</h3>
+					<button class="close-modal">&times;</button>
+				</div>
+				<form id="transactionForm">
+					<div class="form-group">
+						<label for="description">Descrição</label>
+						<input type="text" id="description" required>
+					</div>
+					<div class="form-group">
+						<label for="amount">Valor</label>
+						<input type="number" id="amount" step="0.01" required>
+					</div>
+					<div class="form-group">
+						<label for="type">Tipo</label>
+						<select id="type" required>
+							<option value="income">Receita</option>
+							<option value="expense">Despesa</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="category">Categoria</label>
+						<select id="category" required>
+							<option value="Salário">Salário</option>
+							<option value="Alimentação">Alimentação</option>
+							<option value="Transporte">Transporte</option>
+							<option value="Moradia">Moradia</option>
+							<option value="Lazer">Lazer</option>
+							<option value="Saúde">Saúde</option>
+							<option value="Educação">Educação</option>
+							<option value="Outros">Outros</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="date">Data</label>
+						<input type="date" id="date" required>
+					</div>
+					<div class="form-actions">
+						<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Modal Editar Transação -->
+		<div id="editTransactionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3>Editar Transação</h3>
+					<button class="close-modal">&times;</button>
+				</div>
+				<form id="editTransactionForm">
+					<input type="hidden" id="editTransactionId">
+					<div class="form-group">
+						<label for="editDescription">Descrição</label>
+						<input type="text" id="editDescription" required>
+					</div>
+					<div class="form-group">
+						<label for="editAmount">Valor</label>
+						<input type="number" id="editAmount" step="0.01" required>
+					</div>
+					<div class="form-group">
+						<label for="editType">Tipo</label>
+						<select id="editType" required>
+							<option value="income">Receita</option>
+							<option value="expense">Despesa</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="editCategory">Categoria</label>
+						<select id="editCategory" required>
+							<option value="Salário">Salário</option>
+							<option value="Alimentação">Alimentação</option>
+							<option value="Transporte">Transporte</option>
+							<option value="Moradia">Moradia</option>
+							<option value="Lazer">Lazer</option>
+							<option value="Saúde">Saúde</option>
+							<option value="Educação">Educação</option>
+							<option value="Outros">Outros</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="editDate">Data</label>
+						<input type="date" id="editDate" required>
+					</div>
+					<div class="form-actions">
+						<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Salvar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Nova Despesa Fixa -->
+	<div id="fixedExpenseModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Nova Despesa Fixa</h3>
+				<button class="close-modal">&times;</button>
+			</div>
+			<form id="fixedExpenseForm">
+				<div class="form-group">
+					<label for="fixedExpenseDescription">Descrição</label>
+					<input type="text" id="fixedExpenseDescription" required>
+				</div>
+				<div class="form-group">
+					<label for="fixedExpenseAmount">Valor</label>
+					<input type="number" id="fixedExpenseAmount" step="0.01" required>
+				</div>
+				<div class="form-group">
+					<label for="fixedExpenseCategory">Categoria</label>
+					<select id="fixedExpenseCategory" required>
+						<option value="Aluguel">Aluguel</option>
+						<option value="Internet">Internet</option>
+						<option value="Energia">Energia</option>
+						<option value="Água">Água</option>
+						<option value="Telefone">Telefone</option>
+						<option value="Streaming">Streaming</option>
+						<option value="Academia">Academia</option>
+						<option value="Outros">Outros</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="fixedExpenseDueDay">Dia de Vencimento</label>
+					<input type="number" id="fixedExpenseDueDay" min="1" max="31" required>
+				</div>
+				<div class="form-group">
+					<label for="fixedExpenseNotificationDays">Notificar com quantos dias de antecedência?</label>
+					<input type="number" id="fixedExpenseNotificationDays" min="0" max="30" value="3">
+				</div>
+				<div class="form-group">
+					<label for="fixedExpenseNotes">Observações</label>
+					<textarea id="fixedExpenseNotes" rows="3"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Modal de Pagamento de Despesa Fixa -->
+	<div id="fixedExpensePaymentModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Registrar Pagamento</h3>
+				<button class="close-modal">&times;</button>
+			</div>
+			<form id="fixedExpensePaymentForm">
+				<input type="hidden" id="paymentFixedExpenseId">
+				<div class="form-group">
+					<label for="paymentAmount">Valor do Pagamento</label>
+					<input type="number" id="paymentAmount" step="0.01" required>
+				</div>
+				<div class="form-group">
+					<label for="paymentDate">Data do Pagamento</label>
+					<input type="date" id="paymentDate" required>
+				</div>
+				<div class="form-group">
+					<label for="paymentProof">Comprovante (URL)</label>
+					<input type="url" id="paymentProof">
+				</div>
+				<div class="form-group">
+					<label for="paymentNotes">Observações</label>
+					<textarea id="paymentNotes" rows="3"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Registrar Pagamento</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Modal Nova Meta -->
+	<div id="goalModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Nova Meta</h3>
+				<button class="close-modal" onclick="toggleGoalModal(false)">&times;</button>
+			</div>
+			
+			<div class="modal-tabs">
+				<button class="tab-btn active" data-target="#basicInfo">Informações Básicas</button>
+				<button class="tab-btn" data-target="#notifications">Notificações</button>
+			</div>
+
+			<div class="tab-content">
+				<div id="basicInfo" class="tab-pane active">
+					<div class="form-group">
+						<label for="goalName">Nome da Meta</label>
+						<input type="text" id="goalName" required>
+					</div>
+					<div class="form-group">
+						<label for="targetAmount">Valor Alvo</label>
+						<input type="number" id="targetAmount" required>
+					</div>
+					<div class="form-group">
+						<label for="deadline">Data Limite</label>
+						<input type="date" id="deadline" required>
+					</div>
+				</div>
+
+				<div id="notifications" class="tab-pane">
+					<div class="form-group">
+						<label for="notificationType">Tipo de Notificação</label>
+						<select id="notificationType" required>
+							<option value="notify">Apenas Notificar</option>
+							<option value="postpone">Adiar Automaticamente</option>
+							<option value="auto_adjust">Ajustar Meta Automaticamente</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="notificationDays">Dias para Notificação</label>
+						<input type="number" id="notificationDays" min="1" value="7">
+						<small>Quantos dias antes do vencimento você quer ser notificado?</small>
+					</div>
+					<div id="postponeDaysGroup" class="form-group" style="display: none;">
+						<label for="postponeDays">Dias para Adiar</label>
+						<input type="number" id="postponeDays" min="1" value="30">
+						<small>Caso a meta não seja atingida, por quantos dias ela deve ser adiada?</small>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<div class="form-actions">
+					<button type="button" class="btn btn-secondary cancel-modal">
+						<i class="fas fa-times"></i>
+						Cancelar
+					</button>
+					<button type="button" class="btn btn-primary save-goal">
+						<i class="fas fa-save"></i>
+						Salvar Meta
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Contribuição -->
+	<div id="contributionModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Nova Contribuição</h3>
+				<button class="close-modal">&times;</button>
+			</div>
+			<form id="contributionForm">
+				<input type="hidden" id="goalId">
+				<div class="form-group">
+					<label for="amount">Valor da Contribuição</label>
+					<input type="number" id="amount" step="0.01" required>
+				</div>
+				<div class="form-group">
+					<label for="date">Data</label>
+					<input type="date" id="date" required>
+				</div>
+				<div class="form-group">
+					<label for="notes">Observações</label>
+					<textarea id="notes" rows="3"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Container de Notificações -->
+	<div id="notifications-container"></div>
+
+	<!-- Modal de Edição de Contribuição -->
+	<div id="editContributionModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Editar Contribuição</h3>
+				<button class="close-modal" onclick="toggleEditContributionModal(false)">&times;</button>
+			</div>
+			<form id="editContributionForm" onsubmit="handleEditContributionSubmit(event)">
+				<input type="hidden" id="editContributionId">
+				<input type="hidden" id="editContributionGoalId">
+				<div class="form-group">
+					<label for="editContributionAmount">Valor</label>
+					<input type="number" id="editContributionAmount" step="0.01" required>
+				</div>
+				<div class="form-group">
+					<label for="editContributionDate">Data</label>
+					<input type="date" id="editContributionDate" required>
+				</div>
+				<div class="form-group">
+					<label for="editContributionNotes">Observações</label>
+					<textarea id="editContributionNotes" rows="3"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+					<button type="submit" class="btn btn-primary">Salvar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Modal de Nova Meta Compartilhada -->
+	<div id="sharedGoalModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Nova Meta Compartilhada</h3>
+				<button class="close-modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<form id="sharedGoalForm">
+					<div class="form-group">
+						<label for="sharedGoalName">Nome da Meta</label>
+						<input type="text" id="sharedGoalName" name="name" required>
+					</div>
+					<div class="form-group">
+						<label for="sharedGoalDescription">Descrição</label>
+						<textarea id="sharedGoalDescription" name="description" rows="3"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="sharedGoalAmount">Valor Alvo (R$)</label>
+						<input type="number" id="sharedGoalAmount" name="amount" min="1" step="0.01" required>
+					</div>
+					<div class="form-group">
+						<label for="sharedGoalDeadline">Data Limite</label>
+						<input type="date" id="sharedGoalDeadline" name="deadline" required>
+					</div>
+					<div class="form-actions">
+						<button type="button" class="btn cancel-modal">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Criar Meta</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Detalhes da Meta Compartilhada -->
+	<div id="sharedGoalDetailsModal" class="modal">
+		<div class="modal-content modal-lg">
+			<div class="modal-header">
+				<h3 id="sharedGoalDetailTitle">Detalhes da Meta</h3>
+				<div class="modal-actions">
+					<button id="leaveSharedGoalBtn" class="btn btn-warning btn-sm" style="display: none; margin-right: 10px;" onclick="leaveSharedGoal(this.getAttribute('data-goal-id'))">
+						<i class="fas fa-sign-out-alt"></i> Sair da Meta
+					</button>
+					<button class="close-modal">&times;</button>
+				</div>
+			</div>
+			<div class="modal-body">
+				<div class="shared-goal-info">
+					<div class="progress-section">
+						<h4><i class="fas fa-chart-line"></i> Progresso Geral</h4>
+						<div class="goal-progress-container">
+							<div class="goal-progress" id="sharedGoalProgressBar"></div>
+						</div>
+						<div class="progress-stats">
+							<div class="stat-item meta">
+								<i class="fas fa-target"></i>
+								<div class="stat-info">
+									<div class="stat-label">Meta</div>
+									<div class="stat-value" id="sharedGoalTargetAmount"></div>
+								</div>
+							</div>
+							<div class="stat-item acumulado">
+								<i class="fas fa-arrow-up"></i>
+								<div class="stat-info">
+									<div class="stat-label">Acumulado</div>
+									<div class="stat-value" id="sharedGoalTotalContributed"></div>
+								</div>
+							</div>
+							<div class="stat-item faltam">
+								<i class="fas fa-arrow-down"></i>
+								<div class="stat-info">
+									<div class="stat-label">Faltam</div>
+									<div class="stat-value" id="sharedGoalRemainingAmount"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tabs-container">
+						<div class="tabs-header">
+							<button class="tab-btn active" data-tab="ranking">Ranking</button>
+							<button class="tab-btn" data-tab="contributions">Contribuições</button>
+							<button class="tab-btn" data-tab="participants">Participantes</button>
+						</div>
+						<div class="tab-content">
+							<div id="ranking-tab" class="tab-pane active">
+								<div class="ranking-container">
+									<h4>Ranking de Participantes</h4>
+									<div class="ranking-list" id="sharedGoalRanking">
+										<!-- Ranking será preenchido via JavaScript -->
+									</div>
+								</div>
+							</div>
+							<div id="contributions-tab" class="tab-pane">
+								<div class="contributions-container">
+									<h4><i class="fas fa-history"></i> Histórico de Contribuições</h4>
+									<div id="sharedGoalContributions">
+										<!-- Contribuições serão preenchidas via JavaScript -->
+									</div>
+								</div>
+							</div>
+							<div id="participants-tab" class="tab-pane">
+								<div class="participants-container">
+									<h4>Participantes</h4>
+									<div class="invite-section">
+										<form id="inviteForm">
+											<div class="form-group">
+												<input type="email" id="inviteEmail" placeholder="E-mail do participante">
+												<button type="submit" class="btn btn-primary">Convidar</button>
+											</div>
+										</form>
+									</div>
+									<div class="participants-list" id="sharedGoalParticipants">
+										<!-- Participantes serão preenchidos via JavaScript -->
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Contribuição para Meta Compartilhada -->
+	<div id="sharedContributionModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3>Nova Contribuição</h3>
+				<button class="close-modal">
+					<i class="fas fa-times"></i>
+				</button>
+			</div>
+			<form id="sharedGoalContributionForm">
+				<input type="hidden" id="sharedGoalId" name="sharedGoalId">
+				<div class="form-group">
+					<label for="contributionAmount">Valor da Contribuição</label>
+					<input type="number" id="contributionAmount" name="amount" step="0.01" required>
+				</div>
+				<div class="form-group">
+					<label for="contributionDate">Data</label>
+					<input type="date" id="contributionDate" name="date" required>
+				</div>
+				<div class="form-group">
+					<label for="contributionNotes">Observações (opcional)</label>
+					<textarea id="contributionNotes" name="notes"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Salvar</button>
+					<button type="button" class="btn btn-secondary cancel-modal">Cancelar</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<script>
+		// Inicializar o cliente Supabase
+		const supabaseUrl = 'https://jzamtjaxrxtbhzvdzqfq.supabase.co';
+		const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6YW10amF4cnh0Ymh6dmR6cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxNjQyNTksImV4cCI6MjA1Mzc0MDI1OX0.iGjb1X9sk5Auz3fTYAe-85vM5-xOhkFexu6onRfnW4k';
+		const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+	</script>
+	<script src="/scripts/mobile-modal.js"></script>
+	<script src="/scripts/pagination.js"></script>
+	<script src="/scripts/script.js"></script>
+	<script src="/scripts/goals.js"></script>
+</body>
+</html>

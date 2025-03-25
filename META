@@ -1,0 +1,73 @@
+Especificação: Metas Compartilhadas com Sistema de Ranking
+Visão Geral
+A funcionalidade de Metas Compartilhadas permitirá que os usuários criem e acompanhem objetivos financeiros em grupo. Esta nova funcionalidade complementará as metas individuais já existentes, mantendo o estilo visual e a experiência do usuário consistentes com o resto do aplicativo.
+Principais Componentes
+1. Estrutura de Dados
+Três novas tabelas no banco de dados:
+Metas Compartilhadas: Armazenará informações básicas da meta (nome, descrição, valor alvo, prazo)
+Participantes: Registrará quem está participando de cada meta, incluindo status e pontuação para ranking
+Contribuições: Registrará cada contribuição individual, quanto foi contribuído e quando
+2. Interface do Usuário
+Sistema de abas na seção de Metas:
+Manter a aba "Metas Individuais" (já existente)
+Adicionar uma nova aba "Metas Compartilhadas"
+Componentes visuais:
+Cartões de metas compartilhadas com barras de progresso
+Avatares dos participantes em miniatura
+Indicadores de ranking (medalhas ouro, prata, bronze para os 3 primeiros)
+Estado vazio para quando não há metas compartilhadas
+3. Sistema de Gamificação
+Ranking de participantes baseado em:
+Número de contribuições realizadas
+Valor total contribuído
+Frequência de contribuições
+Badges especiais para conquistas (primeiro contribuinte, maior contribuição, etc.)
+4. Fluxos de Interação
+Criar Meta Compartilhada:
+O usuário acessa a aba "Metas Compartilhadas"
+Clica no botão "Nova Meta Compartilhada"
+Preenche informações básicas (nome, valor alvo, data limite)
+Após criar, pode convidar outros participantes
+Gerenciar Participantes:
+Convidar novos participantes por e-mail
+Visualizar todos os participantes e suas contribuições
+Ver o ranking dos participantes
+Contribuir para a Meta:
+Adicionar uma nova contribuição através do modal de detalhes
+Registrar valor, data e observações
+Ganhar pontos no ranking baseado na contribuição
+Acompanhar Progresso:
+Visualizar o progresso geral da meta
+Ver o ranking atualizado de participantes
+Acompanhar contribuições individuais de cada participante
+Detalhes de Implementação
+Estrutura dos Modais
+Modal de Nova Meta Compartilhada:
+Campos para nome, descrição, valor alvo e data limite
+Área para convidar participantes após a criação
+Modal de Detalhes da Meta:
+Informações gerais da meta
+Barra de progresso
+Seção de ranking dos participantes
+Lista de contribuições
+Formulário para adicionar nova contribuição
+Sistema de Ranking
+Cálculo de pontos:
+Pontos base por cada contribuição (ex: 10 pontos)
+Pontos adicionais baseados no valor (ex: 1 ponto para cada R$100)
+Bônus para contribuições regulares (ex: +5 pontos para contribuições semanais)
+Exibição visual:
+Medalhas ou cores diferentes para os primeiros colocados
+Badges para conquistas especiais
+Lista ordenada com posição, avatar, nome e total contribuído
+Considerações de Design
+Manter o estilo visual consistente com o resto da aplicação
+Adaptar automaticamente para o tema claro/escuro
+Design responsivo para diferentes tamanhos de tela
+Manter as interações intuitivas e simples
+Importante
+Não modificar o funcionamento das metas individuais existentes
+Manter o código JavaScript e CSS organizado para evitar conflitos
+Implementar tratamento adequado de erros e estados vazios
+Garantir que a nova funcionalidade não afete o desempenho do aplicativo
+Com essa implementação, os usuários poderão trabalhar em conjunto para alcançar objetivos financeiros, com um elemento de gamificação que incentivará a participação regular e o engajamento com a plataforma.

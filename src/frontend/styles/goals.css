@@ -1,0 +1,4473 @@
+.goals-container {
+    padding: 1rem;
+}
+
+.goals-stats-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-color);
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: 50%;
+}
+
+.stat-info {
+    flex: 1;
+}
+
+.stat-info span {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-info strong {
+    display: block;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.goals-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    justify-items: center;
+    align-content: start;
+}
+
+.goal-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 340px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.goal-card:hover {
+    transform: translateY(-2px);
+}
+
+.goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+}
+
+.goal-title-wrapper {
+    flex: 1;
+}
+
+.goal-title-wrapper h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.goal-actions .btn-sm {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+
+.goal-actions .btn-sm i {
+    font-size: 0.9rem;
+}
+
+.goal-actions .btn-sm:hover {
+    transform: translateY(-2px);
+}
+
+.goal-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.goal-amount {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 1rem;
+}
+
+.goal-deadline {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+.goal-progress-container {
+    margin-top: auto;
+    background: var(--bg-color);
+    border-radius: 6px;
+    height: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.goal-progress {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    position: absolute;
+    right: 0;
+    top: -20px;
+    color: var(--text-secondary);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .goals-stats-header {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .goals-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .goals-stats-header {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos específicos para o modal de contribuição */
+#contributionModal.modal {
+    background: rgba(0, 0, 0, 0.7); /* Fundo escuro semi-transparente */
+    backdrop-filter: blur(4px); /* Efeito de desfoque no fundo */
+}
+
+#contributionModal .modal-content {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin: 2rem auto;
+}
+
+#contributionModal .modal-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#contributionModal .modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#contributionModal .close-modal {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 8px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+#contributionModal .close-modal:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+#contributionModal form {
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border-radius: 0 0 12px 12px;
+}
+
+#contributionModal .form-group {
+    margin-bottom: 1.25rem;
+}
+
+#contributionModal .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+#contributionModal .form-group input,
+#contributionModal .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#contributionModal .form-group input:focus,
+#contributionModal .form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+    outline: none;
+}
+
+#contributionModal .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+#contributionModal .btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: transform 0.2s;
+}
+
+#contributionModal .btn:hover {
+    transform: translateY(-1px);
+}
+
+#contributionModal .btn-secondary {
+    background: var(--bg-color);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+#contributionModal .btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+/* Responsividade para o modal */
+@media (max-width: 768px) {
+    #contributionModal.modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        padding-bottom: 80px; /* Espaço para a barra de navegação */
+    }
+    
+    #contributionModal.modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #contributionModal .modal-content {
+        width: 90%;
+        margin: 0 auto;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+    }
+
+    #contributionModal .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+
+    #contributionModal .btn {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+/* Ajuste específico para telas menores */
+@media (max-width: 480px) and (max-height: 760px) {
+    #contributionModal.modal {
+        padding-bottom: 90px; /* Mais espaço para a barra de navegação */
+    }
+    
+    #contributionModal .modal-content {
+        max-height: 70vh;
+    }
+}
+
+.empty-goals {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+    padding: 2rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2.5rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+    max-width: 80%;
+}
+
+.empty-state-suggestions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 2rem;
+}
+
+.suggestion-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.suggestion-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item i {
+    font-size: 1.75rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.suggestion-item span {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.create-goal-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.create-goal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.2);
+}
+
+.create-goal-btn i {
+    font-size: 1rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .empty-goals {
+        min-height: calc(100vh - 150px);
+        padding: 1rem;
+    }
+
+    .empty-state {
+        padding: 2rem 1.5rem;
+        aspect-ratio: auto;
+        min-height: 500px;
+    }
+
+    .empty-state-suggestions {
+        grid-template-columns: repeat(2, 1fr);
+        max-width: 100%;
+    }
+
+    .empty-state p {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .empty-state {
+        padding: 1.5rem 1rem;
+    }
+
+    .empty-state-suggestions {
+        grid-template-columns: 1fr;
+    }
+}
+
+.goal-details {
+    padding: 1.5rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.detail-item i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.detail-info label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.detail-info span {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.contributions-history {
+    margin-top: 2rem;
+}
+
+.contributions-history h4 {
+    font-size: 1.125rem;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.contributions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.contribution-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.contribution-date {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.contribution-amount {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.no-contributions {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+#goalDetailsModal.modal {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+#goalDetailsModal .modal-content {
+    max-width: 700px;
+    margin: 2rem auto;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#goalDetailsModal .modal-header {
+    background: var(--primary-color);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#goalDetailsModal .modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+#goalDetailsModal .close-modal {
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+#goalDetailsModal .close-modal:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #goalDetailsModal .modal-content {
+        margin: 1rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* Estilos aprimorados do painel de detalhes */
+.goal-details-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: linear-gradient(135deg, 
+        rgba(44, 51, 58, 0.98) 0%,    /* Cor base mais escura */
+        rgba(33, 37, 41, 0.98) 100%   /* Cor final ainda mais escura */
+    );
+    backdrop-filter: blur(10px);
+    border-left: 2px solid var(--primary-color);
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    overflow-y: auto;
+    border-top-left-radius: 24px;
+    border-bottom-left-radius: 24px;
+}
+
+.goal-details-panel.active {
+    right: 0;
+    animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.goal-details-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-top-left-radius: 24px;
+}
+
+.goal-details-header h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0;
+    flex: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.goal-details-header i {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
+}
+
+.close-details {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.8);
+    cursor: pointer;
+    padding: 0.5rem;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.close-details:hover {
+    color: white;
+    transform: rotate(90deg);
+}
+
+.goal-details-content {
+    padding: 1.5rem;
+}
+
+.goal-details-info {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.goal-details-info:hover {
+    transform: translateY(-2px);
+}
+
+.info-item {
+    position: relative;
+    padding-left: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: var(--primary-color);
+    border-radius: 3px;
+    opacity: 0.5;
+}
+
+.info-item span {
+    display: block;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.25rem;
+}
+
+.info-item strong {
+    display: block;
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
+.contributions-section {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contributions-section h5 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0 0 1.5rem 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.contributions-section h5 i {
+    color: var(--primary-color-light);
+    font-size: 1rem;
+}
+
+/* Ajuste para o modo claro - mantendo branco em ambos os modos */
+[data-theme="light"] .contributions-section h5 {
+    color: #ffffff; /* Forçando branco no modo claro */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil para melhor legibilidade */
+}
+
+[data-theme="light"] .contributions-section h5 i {
+    color: rgba(255, 255, 255, 0.9); /* Ícone também em branco, levemente transparente */
+}
+
+.contributions-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: 0.35rem;
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background: var(--primary-color);
+    opacity: 0.2;
+}
+
+.timeline-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-date i {
+    background: var(--bg-secondary);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    left: -6px;
+    top: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-date i {
+    background: var(--primary-color);
+    transform: scale(1.2);
+}
+
+.timeline-content {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 1.25rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.timeline-content .amount {
+    display: block;
+    font-weight: 600;
+    color: var(--primary-color-light);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-content .notes {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.4;
+}
+
+/* Scrollbar personalizada */
+.goal-details-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.goal-details-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.goal-details-panel::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+    opacity: 0.5;
+}
+
+.goal-details-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color-dark);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .goal-details-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .goal-details-info,
+    .contributions-section {
+        margin: 1rem;
+    }
+}
+
+/* Estilos para meta concluída */
+.goal-card.completed {
+    border-color: var(--success-color);
+    box-shadow: 0 4px 12px rgba(var(--success-rgb), 0.15);
+}
+
+.goal-card.completed .goal-title-wrapper h3::after {
+    content: "✨";
+    margin-left: 6px;
+    font-size: 0.9rem;
+}
+
+.goal-card.completed .goal-progress {
+    background: linear-gradient(90deg, 
+        var(--success-color) 0%,
+        rgba(var(--success-rgb), 0.8) 100%
+    );
+    box-shadow: 0 2px 4px rgba(var(--success-rgb), 0.2);
+}
+
+.goal-card.completed .goal-amount {
+    color: var(--success-color);
+}
+
+/* Desabilitar botão de contribuir em metas concluídas */
+.goal-card.completed .btn-primary {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.goal-card.completed .btn-primary:hover {
+    transform: none;
+}
+
+/* Ajustes no card */
+.goal-card {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 340px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid transparent;
+}
+
+.goal-progress {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.goal-progress-container {
+    margin-top: auto;
+    background: var(--bg-color);
+    border-radius: 6px;
+    height: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Ajustes nos modais */
+#goalModal .modal-content,
+#contributionModal .modal-content {
+    max-width: 500px; /* Aumentado de 450px */
+    margin: 2rem auto;
+    background: var(--bg-primary);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+#goalModal .modal-header,
+#contributionModal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color), #4a90e2);
+    color: white;
+    padding: 18px 20px;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+}
+
+#goalModal .modal-header h3,
+#contributionModal .modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+}
+
+#goalModal .close-modal,
+#contributionModal .close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+}
+
+#goalModal .close-modal:hover,
+#contributionModal .close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+#goalModal .modal-tabs {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 20px;
+    display: flex;
+    overflow-x: auto;
+}
+
+#goalModal .tab-btn {
+    padding: 12px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#goalModal .tab-btn.active {
+    color: var(--primary-color);
+}
+
+#goalModal .tab-btn.active:after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary-color);
+    border-radius: 2px 2px 0 0;
+}
+
+#goalModal .tab-content,
+#contributionModal .modal-body {
+    padding: 20px;
+    background: var(--bg-primary);
+}
+
+#goalModal .form-group label,
+#contributionModal .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+#goalModal .form-group input,
+#goalModal .form-group select,
+#goalModal .form-group textarea,
+#contributionModal .form-group input,
+#contributionModal .form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.25s ease;
+}
+
+#goalModal .form-group input:focus,
+#goalModal .form-group select:focus,
+#goalModal .form-group textarea:focus,
+#contributionModal .form-group input:focus,
+#contributionModal .form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.15);
+    outline: none;
+}
+
+#goalModal .modal-footer {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-primary); /* Garantir fundo escuro */
+}
+
+#goalModal .btn,
+#contributionModal .btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#goalModal .btn-secondary,
+#contributionModal .btn-secondary,
+#goalModal .cancel-button,
+#contributionModal .cancel-button {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+#goalModal .btn-secondary:hover,
+#contributionModal .btn-secondary:hover,
+#goalModal .cancel-button:hover,
+#contributionModal .cancel-button:hover {
+    background-color: var(--bg-tertiary);
+    transform: translateY(-2px);
+}
+
+#goalModal .btn-primary,
+#contributionModal .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #4a90e2);
+    color: white;
+    box-shadow: 0 4px 10px rgba(var(--primary-rgb), 0.3);
+    border: none;
+}
+
+#goalModal .btn-primary:hover,
+#contributionModal .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(var(--primary-rgb), 0.4);
+}
+
+/* Responsividade para os modais */
+@media (max-width: 768px) {
+    #goalModal .modal-content,
+    #contributionModal .modal-content {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    #goalModal .modal-header,
+    #contributionModal .modal-header {
+        padding: 16px;
+    }
+    
+    #goalModal .tab-content,
+    #contributionModal .modal-body {
+        padding: 16px;
+    }
+    
+    #goalModal .modal-footer,
+    #contributionModal .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+        padding: 16px;
+    }
+
+    #goalModal .btn,
+    #contributionModal .btn {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+/* Adicionar os estilos da barra de progresso geral */
+.overall-progress {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.progress-info span {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.progress-percentage {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.progress-bar-container {
+    height: 8px;
+    background: var(--bg-color);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    background: linear-gradient(
+        90deg,
+        var(--primary-color) 0%,
+        #2196F3 25%,    /* Azul */
+        #00BCD4 50%,    /* Ciano */
+        #009688 75%,    /* Verde-água */
+        #4CAF50 100%    /* Verde */
+    );
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease infinite;
+}
+
+/* Animação do gradiente */
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Quando atingir 100% */
+.progress-bar[style*="width: 100"] {
+    background: linear-gradient(
+        90deg,
+        #4CAF50 0%,     /* Verde */
+        #8BC34A 25%,    /* Verde-claro */
+        #CDDC39 50%,    /* Lima */
+        #FFC107 75%,    /* Âmbar */
+        #FFD700 100%    /* Dourado */
+    );
+    animation: gradientMove 3s ease infinite, pulse 2s infinite;
+}
+
+.progress-stats {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Animação quando a barra atinge 100% */
+.progress-bar[style*="width: 100"] {
+    background: linear-gradient(
+        90deg,
+        #4CAF50 0%,     /* Verde */
+        #8BC34A 25%,    /* Verde-claro */
+        #CDDC39 50%,    /* Lima */
+        #FFC107 75%,    /* Âmbar */
+        #FFD700 100%    /* Dourado */
+    );
+    animation: gradientMove 3s ease infinite, pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .overall-progress {
+        padding: 1rem;
+        margin: 1rem;
+    }
+}
+
+/* Estilos para a barra de progresso no painel de detalhes */
+.goal-details-progress {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.goal-details-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.goal-details-progress-info span {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.goal-details-progress-bar-container {
+    height: 8px;
+    background: rgba(var(--primary-rgb), 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.goal-details-progress-bar {
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--primary-color) 0%,
+        #2196F3 25%,
+        #00BCD4 50%,
+        #009688 75%,
+        #4CAF50 100%
+    );
+    border-radius: 4px;
+    transition: width 0.5s ease;
+    background-size: 200% 100%;
+    animation: gradientMove 3s ease infinite;
+}
+
+/* Estilo especial quando a meta está completa */
+.goal-details-progress.completed .goal-details-progress-bar {
+    background: linear-gradient(
+        90deg,
+        #3A7BD5 0%,     /* Azul royal */
+        #00D2FF 25%,    /* Azul claro */
+        #3498db 50%,    /* Azul médio */
+        #2980b9 75%,    /* Azul escuro */
+        #1E3C72 100%    /* Azul profundo */
+    );
+    box-shadow: 0 2px 10px rgba(58, 123, 213, 0.3);
+}
+
+.goal-details-progress-percentage {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color-light);
+    margin-top: 0.5rem;
+    text-align: right;
+}
+
+/* Ajuste também a cor do texto da porcentagem quando completo */
+.goal-details-progress.completed .goal-details-progress-percentage {
+    color: #3A7BD5;
+}
+
+/* E a cor do valor quando completo */
+.timeline-content .amount {
+    display: block;
+    font-weight: 600;
+    color: #3A7BD5; /* Mudando de verde para azul */
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo para quando não há contribuições */
+.contributions-section .no-contributions {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 0.5rem;
+}
+
+/* Ajuste na seção de progresso quando vazia */
+.goal-details-progress:empty {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+}
+
+.timeline-actions .btn-sm {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.timeline-actions .btn-sm i {
+    font-size: 0.9rem;
+    transition: transform 0.2s ease;
+}
+
+.timeline-actions .btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-actions .btn-sm:active {
+    transform: scale(0.95);
+}
+
+/* Ajustes no layout do card de contribuição para mobile */
+@media (max-width: 768px) {
+    .timeline-item {
+        position: relative;
+        padding-bottom: 40px; /* Espaço para os botões */
+    }
+
+    .timeline-content {
+        position: relative;
+        width: 100%;
+    }
+
+    /* Ajuste no valor para garantir que não seja sobreposto */
+    .timeline-content .amount {
+        display: block;
+        margin-right: 8px;
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+
+    /* Reposicionamento dos botões */
+    .timeline-actions {
+        position: absolute;
+        bottom: 8px; /* Distância da borda inferior */
+        right: 8px;
+        transform: none; /* Remove transformação anterior */
+        display: flex;
+        gap: 8px;
+        padding: 4px;
+        background: transparent;
+        z-index: 5;
+    }
+
+    /* Ajustes nos botões */
+    .timeline-actions .btn-sm {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        position: relative;
+        isolation: isolate; /* Cria novo contexto de empilhamento */
+        overflow: visible; /* Permite que o pseudo-elemento ultrapasse */
+    }
+
+    /* Área de toque expandida para Android */
+    .timeline-actions .btn-sm::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        bottom: -10px;
+        left: -10px;
+        z-index: -1;
+        cursor: pointer;
+    }
+
+    /* Estilo específico para o botão de edição */
+    .timeline-actions .btn-sm.btn-secondary {
+        background: rgba(var(--primary-rgb), 0.1);
+        color: var(--primary-color);
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+    }
+
+    /* Estilo específico para o botão de exclusão */
+    .timeline-actions .btn-sm.btn-danger {
+        background: rgba(var(--danger-color), 0.1);
+        color: var(--danger-color);
+    }
+
+    /* Ícones dentro dos botões */
+    .timeline-actions .btn-sm i {
+        font-size: 1rem;
+        pointer-events: none; /* Evita problemas de evento no ícone */
+    }
+
+    /* Feedback visual ao pressionar */
+    .timeline-actions .btn-sm:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+}
+
+/* Correções específicas para Android */
+@supports (-webkit-appearance: none) {
+    @media (max-width: 768px) {
+        .timeline-actions .btn-sm {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        /* Força a interatividade no botão de edição */
+        .timeline-actions .btn-sm.btn-secondary {
+            position: relative;
+            z-index: 100; /* Valor alto para garantir que fique acima */
+            transform: translateZ(0); /* Força hardware acceleration */
+            will-change: transform; /* Otimiza performance */
+        }
+
+        /* Área de toque maior sem afetar visual */
+        .timeline-actions .btn-sm.btn-secondary::after {
+            content: '';
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            bottom: -15px;
+            left: -15px;
+            z-index: 1;
+        }
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 360px) {
+    .timeline-item {
+        padding-bottom: 36px; /* Reduz um pouco o espaço */
+    }
+
+    .timeline-actions .btn-sm {
+        width: 32px;
+        height: 32px;
+    }
+
+    .timeline-actions {
+        bottom: 6px;
+        right: 6px;
+        gap: 6px;
+    }
+}
+
+/* Correções específicas para garantir clique em dispositivos touch */
+@supports (-webkit-touch-callout: none) {
+    .timeline-actions .btn-sm {
+        -webkit-tap-highlight-color: transparent;
+        cursor: pointer;
+        touch-action: manipulation;
+    }
+}
+
+/* Correção específica para Android */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .timeline-actions .btn-sm {
+        touch-action: manipulation;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: pointer;
+    }
+}
+
+/* Ajustes específicos para o botão de edição no Android */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .timeline-actions .btn-sm.btn-secondary {
+        /* Força o botão a ser clicável */
+        position: relative;
+        z-index: 200;
+        pointer-events: all !important;
+        cursor: pointer !important;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+        /* Remove qualquer transformação que possa interferir */
+        transform: none !important;
+        /* Garante que o botão fique acima de outros elementos */
+        isolation: isolate;
+    }
+
+    /* Aumenta a área de clique sem afetar o visual */
+    .timeline-actions .btn-sm.btn-secondary::before {
+        content: '';
+        position: absolute;
+        top: -12px;
+        right: -12px;
+        bottom: -12px;
+        left: -12px;
+        z-index: -1;
+        background: transparent;
+    }
+
+    /* Garante que o ícone dentro do botão não interfira no clique */
+    .timeline-actions .btn-sm.btn-secondary i {
+        pointer-events: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Remove efeitos que possam interferir no clique */
+    .timeline-actions .btn-sm.btn-secondary:hover,
+    .timeline-actions .btn-sm.btn-secondary:focus {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Feedback visual mais simples ao tocar */
+    .timeline-actions .btn-sm.btn-secondary:active {
+        opacity: 0.7;
+    }
+}
+
+/* Correção adicional para Samsung Internet e outros navegadores Android */
+@supports (-webkit-touch-callout: none) {
+    .timeline-actions .btn-sm.btn-secondary {
+        /* Força o botão a ser interativo */
+        pointer-events: auto !important;
+        cursor: pointer !important;
+        /* Previne comportamentos indesejados do navegador */
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+}
+
+/* Ajuste para garantir que o evento de clique funcione em todos os elementos do botão */
+.timeline-actions .btn-sm.btn-secondary * {
+    pointer-events: none;
+}
+
+/* Estilos para o modal de edição de contribuição */
+#editContributionModal .modal-content {
+    background: var(--bg-secondary);
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+    position: relative;
+    margin: 1rem auto;
+    padding: 1.5rem;
+}
+
+#editContributionModal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    padding: 1.5rem;
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#editContributionModal .modal-header h3 {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+#editContributionModal .close-modal {
+    color: rgba(255, 255, 255, 0.8);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.3s ease;
+}
+
+#editContributionModal .close-modal:hover {
+    color: white;
+    transform: rotate(90deg);
+}
+
+#editContributionModal .form-group {
+    margin-bottom: 1.25rem;
+}
+
+#editContributionModal .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+#editContributionModal .form-group input,
+#editContributionModal .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#editContributionModal .form-group input:focus,
+#editContributionModal .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.1);
+}
+
+#editContributionModal .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+#editContributionModal .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+#editContributionModal .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#editContributionModal .btn:hover {
+    transform: translateY(-2px);
+}
+
+#editContributionModal .btn-secondary {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-color);
+}
+
+#editContributionModal .btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    #editContributionModal .modal-content {
+        width: 95%;
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    #editContributionModal .form-actions {
+        flex-direction: column;
+    }
+
+    #editContributionModal .btn {
+        width: 100%;
+    }
+
+    #editContributionModal .form-group input,
+    #editContributionModal .form-group textarea {
+        font-size: 16px;
+    }
+}
+
+/* Ajustes para tema escuro */
+[data-theme="dark"] #editContributionModal .modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] #editContributionModal .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Estilo das Abas para Metas */
+.goals-tabs {
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.tabs-header {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: none;
+    color: var(--text-color);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tab-btn::before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.9rem;
+}
+
+.tab-btn[data-tab="ranking"]::before {
+    content: '\f091';
+    color: #FFD700;
+}
+
+.tab-btn[data-tab="contributions"]::before {
+    content: '\f155';
+    color: #4CAF50;
+}
+
+.tab-btn[data-tab="participants"]::before {
+    content: '\f0c0';
+    color: #2196F3;
+}
+
+.tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.tab-btn.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.tab-btn.active::after {
+    width: 100%;
+}
+
+.tab-content {
+    padding-top: 1rem;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Estilos para Metas Compartilhadas */
+.shared-goals-container {
+    width: 100%;
+}
+
+.shared-goals-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.shared-goals-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    width: 100%;
+    padding: 1rem;
+}
+
+.shared-goal-card {
+    background-color: var(--bg-secondary);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.shared-goal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.shared-goal-card.completed {
+    border: 2px solid var(--success-color);
+}
+
+.shared-goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.shared-goal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    padding-right: 2rem;
+}
+
+.shared-goal-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.shared-goal-info {
+    margin-bottom: 1.5rem;
+}
+
+.shared-goal-description {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.shared-goal-amounts {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.shared-goal-progress-container {
+    height: 10px;
+    background-color: var(--bg-tertiary);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.shared-goal-progress {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    position: relative;
+    transition: width 0.5s ease;
+}
+
+.shared-goal-progress.success {
+    background-color: var(--success-color);
+}
+
+.shared-goal-progress.warning {
+    background-color: var(--warning-color);
+}
+
+.participants-preview {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.participant-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-right: -8px;
+    border: 2px solid var(--bg-secondary);
+    overflow: hidden;
+}
+
+.participant-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.more-participants {
+    background-color: var(--bg-tertiary);
+}
+
+/* Ranking de participantes */
+.ranking-list {
+    margin-top: 1rem;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-secondary);
+    transition: background-color 0.3s ease;
+}
+
+.ranking-item:hover {
+    background-color: var(--bg-tertiary);
+}
+
+.ranking-position {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 0.75rem;
+}
+
+.ranking-position.gold {
+    background-color: #FFD700;
+    color: #000;
+}
+
+.ranking-position.silver {
+    background-color: #C0C0C0;
+    color: #000;
+}
+
+.ranking-position.bronze {
+    background-color: #CD7F32;
+    color: #fff;
+}
+
+.ranking-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    overflow: hidden;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ranking-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ranking-info {
+    flex: 1;
+}
+
+.ranking-name {
+    font-weight: 500;
+}
+
+.ranking-stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.ranking-points {
+    font-weight: 600;
+    margin-left: auto;
+    color: var(--primary-color);
+}
+
+.badge-container {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+.badge {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #fff;
+}
+
+.badge-first {
+    background-color: #FFD700;
+    color: #000;
+}
+
+.badge-frequent {
+    background-color: #9C27B0;
+}
+
+.badge-highest {
+    background-color: #F44336;
+}
+
+/* Histórico de contribuições */
+.contributions-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.contribution-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-secondary);
+}
+
+.contribution-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 0.75rem;
+    overflow: hidden;
+    background-color: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.contribution-info {
+    flex: 1;
+}
+
+.contribution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.contribution-user {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.contribution-user-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 5px;
+    margin-left: 5px;
+    border-radius: 3px;
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.contribution-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.contribution-amount {
+    font-weight: bold;
+    color: var(--success-color);
+    font-size: 1.1rem;
+    margin-top: 3px;
+}
+
+.contribution-notes {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Participantes */
+.participants-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--bg-secondary);
+}
+
+.participant-info {
+    flex: 1;
+    margin-left: 0.75rem;
+}
+
+.participant-name {
+    font-weight: 500;
+}
+
+.participant-since {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.participant-status {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    margin-left: auto;
+}
+
+.status-active {
+    background-color: rgba(39, 174, 96, 0.1);
+    color: var(--success-color);
+}
+
+.status-pending {
+    background-color: rgba(242, 201, 76, 0.1);
+    color: var(--warning-color);
+}
+
+.status-inactive {
+    background-color: rgba(235, 87, 87, 0.1);
+    color: var(--danger-color);
+}
+
+/* Formulário de convite */
+.invite-section {
+    margin-bottom: 1rem;
+}
+
+#inviteForm .form-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+#inviteForm input[type="email"] {
+    flex: 1;
+}
+
+/* Estado vazio para metas compartilhadas */
+.no-shared-goals {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+    border-radius: 1.5rem;
+    min-height: 400px;
+    max-width: 650px;
+    margin: 0 auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.no-shared-goals::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(var(--primary-rgb), 0.03) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.no-shared-goals i {
+    font-size: 4.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    opacity: 0.8;
+    background: linear-gradient(135deg, var(--primary-color), #4a90e2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+.no-shared-goals h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    position: relative;
+    z-index: 1;
+}
+
+.no-shared-goals p {
+    color: var(--text-secondary);
+    max-width: 500px;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+.no-shared-goals .btn-primary {
+    padding: 0.9rem 1.8rem;
+    font-size: 1.1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), #4a90e2);
+    border: none;
+    box-shadow: 0 5px 15px rgba(var(--primary-rgb), 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+    z-index: 1;
+}
+
+.no-shared-goals .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.4);
+}
+
+.no-shared-goals .btn-primary i {
+    font-size: 1rem;
+    margin: 0;
+    background: none;
+    -webkit-text-fill-color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .no-shared-goals {
+        padding: 3rem 1.5rem;
+        min-height: 350px;
+        margin: 1.5rem auto;
+        border-radius: 1.2rem;
+    }
+    
+    .no-shared-goals i {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+}
+
+.no-shared-goals h3 {
+    font-size: 1.5rem;
+}
+
+.no-shared-goals p {
+        font-size: 1rem;
+    margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .no-shared-goals {
+        padding: 2.5rem 1rem;
+        min-height: 300px;
+    }
+    
+    .no-shared-goals i {
+        font-size: 3rem;
+    }
+    
+    .no-shared-goals .btn-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .shared-goals-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .tabs-container .tabs-header {
+        flex-wrap: wrap;
+    }
+    
+    .contribution-section {
+        margin-top: 2rem;
+    }
+}
+
+/* Estilos para dispositivos pequenos */
+@media (max-width: 480px) {
+    .tab-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .shared-goal-header {
+        flex-direction: column;
+    }
+    
+    .shared-goal-actions {
+        margin-top: 0.5rem;
+    }
+    
+    .ranking-item {
+        flex-wrap: wrap;
+    }
+    
+    .ranking-points {
+        width: 100%;
+        margin-top: 0.5rem;
+        text-align: right;
+    }
+}
+
+/* Estilos para modais */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--bg-primary);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-content.modal-lg {
+    max-width: 700px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--danger-color);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contribution-button-container {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    text-align: center;
+    border-radius: 5px;
+}
+
+/* Estilos do Modal de Detalhes da Meta Compartilhada */
+#sharedGoalDetailsModal {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#sharedGoalDetailsModal.show {
+    display: flex;
+    opacity: 1;
+}
+
+#sharedGoalDetailsModal .modal-content {
+    background: var(--bg-primary);
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    width: 95%;
+    max-width: 650px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#sharedGoalDetailsModal.show .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#sharedGoalDetailsModal .modal-header {
+    background: var(--bg-primary);
+    padding: 18px 20px;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative; /* Alterado de sticky para relative */
+    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+#sharedGoalDetailsModal .modal-header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: auto;
+    position: relative;
+    flex-flow: row nowrap;
+    justify-content: flex-end;
+    min-width: 80px;
+    z-index: 2;
+}
+
+#sharedGoalDetailsModal .modal-header h3 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 70%;
+}
+
+#sharedGoalDetailsModal .close-modal,
+#sharedGoalDetailsModal .delete-modal {
+    background: var(--bg-secondary);
+    border: none;
+    color: var(--text-primary);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+    z-index: 3;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#sharedGoalDetailsModal .close-modal:hover,
+#sharedGoalDetailsModal .delete-modal:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.05);
+}
+
+#sharedGoalDetailsModal .delete-modal {
+    color: var(--danger-color);
+}
+
+#sharedGoalDetailsModal .delete-modal:hover {
+    background: rgba(var(--danger-rgb), 0.1);
+}
+
+#sharedGoalDetailsModal .progress-overview {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#sharedGoalDetailsModal .progress-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#sharedGoalDetailsModal .progress-header i {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    background: rgba(var(--primary-rgb), 0.1);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+}
+
+#sharedGoalDetailsModal .progress-header h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+#sharedGoalDetailsModal .progress-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+#sharedGoalDetailsModal .stat-item {
+    background: var(--bg-primary);
+    padding: 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#sharedGoalDetailsModal .stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#sharedGoalDetailsModal .stat-item i {
+    font-size: 1.2rem;
+    color: white;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+#sharedGoalDetailsModal .stat-info {
+    flex: 1;
+}
+
+#sharedGoalDetailsModal .stat-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+#sharedGoalDetailsModal .stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+#sharedGoalDetailsModal .stat-item.meta i {
+    background: linear-gradient(135deg, #4A90E2, #5A6BFF);
+    content: '\f0d6';  /* Ícone de dinheiro */
+}
+
+#sharedGoalDetailsModal .stat-item.meta i::before {
+    content: '\f0d6';  /* Ícone de dinheiro */
+}
+
+#sharedGoalDetailsModal .stat-item.acumulado i {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+    content: '\f0d6';  /* Ícone de dinheiro */
+}
+
+#sharedGoalDetailsModal .stat-item.acumulado i::before {
+    content: '\f3d1';  /* Ícone de seta para cima */
+}
+
+#sharedGoalDetailsModal .stat-item.faltam i {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+#sharedGoalDetailsModal .stat-item.faltam i::before {
+    content: '\f063';  /* Ícone de seta para baixo */
+}
+
+/* Definir a estrutura do grid para os stats */
+#sharedGoalDetailsModal .progress-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    #sharedGoalDetailsModal {
+        padding: 10px;
+    }
+
+    #sharedGoalDetailsModal .modal-content {
+        max-height: 90vh;
+    }
+
+    #sharedGoalDetailsModal .modal-header {
+        padding: 16px;
+        position: relative; /* Garantir que não esteja fixo */
+        top: auto;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    #sharedGoalDetailsModal .modal-header h3 {
+        font-size: 1.1rem;
+        max-width: 65%;
+    }
+
+    #sharedGoalDetailsModal .modal-body {
+        padding: 15px;
+    }
+
+    #sharedGoalDetailsModal .tabs-header {
+        overflow-x: auto;
+        padding: 5px;
+    }
+
+    #sharedGoalDetailsModal .tab-btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+    }
+
+    #sharedGoalDetailsModal .contribution-item,
+    #sharedGoalDetailsModal .participant-item,
+    #sharedGoalDetailsModal .ranking-item {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    #sharedGoalDetailsModal .participant-avatar,
+    #sharedGoalDetailsModal .contribution-avatar,
+    #sharedGoalDetailsModal .ranking-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* Estilização da paginação */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+}
+
+.pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    font-weight: 600;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    user-select: none;
+}
+
+/* Remove a barra de rolagem lateral mas mantém a funcionalidade */
+#sharedGoalDetailsModal .modal-content {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+#sharedGoalDetailsModal .modal-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Ajuste do conteúdo das contribuições */
+.contribution-item {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.contribution-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-color: var(--border-color);
+}
+
+.contribution-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.contribution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contribution-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.contribution-date i {
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+.contribution-amount {
+    color: var(--success-color);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.contribution-notes {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 3px;
+    font-style: italic;
+}
+
+/* Ajuste responsivo */
+@media (max-width: 768px) {
+    #sharedGoalDetailsModal .modal-header-actions {
+        gap: 8px;
+        flex-direction: row;
+        position: relative;
+    }
+    
+    #sharedGoalDetailsModal .close-modal,
+    #sharedGoalDetailsModal .delete-modal {
+        position: static;
+        margin: 0;
+    }
+    
+    .pagination-button {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    #sharedGoalDetailsModal .modal-header-actions {
+        gap: 8px;
+        min-width: 70px;
+    }
+
+    #sharedGoalDetailsModal .close-modal,
+    #sharedGoalDetailsModal .delete-modal {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+
+    .pagination-container {
+        gap: 6px;
+        margin-top: 15px;
+    }
+
+    .pagination-button,
+    .pagination-ellipsis {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    #sharedGoalDetailsModal .modal-header-actions {
+        gap: 6px;
+        min-width: 60px;
+    }
+
+    #sharedGoalDetailsModal .close-modal,
+    #sharedGoalDetailsModal .delete-modal {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+    }
+
+    .pagination-container {
+        gap: 4px;
+        margin-top: 12px;
+    }
+
+    .pagination-button,
+    .pagination-ellipsis {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+}
+
+/* Estilos para o histórico de contribuições */
+.contributions-container {
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.contributions-container h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contributions-container h4 i {
+    color: var(--primary-color);
+}
+
+/* Ocultar a barra de rolagem no histórico de contribuições */
+#sharedGoalContributions {
+    position: relative;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    padding-right: 2px; /* Evitar que o conteúdo fique muito próximo da borda direita */
+}
+
+#sharedGoalContributions::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none; /* Chrome, Safari e Opera */
+    background: transparent;
+}
+
+.contributions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.contribution-item {
+    background-color: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    gap: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid var(--border-color);
+    margin-right: 6px; /* Espaço para evitar que o item toque a borda */
+}
+
+.contribution-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.contribution-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.contribution-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.contribution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.contribution-user {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.contribution-user-badge {
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.contribution-date {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.contribution-date i {
+    color: var(--primary-color);
+    opacity: 0.7;
+}
+
+.contribution-amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--success-color);
+    margin: 4px 0;
+}
+
+.contribution-notes {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-top: 5px;
+    background-color: var(--bg-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* Estilos de paginação melhorados */
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0 10px;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-button.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 6px rgba(var(--primary-rgb), 0.3);
+}
+
+.pagination-ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.pagination-info {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 10px 0;
+}
+
+/* Estado vazio para quando não há contribuições */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    #sharedGoalDetailsModal {
+        padding: 8px;
+    }
+
+    #sharedGoalDetailsModal .modal-content {
+        max-height: 90vh;
+        width: 100%;
+        margin: 0;
+        border-radius: 15px;
+    }
+
+    #sharedGoalDetailsModal .modal-header {
+        padding: 12px 15px;
+    }
+
+    #sharedGoalDetailsModal .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    #sharedGoalDetailsModal .modal-body {
+        padding: 12px;
+    }
+
+    #sharedGoalDetailsModal .tabs-header {
+        overflow-x: auto;
+        padding: 3px 0;
+        gap: 0;
+        justify-content: space-between;
+    }
+
+    #sharedGoalDetailsModal .tab-btn {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+        white-space: nowrap;
+        flex: 1;
+        justify-content: center;
+    }
+
+    #sharedGoalDetailsModal .progress-overview {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    #sharedGoalDetailsModal .progress-header {
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    
+    #sharedGoalDetailsModal .progress-header i {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    
+    #sharedGoalDetailsModal .progress-header h4 {
+        font-size: 1rem;
+    }
+    
+    #sharedGoalDetailsModal .progress-stats {
+        gap: 10px;
+        margin: 15px 0;
+    }
+    
+    #sharedGoalDetailsModal .stat-item {
+        padding: 10px;
+        gap: 10px;
+    }
+    
+    #sharedGoalDetailsModal .stat-item i {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+    
+    #sharedGoalDetailsModal .stat-label {
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+    }
+    
+    #sharedGoalDetailsModal .stat-value {
+        font-size: 0.95rem;
+    }
+
+    #sharedGoalDetailsModal .contribution-item,
+    #sharedGoalDetailsModal .participant-item,
+    #sharedGoalDetailsModal .ranking-item {
+        padding: 12px;
+        gap: 10px;
+    }
+
+    #sharedGoalDetailsModal .participant-avatar,
+    #sharedGoalDetailsModal .contribution-avatar,
+    #sharedGoalDetailsModal .ranking-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+    }
+    
+    .contribution-user {
+        font-size: 0.9rem;
+    }
+    
+    .contribution-date {
+        font-size: 0.8rem;
+    }
+    
+    .contribution-amount {
+        font-size: 1rem;
+    }
+    
+    .contribution-notes {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+    
+    .pagination-container {
+        gap: 6px;
+        margin: 15px 0;
+    }
+    
+    .pagination-button,
+    .pagination-ellipsis {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+        padding: 0 8px;
+    }
+}
+
+/* Ajustes específicos para telas muito pequenas */
+@media (max-width: 480px) {
+    #sharedGoalDetailsModal {
+        padding: 5px;
+    }
+    
+    #sharedGoalDetailsModal .modal-content {
+        border-radius: 12px;
+    }
+
+    #sharedGoalDetailsModal .modal-header {
+        padding: 10px 12px;
+    }
+    
+    #sharedGoalDetailsModal .modal-header h3 {
+        font-size: 1rem;
+    }
+    
+    #sharedGoalDetailsModal .modal-header-actions {
+        gap: 6px;
+        min-width: 60px;
+    }
+
+    #sharedGoalDetailsModal .close-modal,
+    #sharedGoalDetailsModal .delete-modal {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+    }
+    
+    #sharedGoalDetailsModal .modal-body {
+        padding: 10px;
+    }
+    
+    #sharedGoalDetailsModal .tab-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    #sharedGoalDetailsModal .progress-stats {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    #sharedGoalDetailsModal .stat-item {
+        padding: 8px;
+    }
+    
+    #sharedGoalDetailsModal .stat-value {
+        font-size: 0.9rem;
+    }
+    
+    .contribution-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .contribution-amount {
+        margin: 2px 0;
+    }
+    
+    .pagination-container {
+        gap: 4px;
+        margin-top: 12px;
+    }
+    
+    .pagination-button,
+    .pagination-ellipsis {
+        min-width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+        padding: 0 6px;
+    }
+    
+    .pagination-info {
+        font-size: 0.75rem;
+    }
+}
+
+/* Otimizações para dispositivos Android */
+@supports (-webkit-touch-callout: none) {
+    /* Ajustes específicos para dispositivos móveis com Android */
+    
+    #sharedGoalDetailsModal .modal-content {
+        max-height: 70vh; /* Aumentado de 65vh para 70vh */
+        border-radius: 16px;
+        margin-bottom: 80px;
+    }
+    
+    #sharedGoalDetailsModal .tabs-header {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #sharedGoalContributions {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Melhorar a performance de scroll */
+    .contribution-item {
+        will-change: transform;
+        transform: translateZ(0);
+    }
+    
+    /* Corrigir problema de height em algumas versões do Android */
+    @media (max-height: 700px) {
+        #sharedGoalDetailsModal .modal-content {
+            max-height: 65vh; /* Aumentado de 60vh para 65vh */
+            margin-bottom: 80px;
+        }
+        
+        #sharedGoalDetailsModal .progress-stats {
+            margin: 10px 0;
+        }
+    }
+}
+
+/* Ajustes para telas pequenas em orientação retrato */
+@media (max-width: 380px) and (orientation: portrait) {
+    #sharedGoalDetailsModal .tab-btn {
+        padding: 8px 8px;
+        font-size: 0.8rem;
+    }
+    
+    #sharedGoalDetailsModal .stat-item i {
+        width: 28px;
+        height: 28px;
+    }
+    
+    #sharedGoalDetailsModal .stat-label {
+        font-size: 0.65rem;
+    }
+    
+    #sharedGoalDetailsModal .stat-value {
+        font-size: 0.85rem;
+    }
+    
+    .contribution-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .contribution-item {
+        padding: 10px;
+    }
+    
+    .pagination-info {
+        font-size: 0.7rem;
+    }
+}
+
+/* Ajustes adicionais para dispositivos móveis */
+@media (max-width: 768px) {
+    /* Reduzir o tamanho dos itens para economizar espaço */
+    .contributions-container h4 {
+        font-size: 1rem;
+        margin-bottom: 0.7rem;
+    }
+    
+    .contribution-notes {
+        max-height: 80px;
+        overflow-y: auto;
+    }
+    
+    /* Ajustar o espaçamento interno */
+    #sharedGoalDetailsModal .modal-body {
+        padding: 10px;
+    }
+    
+    /* Melhorar a visualização das abas */
+    #sharedGoalDetailsModal .tabs-header {
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: 5;
+        padding-top: 10px;
+    }
+    
+    /* Tornar as estatísticas mais compactas */
+    #sharedGoalDetailsModal .progress-stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    /* Ajustes para o histórico de contribuições */
+    .contribution-item {
+        margin-bottom: 8px;
+    }
+    
+    /* Reduzir o espaço ocupado pelos botões de paginação */
+    .pagination-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    /* Melhorar a visualização dos estados vazios */
+    .empty-state {
+        padding: 20px 15px;
+    }
+    
+    .empty-state i {
+        font-size: 36px;
+    }
+}
+
+/* Corrigir o conflito nas estatísticas */
+@media (max-width: 768px) {
+    /* Tornar as estatísticas mais compactas */
+    #sharedGoalDetailsModal .progress-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Em telas menores, mostrar as estatísticas em coluna */
+    #sharedGoalDetailsModal .progress-stats {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
+/* Ajustar a paginação para horizontal em dispositivos móveis */
+@media (max-width: 768px) {
+    .pagination-container {
+        flex-direction: row; /* Mudado de column para row */
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 15px 0;
+    }
+    
+    #sharedGoalDetailsModal .pagination-container {
+        flex-direction: row; /* Garantir que a paginação dentro do modal seja horizontal */
+        justify-content: center;
+        margin-top: 10px;
+        margin-bottom: 15px;
+        padding: 0 10px;
+    }
+
+    /* Garantir espaço adicional para a barra de navegação em todos os dispositivos móveis */
+    #sharedGoalDetailsModal {
+        padding: 8px;
+        padding-bottom: 70px; /* Adicionar padding inferior */
+        align-items: center; /* Centralizar na tela (antes era flex-start) */
+        padding-top: 10px; /* Reduzido de 40px para 10px */
+    }
+    
+    #sharedGoalDetailsModal .modal-content {
+        max-height: 75vh; /* Aumentado de 70vh para 75vh */
+        margin-bottom: 70px; /* Garantir espaço para a barra de navegação */
+        transform: translateY(0) !important; /* Removido o deslocamento para cima que era -40px */
+    }
+    
+    #sharedGoalDetailsModal.show .modal-content {
+        transform: scale(1) !important; /* Removido o deslocamento durante a animação */
+    }
+    
+    /* Para telas muito pequenas, reduzir ainda mais */
+    @media (max-height: 600px) {
+        #sharedGoalDetailsModal .modal-content {
+            max-height: 60vh; /* Aumentado de 55vh para 60vh */
+            margin-bottom: 85px;
+        }
+        
+        /* Mesmo em telas pequenas, manter centralizado */
+        #sharedGoalDetailsModal {
+            align-items: center;
+        }
+    }
+}
+
+/* Estilização aprimorada para Ranking de Participantes */
+.ranking-list {
+    padding: 10px 0;
+}
+
+.ranking-item {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ranking-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.ranking-position {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ranking-position.gold {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+}
+
+.ranking-position.silver {
+    background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+    color: #000;
+}
+
+.ranking-position.bronze {
+    background: linear-gradient(135deg, #CD7F32, #A0522D);
+    color: #000;
+}
+
+.ranking-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.ranking-name {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.ranking-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.ranking-contributions {
+    opacity: 0.9;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ranking-contributions span {
+    font-weight: 500;
+}
+
+.ranking-amount {
+    font-weight: 600;
+    color: var(--success-color);
+    margin-left: 8px;
+}
+
+.ranking-points {
+    color: #3498db;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: rgba(52, 152, 219, 0.1);
+}
+
+/* Badges no ranking */
+.badge-container {
+    display: flex;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.badge-first {
+    background: #f1c40f;
+}
+
+.badge-frequent {
+    background: #e74c3c;
+}
+
+.badge-highest {
+    background: #9b59b6;
+}
+
+/* Responsividade para o ranking */
+@media (max-width: 768px) {
+    .ranking-item {
+        padding: 12px;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+    
+    .ranking-position {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .ranking-name {
+        font-size: 1rem;
+    }
+    
+    .ranking-stats {
+        font-size: 0.85rem;
+    }
+    
+    .ranking-contributions {
+        font-size: 0.85rem;
+    }
+    
+    .ranking-points {
+        font-size: 0.9rem;
+        padding: 3px 8px;
+    }
+    
+    .badge {
+        width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+}
+
+/* Melhorar o layout do resumo de meta principal */
+#sharedGoalDetailsModal .goal-summary {
+    padding: 5px 15px 15px;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#sharedGoalDetailsModal .goal-progress-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+#sharedGoalDetailsModal .goal-progress-label i {
+    color: var(--primary-color);
+    font-size: 0.9em;
+}
+
+#sharedGoalDetailsModal .goal-progress-bar {
+    height: 8px;
+    background: var(--bg-secondary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+#sharedGoalDetailsModal .goal-progress-bar .progress {
+    height: 100%;
+    background: linear-gradient(to right, var(--primary-color), #4a90e2);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+#sharedGoalDetailsModal .goal-stats-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#sharedGoalDetailsModal .goal-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#sharedGoalDetailsModal .goal-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    color: white;
+    font-size: 1.1rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+#sharedGoalDetailsModal .goal-stat-icon.meta {
+    background: linear-gradient(135deg, #4A90E2, #5A6BFF);
+}
+
+#sharedGoalDetailsModal .goal-stat-icon.acumulado {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+#sharedGoalDetailsModal .goal-stat-icon.faltam {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+#sharedGoalDetailsModal .goal-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+#sharedGoalDetailsModal .goal-stat-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Responsividade para o resumo da meta */
+@media (max-width: 768px) {
+    #sharedGoalDetailsModal .goal-summary {
+        padding: 5px 15px 12px;
+    }
+    
+    #sharedGoalDetailsModal .goal-progress-label {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+    
+    #sharedGoalDetailsModal .goal-progress-bar {
+        height: 6px;
+        margin-bottom: 12px;
+    }
+    
+    #sharedGoalDetailsModal .goal-stat-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+    
+    #sharedGoalDetailsModal .goal-stat-label {
+        font-size: 0.7rem;
+    }
+    
+    #sharedGoalDetailsModal .goal-stat-value {
+        font-size: 1rem;
+    }
+}
+
+/* Estilizar o modal de Nova Meta Compartilhada */
+#sharedGoalModal .modal-content {
+    background: var(--bg-primary);
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    max-width: 550px;
+    transform: translateY(0);
+}
+
+#sharedGoalModal .modal-header {
+    background: linear-gradient(135deg, var(--primary-color), #3178c6);
+    color: white;
+    padding: 22px 25px;
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+#sharedGoalModal .modal-header h3 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+}
+
+#sharedGoalModal .modal-header h3::before {
+    content: "\f500";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    margin-right: 12px;
+    font-size: 1.25rem;
+}
+
+#sharedGoalModal .close-modal {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    backdrop-filter: blur(4px);
+}
+
+#sharedGoalModal .close-modal:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.05) rotate(90deg);
+}
+
+#sharedGoalModal .modal-body {
+    padding: 28px 30px;
+    background: var(--bg-primary);
+}
+
+#sharedGoalModal .form-group {
+    margin-bottom: 22px;
+    position: relative;
+}
+
+#sharedGoalModal .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+#sharedGoalModal .form-group input,
+#sharedGoalModal .form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) inset;
+}
+
+#sharedGoalModal .form-group input:focus,
+#sharedGoalModal .form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.15);
+    outline: none;
+}
+
+#sharedGoalModal .form-group:focus-within label {
+    color: var(--primary-color);
+}
+
+#sharedGoalModal .form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+#sharedGoalModal .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 25px;
+}
+
+#sharedGoalModal .btn {
+    padding: 14px 28px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#sharedGoalModal .cancel-modal {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+#sharedGoalModal .cancel-modal:hover {
+    background-color: var(--bg-tertiary);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+#sharedGoalModal .btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), #3178c6);
+    color: white;
+    box-shadow: 0 6px 15px rgba(var(--primary-rgb), 0.35);
+}
+
+#sharedGoalModal .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(var(--primary-rgb), 0.45);
+}
+
+#sharedGoalModal .btn-primary::before {
+    content: "\f067";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+/* Responsividade para o modal */
+@media (max-width: 768px) {
+    #sharedGoalModal.modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        padding-bottom: 80px; /* Espaço para a barra de navegação */
+    }
+    
+    #sharedGoalModal.modal.active,
+    #sharedGoalModal.modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #sharedGoalModal .modal-content {
+        width: 92%;
+        margin: 0 auto;
+        max-height: 85vh;
+        overflow-y: auto;
+        border-radius: 20px;
+    }
+    
+    #sharedGoalModal .modal-header {
+        padding: 18px 20px;
+    }
+    
+    #sharedGoalModal .modal-body {
+        padding: 20px;
+    }
+    
+    #sharedGoalModal .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+    
+    #sharedGoalModal .btn {
+        width: 100%;
+        padding: 16px;
+    }
+}
+
+/* Adicionar estilos específicos para o botão de cancelar no modal de Nova Meta */
+#goalModal .cancel-modal {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+#goalModal .cancel-modal:hover {
+    background-color: var(--bg-tertiary);
+    transform: translateY(-2px);
+}
+
+#goalModal .close-modal,
+#contributionModal .close-modal {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+}
+
+#goalModal .close-modal:hover,
+#contributionModal .close-modal:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* Responsividade para o modal */
+@media (max-width: 768px) {
+    #goalModal .modal-content,
+    #contributionModal .modal-content {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    #goalModal .modal-header,
+    #contributionModal .modal-header {
+        padding: 16px;
+    }
+    
+    #goalModal .tab-content,
+    #contributionModal .modal-body {
+        padding: 16px;
+    }
+    
+    #goalModal .modal-footer,
+    #contributionModal .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+        padding: 16px;
+    }
+    
+    #goalModal .btn,
+    #contributionModal .btn {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+#sharedGoalModal .cancel-modal {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+#sharedGoalModal .cancel-modal:hover {
+    background-color: var(--bg-tertiary);
+    transform: translateY(-2px);
+}
+
+/* Ajustes específicos para o modal de contribuição em dispositivos móveis */
+@media (max-width: 768px) {
+    #contributionModal .modal-content {
+        width: 90%;
+        margin: 0 auto;
+        transform: translateY(-40px); /* Ajustar para cima para evitar a barra de navegação */
+    }
+    
+    #contributionModal .form-actions {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    
+    #contributionModal .btn {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+/* Específico para dispositivos muito pequenos */
+@media (max-width: 480px) and (max-height: 760px) {
+    #contributionModal .modal-content {
+        transform: translateY(-50px); /* Mais espaço para dispositivos menores */
+    }
+}
+
+/* Estilos para os botões de Nova Meta */
+.goals-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.goals-actions .goal-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.goals-actions .goal-btn i {
+    font-size: 16px;
+}
+
+/* Botão de meta individual é visível somente na aba de metas individuais */
+.goals-actions .shared-btn {
+    display: none;
+}
+
+/* Quando a aba compartilhada estiver ativa, mostrar apenas o botão de meta compartilhada */
+.tab-btn[data-tab="shared"].active ~ .tab-content .shared-btn,
+.tab-btn[data-tab="shared"].active ~ .tab-content ~ .shared-btn,
+.tab-pane#shared-tab.active ~ .shared-btn,
+#shared-tab.active ~ .shared-btn {
+    display: flex;
+}
+
+.tab-btn[data-tab="shared"].active ~ .tab-content .individual-btn,
+.tab-btn[data-tab="shared"].active ~ .tab-content ~ .individual-btn,
+.tab-pane#shared-tab.active ~ .individual-btn,
+#shared-tab.active ~ .individual-btn {
+    display: none;
+}
+
+/* Controlar visibilidade com JavaScript também */
+body[data-active-tab="shared"] .goals-actions .individual-btn {
+    display: none;
+}
+
+body[data-active-tab="shared"] .goals-actions .shared-btn {
+    display: flex;
+}
+
+body[data-active-tab="individual"] .goals-actions .individual-btn {
+    display: flex;
+}
+
+body[data-active-tab="individual"] .goals-actions .shared-btn {
+    display: none;
+}
+
+/* Corrigindo seletor para o botão cancelar */
+#sharedGoalModal .cancel-modal,
+#sharedGoalModal .cancel-button {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+#sharedGoalModal .cancel-modal:hover,
+#sharedGoalModal .cancel-button:hover {
+    background-color: var(--bg-tertiary);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Melhorando a aparência dos botões de ação nas metas compartilhadas */
+.shared-goal-actions .btn-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.shared-goal-actions .btn-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.shared-goal-actions .btn-sm i {
+    font-size: 15px;
+}
+
+.shared-goal-actions .btn-info {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+}
+
+.shared-goal-actions .btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .shared-goal-actions .btn-sm {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .shared-goal-actions .btn-sm i {
+        font-size: 13px;
+    }
+}
+
+.empty-icon-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1),
+                inset 0 2px 5px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 1;
+}
+
+.empty-icon-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(var(--primary-rgb), 0.2), transparent 70%);
+    z-index: -1;
+}
+
+.no-shared-goals .empty-icon-container i {
+    font-size: 3.5rem;
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .empty-icon-container {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .no-shared-goals .empty-icon-container i {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .empty-icon-container {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .no-shared-goals .empty-icon-container i {
+        font-size: 2.4rem;
+    }
+}
+
+/* Mantendo a visualização em grade quando existem metas compartilhadas */
+.shared-goals-list:not(:has(.no-shared-goals)) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    min-height: auto;
+    align-items: start;
+}
+
+/* Ajuste alternativo para navegadores que não suportam :has */
+.shared-goals-container:has(.shared-goal-card) .shared-goals-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    min-height: auto;
+    align-items: start;
+}
