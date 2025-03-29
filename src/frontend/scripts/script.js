@@ -528,41 +528,8 @@ function showPaymentModal(expenseId, defaultAmount) {
 
 	document.getElementById('paymentFixedExpenseId').value = expenseIdNumber; // Garantir que é número
 	const amountInput = document.getElementById('paymentAmount');
-	
-<<<<<<< Updated upstream
-	// Formatar o valor padrão usando formatNumberToBrazilian quando disponível
-	const valueToDisplay = defaultAmount || remainingAmount;
-	if (typeof window.formatNumberToBrazilian === 'function') {
-		amountInput.value = formatNumberToBrazilian(valueToDisplay);
-		console.log(`Formatando valor para pagamento: ${valueToDisplay} => ${amountInput.value}`);
-	} else {
-		amountInput.value = valueToDisplay;
-	}
+	amountInput.value = defaultAmount || remainingAmount;
 	amountInput.max = remainingAmount;
-=======
-	// Converter o input para tipo texto para permitir formatação
-	if (amountInput.getAttribute('type') !== 'text') {
-        amountInput.type = 'text';
-    }
-    
-    // Definir o valor a ser exibido (valor restante ou valor padrão)
-    const valueToDisplay = defaultAmount || remainingAmount;
-    
-    // Formatar o valor usando formatNumberToBrazilian
-    if (typeof window.formatNumberToBrazilian === 'function') {
-        amountInput.value = formatNumberToBrazilian(valueToDisplay);
-        console.log(`Formatando valor para pagamento: ${valueToDisplay} => ${amountInput.value}`);
-    } else {
-        // Fallback se a função não estiver disponível
-        amountInput.value = valueToDisplay;
-        console.log(`Função de formatação não disponível, usando valor não formatado: ${valueToDisplay}`);
-    }
-    
-    // Aplicar uma versão modificada da máscara para tratar corretamente a vírgula
-    // ao invés de usar window.applyNumberMask diretamente
-    applyCustomNumberMask(amountInput);
-    console.log('Formatador de número personalizado aplicado ao campo de valor do pagamento');
->>>>>>> Stashed changes
 	
 	// Definir a data atual como padrão
 	const today = new Date().toISOString().split('T')[0];
@@ -705,48 +672,7 @@ async function handlePaymentSubmit(event) {
 			throw new Error('Despesa não encontrada');
 		}
 
-<<<<<<< Updated upstream
-		// Obter o valor formatado e converter para número usando parseFormattedNumber
-		const amountFormatted = document.getElementById('paymentAmount').value;
-		const paymentAmount = typeof parseFormattedNumber === 'function' 
-		    ? parseFormattedNumber(amountFormatted) 
-		    : parseFloat(amountFormatted.replace(/\./g, '').replace(',', '.'));
-		
-		console.log(`Processando pagamento: valor formatado "${amountFormatted}" => valor numérico ${paymentAmount}`);
-=======
-		// Obter o valor formatado
-		const amountFormatted = document.getElementById('paymentAmount').value;
-		console.log(`Valor do input: "${amountFormatted}"`);
-		
-		// Verificar se o valor tem vírgula para separar os centavos
-		// Se não tiver, e for apenas um número inteiro, adicionar ",00"
-		let formattedValue = amountFormatted;
-		if (!formattedValue.includes(',')) {
-		    formattedValue = formattedValue + ',00';
-		    console.log(`Valor sem centavos, adicionando: "${amountFormatted}" => "${formattedValue}"`);
-		}
-		
-		// Verificar se a parte decimal tem 2 dígitos
-        if (formattedValue.includes(',')) {
-            const parts = formattedValue.split(',');
-            if (parts.length > 1 && parts[1].length < 2) {
-                formattedValue = parts[0] + ',' + parts[1].padEnd(2, '0');
-                console.log(`Completando casas decimais: "${amountFormatted}" => "${formattedValue}"`);
-            }
-        }
-		
-		// Converter o valor formatado para número usando a função específica para isso
-		let paymentAmount;
-		if (typeof parseFormattedNumber === 'function') {
-		    paymentAmount = parseFormattedNumber(formattedValue);
-		} else {
-		    // Fallback manual: remover pontos e substituir vírgula por ponto para converter para número
-		    paymentAmount = parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
-		}
-		
-		console.log(`Processando pagamento: valor formatado "${formattedValue}" => valor numérico ${paymentAmount}`);
->>>>>>> Stashed changes
-		
+		const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
 		const currentDate = new Date();
 		const currentMonth = currentDate.getMonth();
 		const currentYear = currentDate.getFullYear();
@@ -845,30 +771,6 @@ function togglePaymentModal(show) {
 	const modal = document.getElementById('fixedExpensePaymentModal');
 	if (show) {
 		modal.classList.add('active');
-		
-<<<<<<< Updated upstream
-		// Inicializar formatação de número para o campo amount, se disponível
-		if (typeof window.applyNumberMask === 'function') {
-			const amountInput = document.getElementById('paymentAmount');
-			if (amountInput && amountInput.getAttribute('type') !== 'text') {
-				amountInput.type = 'text';
-				window.applyNumberMask(amountInput);
-				console.log('Formatador de número aplicado ao campo de valor do pagamento');
-			}
-=======
-		// Inicializar formatação de número para o campo amount
-		const amountInput = document.getElementById('paymentAmount');
-		if (amountInput) {
-		    // Garantir que o campo é do tipo texto para permitir formatação
-		    if (amountInput.getAttribute('type') !== 'text') {
-		        amountInput.type = 'text';
-		    }
-		    
-		    // Usar o formatador personalizado ao invés do padrão
-		    applyCustomNumberMask(amountInput);
-		    console.log('Formatador de número personalizado aplicado ao campo de valor do pagamento');
->>>>>>> Stashed changes
-		}
 	} else {
 		modal.classList.remove('active');
 		// Limpar o formulário quando fechar o modal
