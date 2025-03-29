@@ -422,6 +422,16 @@ function toggleFixedExpenseModal(show) {
 	const modal = document.getElementById('fixedExpenseModal');
 	if (show) {
 		modal.classList.add('active');
+		
+		// Inicializar formatação de número para o campo amount, se disponível
+		if (typeof window.applyNumberMask === 'function') {
+			const amountInput = document.getElementById('fixedExpenseAmount');
+			if (amountInput && amountInput.getAttribute('type') !== 'text') {
+				amountInput.type = 'text';
+				window.applyNumberMask(amountInput);
+				console.log('Formatador de número aplicado ao campo de valor da despesa fixa');
+			}
+		}
 	} else {
 		modal.classList.remove('active');
 		document.getElementById('fixedExpenseForm').reset();
@@ -432,9 +442,17 @@ async function saveFixedExpense(event) {
 	event.preventDefault();
 	
 	try {
+		// Obter o valor formatado e converter para número usando parseFormattedNumber
+		const amountFormatted = document.getElementById('fixedExpenseAmount').value;
+		const amount = typeof parseFormattedNumber === 'function' 
+		    ? parseFormattedNumber(amountFormatted) 
+		    : parseFloat(amountFormatted.replace(/\./g, '').replace(',', '.'));
+		
+		console.log(`Processando despesa fixa: valor formatado "${amountFormatted}" => valor numérico ${amount}`);
+		
 		const formData = {
 			description: document.getElementById('fixedExpenseDescription').value,
-			amount: parseFloat(document.getElementById('fixedExpenseAmount').value),
+			amount: amount,
 			category: document.getElementById('fixedExpenseCategory').value,
 			due_day: parseInt(document.getElementById('fixedExpenseDueDay').value),
 			notification_days: parseInt(document.getElementById('fixedExpenseNotificationDays').value),
@@ -507,7 +525,15 @@ function showPaymentModal(expenseId, defaultAmount) {
 
 	document.getElementById('paymentFixedExpenseId').value = expenseIdNumber; // Garantir que é número
 	const amountInput = document.getElementById('paymentAmount');
-	amountInput.value = defaultAmount || remainingAmount;
+	
+	// Formatar o valor padrão usando formatNumberToBrazilian quando disponível
+	const valueToDisplay = defaultAmount || remainingAmount;
+	if (typeof window.formatNumberToBrazilian === 'function') {
+		amountInput.value = formatNumberToBrazilian(valueToDisplay);
+		console.log(`Formatando valor para pagamento: ${valueToDisplay} => ${amountInput.value}`);
+	} else {
+		amountInput.value = valueToDisplay;
+	}
 	amountInput.max = remainingAmount;
 	
 	// Definir a data atual como padrão
@@ -550,7 +576,14 @@ async function handlePaymentSubmit(event) {
 			throw new Error('Despesa não encontrada');
 		}
 
-		const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+		// Obter o valor formatado e converter para número usando parseFormattedNumber
+		const amountFormatted = document.getElementById('paymentAmount').value;
+		const paymentAmount = typeof parseFormattedNumber === 'function' 
+		    ? parseFormattedNumber(amountFormatted) 
+		    : parseFloat(amountFormatted.replace(/\./g, '').replace(',', '.'));
+		
+		console.log(`Processando pagamento: valor formatado "${amountFormatted}" => valor numérico ${paymentAmount}`);
+		
 		const currentDate = new Date();
 		const currentMonth = currentDate.getMonth();
 		const currentYear = currentDate.getFullYear();
@@ -649,6 +682,16 @@ function togglePaymentModal(show) {
 	const modal = document.getElementById('fixedExpensePaymentModal');
 	if (show) {
 		modal.classList.add('active');
+		
+		// Inicializar formatação de número para o campo amount, se disponível
+		if (typeof window.applyNumberMask === 'function') {
+			const amountInput = document.getElementById('paymentAmount');
+			if (amountInput && amountInput.getAttribute('type') !== 'text') {
+				amountInput.type = 'text';
+				window.applyNumberMask(amountInput);
+				console.log('Formatador de número aplicado ao campo de valor do pagamento');
+			}
+		}
 	} else {
 		modal.classList.remove('active');
 		document.getElementById('fixedExpensePaymentForm').reset();
@@ -804,7 +847,23 @@ async function handleTransactionSubmit(e) {
     
     const form = e.target;
     const type = form.type.value;
-    let amount = parseFloat(form.amount.value);
+    
+    // Obter o valor formatado e converter para número usando parseFormattedNumber
+    const amountFormatted = form.amount.value;
+    
+    // Verificar se o valor tem vírgula para separar os centavos
+    // Se não tiver, e for apenas um número inteiro como "8", adicionar ",00"
+    let formattedValue = amountFormatted;
+    if (!formattedValue.includes(',')) {
+        formattedValue = formattedValue + ',00';
+        console.log(`Valor sem centavos, adicionando: "${amountFormatted}" => "${formattedValue}"`);
+    }
+    
+    let amount = typeof parseFormattedNumber === 'function' 
+        ? parseFormattedNumber(formattedValue) 
+        : parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
+    
+    console.log(`Processando transação: valor formatado "${formattedValue}" => valor numérico ${amount}`);
     
     if (type === 'expense') {
         amount = -Math.abs(amount);
@@ -831,17 +890,10 @@ async function handleTransactionSubmit(e) {
         // Adicionar a nova transação à lista global
         window.transactions = [data, ...window.transactions];
         
-        // Se estiver usando paginação, atualizar
-        if (window.transactionPagination) {
-            const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-            const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-            window.transactionPagination.setTransactions(filteredByPeriod);
-        } else {
-            updateTransactionsList(window.transactions);
-        }
+        // Forçar atualização imediata da UI
+        updateTransactionsListImmediate(window.transactions);
         
-        // Atualizar UI
-        updateUI();
+        // Atualizar UI e gráficos
         updateDashboardUI();
         updateCharts();
         
@@ -853,6 +905,62 @@ async function handleTransactionSubmit(e) {
         console.error('Erro ao salvar transação:', error);
         showNotification('error', 'Erro', 'Erro ao salvar transação');
     }
+}
+
+// Função de atualização imediata (sem delay)
+function updateTransactionsListImmediate(transactions) {
+    // Função similar à updateTransactionsList mas sem animação e delay
+    // para garantir atualização imediata da lista
+    const container = document.getElementById('transactionsList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    const transactionsToShow = transactions || window.transactions;
+
+    if (!transactionsToShow.length) {
+        container.innerHTML = `
+            <div class="no-transactions">
+                <p>Nenhuma transação encontrada.</p>
+                <button class="btn btn-primary" onclick="toggleModal(true)">
+                    <i class="fas fa-plus"></i>
+                    Adicionar Transação
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    transactionsToShow.forEach(transaction => {
+        const div = document.createElement('div');
+        div.className = `transaction-item ${transaction.type}`;
+        div.setAttribute('data-id', transaction.id);
+        
+        const amountClass = transaction.type === 'income' ? 'amount-positive' : 'amount-negative';
+        
+        div.innerHTML = `
+            <div class="transaction-info">
+                <strong>${transaction.description}</strong>
+                <div>${transaction.category}</div>
+                <small>${new Date(transaction.date).toLocaleDateString()}</small>
+            </div>
+            <div class="transaction-amount ${amountClass}">
+                ${formatCurrency(Math.abs(transaction.amount))}
+                <div class="transaction-actions">
+                    <i class="fas fa-edit edit-btn" title="Editar"></i>
+                    <i class="fas fa-trash delete-btn" title="Excluir"></i>
+                </div>
+            </div>
+        `;
+        
+        const editBtn = div.querySelector('.edit-btn');
+        const deleteBtn = div.querySelector('.delete-btn');
+        
+        editBtn.addEventListener('click', () => toggleEditModal(true, transaction));
+        deleteBtn.addEventListener('click', () => handleDeleteTransaction(transaction.id));
+        
+        container.appendChild(div);
+    });
 }
 
 async function handleSettingsSubmit(e) {
@@ -910,7 +1018,54 @@ function toggleModal(show) {
 	const modal = document.getElementById('transactionModal');
 	if (show) {
 		modal.classList.add('active');
+		// Definir a data atual como padrão
 		document.getElementById('date').valueAsDate = new Date();
+		
+		// Inicializar formatação de número para o campo amount
+		const amountInput = document.getElementById('amount');
+		if (amountInput) {
+		    // Garantir que o campo esteja vazio
+		    amountInput.value = '';
+		    
+		    // Converter para tipo text para permitir formatação
+		    if (amountInput.getAttribute('type') !== 'text') {
+		        amountInput.type = 'text';
+		    }
+		    
+		    // Aplicar a máscara de formatação
+		    if (typeof window.applyNumberMask === 'function') {
+		        window.applyNumberMask(amountInput);
+		        console.log('Formatador de número aplicado ao campo de valor da transação');
+		    }
+		    
+		    // Adicionar listener de blur para garantir que valores como "800" sejam formatados corretamente
+		    amountInput.addEventListener('blur', function() {
+		        // Se o valor está vazio, não fazer nada
+		        if (!this.value) return;
+		        
+		        // Número inteiro sem vírgula - adicionar ",00"
+		        if (!this.value.includes(',')) {
+		            const numValue = this.value.replace(/\./g, '');
+		            if (!isNaN(numValue) && numValue !== '') {
+		                // Formatar o número com separadores
+		                if (typeof window.formatNumberToBrazilian === 'function') {
+		                    this.value = window.formatNumberToBrazilian(parseInt(numValue));
+		                    console.log(`Formatando número inteiro: ${numValue} => ${this.value}`);
+		                } else {
+		                    // Adicionar apenas a vírgula e zeros se a função não estiver disponível
+		                    this.value = this.value + ',00';
+		                }
+		            }
+		        }
+		        // Se já tem vírgula mas não tem 2 casas decimais
+		        else if (this.value.includes(',')) {
+		            const parts = this.value.split(',');
+		            if (parts.length === 2 && parts[1].length < 2) {
+		                this.value = parts[0] + ',' + parts[1].padEnd(2, '0');
+		            }
+		        }
+		    });
+		}
 	} else {
 		modal.classList.remove('active');
 		document.getElementById('transactionForm').reset();
@@ -1417,29 +1572,24 @@ async function handleDeleteTransaction(id) {
 		const { error } = await supabase
 			.from('transactions')
 			.delete()
-			.eq('id', id)
-			.eq('user_id', currentUser.id);
+			.eq('id', id);
 
 		if (error) throw error;
 
-		// Atualizar a lista global de transações
+		// Remover a transação da lista local
 		window.transactions = window.transactions.filter(t => t.id !== id);
 		
-		// Se estiver usando paginação, atualizar
-		if (window.transactionPagination) {
-			const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-			const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-			window.transactionPagination.setTransactions(filteredByPeriod);
-		}
+		// Atualizar a interface imediatamente
+		updateTransactionsListImmediate(window.transactions);
 		
-		// Atualizar UI
-		updateUI();
+		// Atualizar dashboard e gráficos
 		updateDashboardUI();
+		updateCharts();
 		
 		showNotification('success', 'Sucesso', 'Transação excluída com sucesso!');
 	} catch (error) {
 		console.error('Erro ao excluir transação:', error);
-		showNotification('error', 'Erro', 'Erro ao excluir a transação');
+		showNotification('error', 'Erro', 'Não foi possível excluir a transação');
 	}
 }
 
@@ -1552,11 +1702,51 @@ function setupFilterListeners() {
 // Funções de Edição de Transação
 function toggleEditModal(show, transaction = null) {
 	const modal = document.getElementById('editTransactionModal');
+	
 	if (show && transaction) {
+		// Preencher o formulário com os dados da transação
+		const form = document.getElementById('editTransactionForm');
+		
+		document.getElementById('editTransactionId').value = transaction.id;
+		document.getElementById('editDescription').value = transaction.description;
+		
+		// Formatar o valor para exibição
+		const amountInput = document.getElementById('editAmount');
+		const absAmount = Math.abs(transaction.amount);
+		
+		// Usar formatNumberToBrazilian para garantir exibição com centavos
+		if (typeof window.formatNumberToBrazilian === 'function') {
+		    amountInput.value = formatNumberToBrazilian(absAmount);
+		    // Converter para texto para habilitar formatação
+		    if (amountInput.getAttribute('type') !== 'text') {
+                amountInput.type = 'text';
+                // Aplicar máscara de formatação
+                if (typeof window.applyNumberMask === 'function') {
+                    window.applyNumberMask(amountInput);
+                }
+            }
+		} else {
+		    // Fallback se a função não estiver disponível
+		    amountInput.value = absAmount;
+		}
+		
+		document.getElementById('editType').value = transaction.type;
+		document.getElementById('editCategory').value = transaction.category;
+		
+		// Formatar a data (YYYY-MM-DD)
+		let dateValue = transaction.date;
+		if (dateValue.includes('T')) {
+		    dateValue = dateValue.split('T')[0];
+		}
+		document.getElementById('editDate').value = dateValue;
+		
+		// Mostrar o modal
 		modal.classList.add('active');
-		fillEditForm(transaction);
 	} else {
+		// Fechar o modal
 		modal.classList.remove('active');
+		
+		// Limpar o formulário
 		document.getElementById('editTransactionForm').reset();
 	}
 }
@@ -1571,63 +1761,110 @@ function fillEditForm(transaction) {
 }
 
 async function handleEditTransactionSubmit(e) {
-	e.preventDefault();
-	
-	const form = e.target;
-	const id = form.querySelector('#editTransactionId').value;
-	const type = form.querySelector('#editType').value;
-	let amount = parseFloat(form.querySelector('#editAmount').value);
-	
-	if (type === 'expense') {
-		amount = -Math.abs(amount);
-	}
-
-	const [year, month, day] = form.querySelector('#editDate').value.split('-');
-	const formattedDate = `${year}-${month}-${day}`;
-
-	const transaction = {
-		description: form.querySelector('#editDescription').value,
-		amount,
-		type,
-		category: form.querySelector('#editCategory').value,
-		date: formattedDate
-	};
-
-	try {
-		const { data, error } = await supabase
-			.from('transactions')
-			.update(transaction)
-			.eq('id', id)
-			.select()
-			.single();
-
-		if (error) throw error;
-
-		// Atualizar a transação na lista
-		const index = window.transactions.findIndex(t => t.id === id);
-		if (index !== -1) {
-			window.transactions[index] = data;
-		}
-
-		// Se estiver usando paginação, atualizar
-		if (window.transactionPagination) {
-			const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-			const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-			window.transactionPagination.setTransactions(filteredByPeriod);
-		} else {
-			await loadTransactions();
-		}
-
-		// Atualizar a UI
-		updateUI();
-		
-		toggleEditModal(false);
-		
-		showNotification('success', 'Sucesso', 'Transação atualizada com sucesso!');
-	} catch (error) {
-		console.error('Erro ao atualizar transação:', error);
-		showNotification('error', 'Erro', 'Erro ao atualizar a transação');
-	}
+    e.preventDefault();
+    
+    try {
+        const form = e.target;
+        const id = form.querySelector('#editTransactionId').value;
+        const type = form.querySelector('#editType').value;
+        
+        // Obter o valor formatado e converter para número
+        const amountFormatted = form.querySelector('#editAmount').value;
+        
+        // Verificar se o valor tem vírgula para separar os centavos
+        // Se não tiver, e for apenas um número inteiro como "8", adicionar ",00"
+        let formattedValue = amountFormatted;
+        if (!formattedValue.includes(',')) {
+            formattedValue = formattedValue + ',00';
+            console.log(`Valor sem centavos, adicionando: "${amountFormatted}" => "${formattedValue}"`);
+        }
+        
+        let amount = typeof parseFormattedNumber === 'function' 
+            ? parseFormattedNumber(formattedValue) 
+            : parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
+        
+        console.log(`Editando transação: valor formatado "${formattedValue}" => valor numérico ${amount}`);
+        
+        if (type === 'expense') {
+            amount = -Math.abs(amount);
+        }
+    
+        const transaction = {
+            description: form.querySelector('#editDescription').value,
+            amount,
+            type,
+            category: form.querySelector('#editCategory').value,
+            date: form.querySelector('#editDate').value
+        };
+    
+        const { data, error } = await supabase
+            .from('transactions')
+            .update(transaction)
+            .eq('id', id)
+            .select()
+            .single();
+    
+        if (error) throw error;
+    
+        // Atualizar a transação na lista local
+        const index = window.transactions.findIndex(t => t.id === id);
+        if (index !== -1) {
+            window.transactions[index] = data;
+            console.log(`Transação atualizada no índice ${index}:`, data);
+        }
+        
+        // Atualizar o elemento diretamente no DOM para uma atualização imediata
+        const transactionItem = document.querySelector(`.transaction-item[data-id="${id}"]`);
+        if (transactionItem) {
+            // Atualizando a classe principal
+            transactionItem.className = `transaction-item ${data.type}`;
+            
+            // Atualizando as informações da transação
+            const infoElement = transactionItem.querySelector('.transaction-info');
+            if (infoElement) {
+                infoElement.innerHTML = `
+                    <strong>${data.description}</strong>
+                    <div>${data.category}</div>
+                    <small>${new Date(data.date).toLocaleDateString()}</small>
+                `;
+            }
+            
+            // Atualizando o valor e os botões
+            const amountElement = transactionItem.querySelector('.transaction-amount');
+            if (amountElement) {
+                const amountClass = data.type === 'income' ? 'amount-positive' : 'amount-negative';
+                amountElement.className = `transaction-amount ${amountClass}`;
+                amountElement.innerHTML = `
+                    ${formatCurrency(Math.abs(data.amount))}
+                    <div class="transaction-actions">
+                        <i class="fas fa-edit edit-btn" title="Editar"></i>
+                        <i class="fas fa-trash delete-btn" title="Excluir"></i>
+                    </div>
+                `;
+                
+                // Reconectando event listeners
+                const editBtn = amountElement.querySelector('.edit-btn');
+                const deleteBtn = amountElement.querySelector('.delete-btn');
+                
+                editBtn.addEventListener('click', () => toggleEditModal(true, data));
+                deleteBtn.addEventListener('click', () => handleDeleteTransaction(data.id));
+            }
+        } else {
+            // Se o elemento não estiver no DOM, atualizar toda a lista
+            updateTransactionsListImmediate(window.transactions);
+        }
+    
+        // Atualizar dashboard e gráficos
+        updateDashboardUI();
+        updateCharts();
+        
+        toggleEditModal(false);
+        
+        showNotification('success', 'Sucesso', 'Transação atualizada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao atualizar transação:', error);
+        showNotification('error', 'Erro', 'Erro ao atualizar a transação');
+    }
 }
 
 // Atualizar informações do usuário
@@ -1745,9 +1982,9 @@ function showWelcomeModal() {
 					</div>
 				</form>
 			</div>
-		</div>
-	`;
-	
+                    </div>
+                `;
+                
 	document.body.appendChild(modal);
 	
 	const form = document.getElementById('welcomeForm');
