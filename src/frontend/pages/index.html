@@ -65,6 +65,10 @@
 						</div>
 						<h2>Dashboard</h2>
 						<div class="period-selector">
+							<div class="period-label">
+								<i class="fas fa-calendar-alt"></i>
+								<span>Período:</span>
+							</div>
 							<select id="periodSelect" class="filter-select">
 								<option value="month">Este Mês</option>
 								<option value="year">Este Ano</option>
@@ -75,60 +79,75 @@
 								<input type="date" id="startDate" class="filter-date">
 								<span>até</span>
 								<input type="date" id="endDate" class="filter-date">
+								<button id="applyDateRange" class="btn btn-sm">
+									<i class="fas fa-check"></i>
+								</button>
 							</div>
 						</div>
 					</div>
 
-					<div class="dashboard-grid">
-						<div class="card">
-							<div class="card-icon income">
-								<i class="fas fa-arrow-up"></i>
+					<div class="dashboard-container">
+						<div class="dashboard-grid">
+							<div class="card">
+								<div class="card-icon income">
+									<i class="fas fa-arrow-up"></i>
+								</div>
+								<div class="card-content">
+									<h3>Receitas</h3>
+									<p id="totalIncome">R$ 0,00</p>
+								</div>
 							</div>
-							<div class="card-content">
-								<h3>Receitas</h3>
-								<p id="totalIncome">R$ 0,00</p>
+							<div class="card">
+								<div class="card-icon expense">
+									<i class="fas fa-arrow-down"></i>
+								</div>
+								<div class="card-content">
+									<h3>Despesas</h3>
+									<p id="totalExpenses">R$ 0,00</p>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-icon balance">
+									<i class="fas fa-wallet"></i>
+								</div>
+								<div class="card-content">
+									<h3>Saldo</h3>
+									<p id="balance">R$ 0,00</p>
+								</div>
+							</div>
+							<div class="card">
+								<div class="card-icon savings">
+									<i class="fas fa-piggy-bank"></i>
+								</div>
+								<div class="card-content">
+									<h3>Taxa de Economia</h3>
+									<p id="savings">0%</p>
+								</div>
 							</div>
 						</div>
-						<div class="card">
-							<div class="card-icon expense">
-								<i class="fas fa-arrow-down"></i>
-							</div>
-							<div class="card-content">
-								<h3>Despesas</h3>
-								<p id="totalExpenses">R$ 0,00</p>
-							</div>
-						</div>
-						<div class="card">
-							<div class="card-icon balance">
-								<i class="fas fa-wallet"></i>
-							</div>
-							<div class="card-content">
-								<h3>Saldo</h3>
-								<p id="balance">R$ 0,00</p>
-							</div>
-						</div>
-						<div class="card">
-							<div class="card-icon savings">
-								<i class="fas fa-piggy-bank"></i>
-							</div>
-							<div class="card-content">
-								<h3>Taxa de Economia</h3>
-								<p id="savings">0%</p>
-							</div>
-						</div>
-					</div>
 
-					<div class="charts-container">
-						<div class="chart-card">
-							<h3>Despesas por Categoria</h3>
-							<div class="chart-wrapper">
-								<canvas id="expensesByCategory"></canvas>
+						<div class="charts-container">
+							<div class="chart-card">
+								<h3>Despesas por Categoria</h3>
+								<div class="chart-wrapper">
+									<canvas id="expensesByCategory"></canvas>
+								</div>
+							</div>
+							<div class="chart-card">
+								<h3>Fluxo de Caixa</h3>
+								<div class="chart-wrapper">
+									<canvas id="cashFlow"></canvas>
+								</div>
 							</div>
 						</div>
-						<div class="chart-card">
-							<h3>Fluxo de Caixa</h3>
-							<div class="chart-wrapper">
-								<canvas id="cashFlow"></canvas>
+						
+						<div class="recent-transactions">
+							<div class="section-header">
+								<h3>Transações Recentes</h3>
+								<a href="#" class="view-all" data-page="transactions">Ver todas</a>
+							</div>
+							<div id="recentTransactionsList" class="recent-transactions-list">
+								<!-- Lista das transações mais recentes será preenchida via JavaScript -->
 							</div>
 						</div>
 					</div>
