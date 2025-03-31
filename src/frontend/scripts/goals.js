@@ -370,44 +370,195 @@ async function updateGoalDeadline(goalId, newDeadline) {
 // Alterar o intervalo para verificar a cada hora em vez de diariamente
 setInterval(checkGoalsForNotifications, 60 * 60 * 1000); // Verificar uma vez por hora
 
+// Função para lidar com o envio do formulário de meta
 async function handleGoalSubmit(e) {
     e.preventDefault();
     
     try {
-        const formData = {
-            name: document.getElementById('goalName').value,
-            target_amount: parseFloat(document.getElementById('targetAmount').value),
-            deadline: document.getElementById('deadline').value,
-            user_id: currentUser.id,
-            // Adicionar campos de notificação
-            notification_type: document.getElementById('notificationType').value,
-            notification_days: parseInt(document.getElementById('notificationDays').value),
-            postpone_days: parseInt(document.getElementById('postponeDays')?.value || '30')
-        };
+        showLoader();
+        
+        // Obter valores do formulário
+        const name = document.getElementById('goalName').value;
+        // Usar parseFormattedNumber para garantir conversão correta do valor formatado
+        const targetAmount = parseFormattedNumber(document.getElementById('targetAmount').value);
+        const deadline = document.getElementById('deadline').value;
+        const category = document.getElementById('goalCategory').value;
+        const notificationDays = parseInt(document.getElementById('notificationDays').value);
+        const postponeDays = parseInt(document.getElementById('postponeDays').value);
 
         // Validações
-        if (!formData.name || !formData.target_amount || !formData.deadline) {
-            throw new Error('Por favor, preencha todos os campos obrigatórios.');
+        if (!name || !targetAmount || !deadline || !category) {
+            throw new Error('Todos os campos obrigatórios devem ser preenchidos');
         }
-
-        if (formData.target_amount <= 0) {
-            throw new Error('O valor alvo deve ser maior que zero.');
+        
+        if (targetAmount <= 0) {
+            throw new Error('O valor da meta deve ser maior que zero');
         }
-
+        
+        // Obter ID do usuário atual
+        const userId = await getCurrentUserId();
+        if (!userId) {
+            throw new Error('Usuário não autenticado');
+        }
+        
+        // Criar nova meta
         const { data, error } = await supabase
             .from('financial_goals')
-            .insert([formData])
-            .select()
-            .single();
+            .insert([{
+                name,
+                target_amount: targetAmount,
+                deadline,
+                category,
+                notification_days: notificationDays,
+                postpone_days: postponeDays,
+                user_id: userId
+            }]);
 
         if (error) throw error;
 
-        showNotification('success', 'Meta Criada', 'Meta criada com sucesso!');
+        // Fechar modal e atualizar UI
         toggleGoalModal(false);
+        showToast('Meta criada com sucesso!', 'success', 'Sucesso');
+        
+        // Recarregar metas
         await loadGoals();
+        
     } catch (error) {
         console.error('Erro ao criar meta:', error);
-        showNotification('error', 'Erro ao Criar Meta', error.message || 'Não foi possível criar a meta. Por favor, tente novamente.');
+        showToast(error.message || 'Erro ao criar meta', 'error', 'Erro');
+    } finally {
+        hideLoader();
+    }
+}
+
+// Função para lidar com o envio do formulário de contribuição
+async function handleGoalContributionSubmit(e) {
+    e.preventDefault();
+    
+    try {
+        showLoader();
+        
+        // Obter valores do formulário
+        const goalId = document.getElementById('goalId').value;
+        // Usar parseFormattedNumber para garantir conversão correta do valor formatado
+        const amount = parseFormattedNumber(document.getElementById('contributionAmount').value);
+        const date = document.getElementById('contributionDate').value;
+        const notes = document.getElementById('contributionNotes').value;
+        
+        // Validações
+        if (!goalId || !amount || !date) {
+            throw new Error('Todos os campos obrigatórios devem ser preenchidos');
+        }
+        
+        if (amount <= 0) {
+            throw new Error('O valor da contribuição deve ser maior que zero');
+        }
+        
+        // Criar nova contribuição
+        const { data, error } = await supabase
+            .from('goal_contributions')
+            .insert([{
+                goal_id: goalId,
+                amount,
+                date,
+                notes
+            }]);
+        
+        if (error) throw error;
+        
+        // Fechar modal e mostrar mensagem
+        toggleContributionModal(false);
+        showToast('Contribuição adicionada com sucesso!', 'success', 'Sucesso');
+        
+        // Recarregar metas para atualizar os valores
+        await loadGoals();
+        
+    } catch (error) {
+        console.error('Erro ao adicionar contribuição:', error);
+        showToast(error.message || 'Erro ao adicionar contribuição', 'error', 'Erro');
+    } finally {
+        hideLoader();
+    }
+}
+
+// Função para lidar com o envio do formulário de meta compartilhada
+async function handleSharedGoalSubmit(e) {
+    e.preventDefault();
+    
+    try {
+        showLoader();
+        
+        // Obter valores do formulário
+        const name = document.getElementById('sharedGoalName').value;
+        const description = document.getElementById('sharedGoalDescription').value;
+        // Usar parseFormattedNumber para garantir conversão correta do valor formatado
+        const targetAmount = parseFormattedNumber(document.getElementById('sharedGoalAmount').value);
+        const deadline = document.getElementById('sharedGoalDeadline').value;
+        
+        // Validações
+        if (!name || !targetAmount || !deadline) {
+            showToast('Preencha todos os campos obrigatórios', 'error', 'Erro');
+            return;
+        }
+        
+        if (targetAmount <= 0) {
+            showToast('O valor da meta deve ser maior que zero', 'error', 'Erro');
+            return;
+        }
+        
+        // Obter ID do usuário atual
+        const userId = await getCurrentUserId();
+        if (!userId) {
+            showToast('Usuário não autenticado', 'error', 'Erro');
+            return;
+        }
+        
+        // Criar meta compartilhada
+        const { data: goalData, error: goalError } = await supabase
+            .from('shared_goals')
+            .insert([{
+                name,
+                description,
+                target_amount: targetAmount,
+                deadline,
+                creator_id: userId
+            }])
+            .select()
+            .single();
+        
+        if (goalError) {
+            console.error('Erro ao criar meta compartilhada:', goalError);
+            showToast('Erro ao criar meta compartilhada', 'error', 'Erro');
+            return;
+        }
+        
+        // Adicionar o criador como participante
+        const { error: participantError } = await supabase
+            .from('shared_goal_participants')
+            .insert([{
+                shared_goal_id: goalData.id,
+                user_id: userId,
+                status: 'active' // Usando 'status' em vez de 'role'
+            }]);
+        
+        if (participantError) {
+            console.error('Erro ao adicionar criador como participante:', participantError);
+            showToast('Erro ao finalizar criação da meta', 'error', 'Erro');
+            return;
+        }
+        
+        // Fechar modal e mostrar mensagem
+        toggleSharedGoalModal(false);
+        showToast('Meta compartilhada criada com sucesso!', 'success', 'Sucesso');
+        
+        // Recarregar metas compartilhadas
+        await loadSharedGoals();
+        
+    } catch (error) {
+        console.error('Erro ao criar meta compartilhada:', error);
+        showToast('Erro ao criar meta compartilhada', 'error', 'Erro');
+    } finally {
+        hideLoader();
     }
 }
 
@@ -943,7 +1094,18 @@ async function editContribution(contributionId) {
 
         // Preencher o modal de edição
         document.getElementById('editContributionId').value = contribution.id;
-        document.getElementById('editContributionAmount').value = contribution.amount;
+        
+        // Formatar o valor para exibição
+        const amountInput = document.getElementById('editContributionAmount');
+        if (typeof window.formatNumberToBrazilian === 'function') {
+            // Usar formatação brasileira se disponível
+            amountInput.value = formatNumberToBrazilian(contribution.amount);
+            console.log(`Formatando valor para edição: ${contribution.amount} => ${amountInput.value}`);
+        } else {
+            // Fallback se a função não estiver disponível
+            amountInput.value = contribution.amount;
+        }
+        
         document.getElementById('editContributionDate').value = contribution.date.split('T')[0];
         document.getElementById('editContributionNotes').value = contribution.notes || '';
         document.getElementById('editContributionGoalId').value = contribution.goal_id;
@@ -976,8 +1138,14 @@ async function handleEditContributionSubmit(e) {
         const contributionId = document.getElementById('editContributionId').value;
         const goalId = document.getElementById('editContributionGoalId').value;
         
+        // Usar parseFormattedNumber para converter corretamente o valor formatado
+        const amountValue = document.getElementById('editContributionAmount').value;
+        const amount = parseFormattedNumber(amountValue);
+        
+        console.log(`Atualizando contribuição: valor formatado "${amountValue}" => valor numérico ${amount}`);
+        
         const formData = {
-            amount: Number(document.getElementById('editContributionAmount').value),
+            amount: amount,
             date: document.getElementById('editContributionDate').value,
             notes: document.getElementById('editContributionNotes').value
         };
@@ -987,7 +1155,10 @@ async function handleEditContributionSubmit(e) {
             .update(formData)
             .eq('id', contributionId);
 
-        if (error) throw error;
+        if (error) {
+            console.error('Erro ao atualizar contribuição:', error);
+            throw error;
+        }
 
         // Fechar o modal
         toggleEditContributionModal(false);
@@ -1007,10 +1178,10 @@ async function handleEditContributionSubmit(e) {
             }
         }
 
-        showNotification('success', 'Sucesso', 'Contribuição atualizada com sucesso!');
+        showToast('Contribuição atualizada com sucesso!', 'success', 'Sucesso');
     } catch (error) {
         console.error('Erro ao atualizar contribuição:', error);
-        showNotification('error', 'Erro', 'Não foi possível atualizar a contribuição.');
+        showToast('Não foi possível atualizar a contribuição', 'error', 'Erro');
     }
 }
 
@@ -1914,63 +2085,75 @@ async function handleSharedGoalSubmit(e) {
     try {
         showLoader();
         
-        const form = e.target;
-        const formData = new FormData(form);
+        // Obter valores do formulário
+        const name = document.getElementById('sharedGoalName').value;
+        const description = document.getElementById('sharedGoalDescription').value;
+        // Usar parseFormattedNumber para garantir conversão correta do valor formatado
+        const targetAmount = parseFormattedNumber(document.getElementById('sharedGoalAmount').value);
+        const deadline = document.getElementById('sharedGoalDeadline').value;
+        
+        // Validações
+        if (!name || !targetAmount || !deadline) {
+            showToast('Preencha todos os campos obrigatórios', 'error', 'Erro');
+            return;
+        }
+        
+        if (targetAmount <= 0) {
+            showToast('O valor da meta deve ser maior que zero', 'error', 'Erro');
+            return;
+        }
         
         // Obter ID do usuário atual
         const userId = await getCurrentUserId();
         if (!userId) {
-            showToast('Erro: usuário não autenticado', 'error');
-            hideLoader();
+            showToast('Usuário não autenticado', 'error', 'Erro');
             return;
         }
         
-        const newGoal = {
-            name: formData.get('name'),
-            description: formData.get('description') || null,
-            target_amount: parseFloat(formData.get('amount')),
-            deadline: formData.get('deadline'),
-            creator_id: userId
-        };
-        
-        // Validar dados
-        if (!newGoal.name || !newGoal.target_amount || !newGoal.deadline) {
-            showToast('Preencha todos os campos obrigatórios', 'error');
-            hideLoader();
-            return;
-        }
-        
-        // Inserir meta no banco
+        // Criar meta compartilhada
         const { data: goalData, error: goalError } = await supabase
             .from('shared_goals')
-            .insert([newGoal])
+            .insert([{
+                name,
+                description,
+                target_amount: targetAmount,
+                deadline,
+                creator_id: userId
+            }])
             .select()
             .single();
         
-        if (goalError) throw goalError;
+        if (goalError) {
+            console.error('Erro ao criar meta compartilhada:', goalError);
+            showToast('Erro ao criar meta compartilhada', 'error', 'Erro');
+            return;
+        }
         
-        // Adicionar criador como participante
-        const { data: participantData, error: participantError } = await supabase
+        // Adicionar o criador como participante
+        const { error: participantError } = await supabase
             .from('shared_goal_participants')
             .insert([{
                 shared_goal_id: goalData.id,
                 user_id: userId,
-                status: 'active'
+                status: 'active' // Usando 'status' em vez de 'role'
             }]);
         
-        if (participantError) throw participantError;
+        if (participantError) {
+            console.error('Erro ao adicionar criador como participante:', participantError);
+            showToast('Erro ao finalizar criação da meta', 'error', 'Erro');
+            return;
+        }
         
-        // Recarregar metas
-        await loadSharedGoals();
-        
-        // Fechar modal
+        // Fechar modal e mostrar mensagem
         toggleSharedGoalModal(false);
+        showToast('Meta compartilhada criada com sucesso!', 'success', 'Sucesso');
         
-        showToast('Meta compartilhada criada com sucesso!', 'success', 'Nova Meta');
+        // Recarregar metas compartilhadas
+        await loadSharedGoals();
         
     } catch (error) {
         console.error('Erro ao criar meta compartilhada:', error);
-        showToast('Não foi possível criar a meta', 'error', 'Erro');
+        showToast('Erro ao criar meta compartilhada', 'error', 'Erro');
     } finally {
         hideLoader();
     }
@@ -1984,7 +2167,21 @@ async function handleSharedGoalContribution(e) {
         showLoader();
         
         // Obter os valores do formulário
-        const amount = parseFloat(document.getElementById('contributionAmount').value);
+        const amountInput = document.getElementById('contributionAmount');
+        const amountValue = amountInput.value;
+        
+        // Garantir que o valor seja formatado corretamente antes de converter
+        if (amountValue.includes('.') && !amountValue.includes(',')) {
+            // Valor sem vírgula decimal, mas com ponto como separador de milhar
+            console.log(`Formatando automaticamente o valor ${amountValue} antes de processar`);
+            const numericValue = parseFloat(amountValue.replace(/\./g, ''));
+            amountInput.value = formatNumberToBrazilian(numericValue);
+        }
+        
+        // Usar parseFormattedNumber para converter corretamente o valor formatado
+        const amount = parseFormattedNumber(amountInput.value);
+        console.log(`Processando contribuição: valor formatado "${amountInput.value}" convertido para ${amount}`);
+        
         const dateInput = document.getElementById('contributionDate').value;
         // Ajustar a data para o fuso horário local
         const date = new Date(dateInput);
@@ -2501,7 +2698,12 @@ function initContributionModal() {
                 showLoader();
                 
                 // Obter os valores do formulário
-                const amount = parseFloat(document.getElementById('contributionAmount').value);
+                const amountInput = document.getElementById('contributionAmount');
+                const amountFormatted = amountInput.value;
+                const amount = parseFormattedNumber(amountFormatted);
+                
+                console.log(`Contribuição - valor formatado: "${amountFormatted}" => convertido: ${amount}`);
+                
                 const date = document.getElementById('contributionDate').value;
                 const notes = document.getElementById('contributionNotes').value;
                 const goalId = document.getElementById('sharedGoalId').value;

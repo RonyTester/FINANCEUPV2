@@ -146,16 +146,19 @@ function setupModalTabs() {
 // Carregamento de Dados
 async function loadUserData() {
 	try {
-		await Promise.all([
-			loadTransactions(),
-			loadUserSettings(),
-			loadFixedExpenses(),
-			loadGoals()
-		]);
+		if (!currentUser) return;
+
+		await loadUserSettings();
+		await loadTransactions();
+		await loadFixedExpenses();
+		await loadGoals();
+
 		updateUI();
+		setupFilterListeners();
+		setupPeriodSelector(); // Adicionar esta linha
 	} catch (error) {
-		console.error('Erro ao carregar dados:', error);
-		alert('Erro ao carregar dados. Por favor, recarregue a página.');
+		console.error('Erro ao carregar dados do usuário:', error);
+		showNotification('error', 'Erro', 'Não foi possível carregar seus dados. Por favor, tente novamente.');
 	}
 }
 
@@ -422,6 +425,16 @@ function toggleFixedExpenseModal(show) {
 	const modal = document.getElementById('fixedExpenseModal');
 	if (show) {
 		modal.classList.add('active');
+		
+		// Inicializar formatação de número para o campo amount, se disponível
+		if (typeof window.applyNumberMask === 'function') {
+			const amountInput = document.getElementById('fixedExpenseAmount');
+			if (amountInput && amountInput.getAttribute('type') !== 'text') {
+				amountInput.type = 'text';
+				window.applyNumberMask(amountInput);
+				console.log('Formatador de número aplicado ao campo de valor da despesa fixa');
+			}
+		}
 	} else {
 		modal.classList.remove('active');
 		document.getElementById('fixedExpenseForm').reset();
@@ -432,9 +445,17 @@ async function saveFixedExpense(event) {
 	event.preventDefault();
 	
 	try {
+		// Obter o valor formatado e converter para número usando parseFormattedNumber
+		const amountFormatted = document.getElementById('fixedExpenseAmount').value;
+		const amount = typeof parseFormattedNumber === 'function' 
+		    ? parseFormattedNumber(amountFormatted) 
+		    : parseFloat(amountFormatted.replace(/\./g, '').replace(',', '.'));
+		
+		console.log(`Processando despesa fixa: valor formatado "${amountFormatted}" => valor numérico ${amount}`);
+		
 		const formData = {
 			description: document.getElementById('fixedExpenseDescription').value,
-			amount: parseFloat(document.getElementById('fixedExpenseAmount').value),
+			amount: amount,
 			category: document.getElementById('fixedExpenseCategory').value,
 			due_day: parseInt(document.getElementById('fixedExpenseDueDay').value),
 			notification_days: parseInt(document.getElementById('fixedExpenseNotificationDays').value),
@@ -528,14 +549,115 @@ function showPaymentModal(expenseId, defaultAmount) {
 
 	// Adicionar novo listener de validação
 	const validateListener = function() {
-		const value = Number(this.value);
+	    // Obter o valor formatado e converter para número usando parseFormattedNumber
+	    const formattedValue = this.value;
+	    const value = typeof parseFormattedNumber === 'function' 
+	        ? parseFormattedNumber(formattedValue) 
+	        : parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
+	        
 		if (value > remainingAmount) {
-			this.value = remainingAmount;
+		    // Formatar o valor máximo permitido
+		    if (typeof window.formatNumberToBrazilian === 'function') {
+		        this.value = formatNumberToBrazilian(remainingAmount);
+		    } else {
+		        this.value = remainingAmount;
+		    }
 			showNotification('warning', 'Atenção', `O valor máximo permitido é ${formatCurrency(remainingAmount)}`);
 		}
 	};
 	amountInput.addEventListener('input', validateListener);
 	amountInput._validateListener = validateListener;
+}
+
+// Nova função personalizada para aplicar máscara de formatação específica para campos monetários
+// Esta versão resolve o problema da interpretação da vírgula durante a edição
+function applyCustomNumberMask(input) {
+    // Remover eventos anteriores se já estiver configurado
+    if (input._hasCustomMask) {
+        return;
+    }
+    
+    input._hasCustomMask = true;
+    
+    // Registrar o valor original para comparação
+    let previousValue = input.value;
+    
+    // Processar a entrada de forma correta preservando a posição do cursor
+    input.addEventListener('input', function(e) {
+        // Guardar a posição do cursor e o comprimento original
+        const cursorPos = this.selectionStart;
+        const oldLength = this.value.length;
+        
+        // Se o usuário digitar uma vírgula, queremos manter ela na posição correta
+        // e não permitir mais de uma vírgula
+        let value = this.value;
+        
+        // Verificar se há mais de uma vírgula
+        const commaCount = (value.match(/,/g) || []).length;
+        if (commaCount > 1) {
+            // Manter apenas a última vírgula digitada
+            const lastCommaPos = value.lastIndexOf(',');
+            value = value.substring(0, lastCommaPos).replace(/,/g, '') + 
+                   value.substring(lastCommaPos);
+        }
+        
+        // Remover todos os caracteres não numéricos exceto a vírgula
+        value = value.replace(/[^\d,]/g, '');
+        
+        // Verificar se já tem vírgula
+        if (value.includes(',')) {
+            // Separar parte inteira e decimal
+            let [intPart, decPart] = value.split(',');
+            
+            // Limitar a parte decimal a 2 dígitos
+            if (decPart && decPart.length > 2) {
+                decPart = decPart.substring(0, 2);
+            }
+            
+            // Adicionar pontos como separadores de milhar na parte inteira
+            intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            
+            // Reconstruir o valor formatado
+            value = intPart + (decPart ? ',' + decPart : ',');
+        } else {
+            // Se não tem vírgula, apenas formatar com pontos
+            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+        
+        // Atualizar o valor e ajustar a posição do cursor
+        this.value = value;
+        
+        // Calcular a nova posição do cursor
+        const lengthDiff = value.length - oldLength;
+        const newCursorPos = cursorPos + lengthDiff;
+        
+        // Restaurar a posição do cursor
+        this.setSelectionRange(newCursorPos, newCursorPos);
+        
+        // Armazenar o valor para a próxima comparação
+        previousValue = value;
+    });
+    
+    // Formatar quando o campo perder o foco
+    input.addEventListener('blur', function() {
+        let value = this.value.trim();
+        
+        // Se estiver vazio, sair
+        if (!value) return;
+        
+        // Se não tem vírgula, adicionar
+        if (!value.includes(',')) {
+            value += ',00';
+        } else {
+            // Se tem vírgula, completar com zeros se necessário
+            const parts = value.split(',');
+            if (parts.length > 1 && parts[1].length < 2) {
+                value = parts[0] + ',' + parts[1].padEnd(2, '0');
+            }
+        }
+        
+        this.value = value;
+    });
 }
 
 async function handlePaymentSubmit(event) {
@@ -651,6 +773,7 @@ function togglePaymentModal(show) {
 		modal.classList.add('active');
 	} else {
 		modal.classList.remove('active');
+		// Limpar o formulário quando fechar o modal
 		document.getElementById('fixedExpensePaymentForm').reset();
 	}
 }
@@ -804,7 +927,23 @@ async function handleTransactionSubmit(e) {
     
     const form = e.target;
     const type = form.type.value;
-    let amount = parseFloat(form.amount.value);
+    
+    // Obter o valor formatado e converter para número usando parseFormattedNumber
+    const amountFormatted = form.amount.value;
+    
+    // Verificar se o valor tem vírgula para separar os centavos
+    // Se não tiver, e for apenas um número inteiro como "8", adicionar ",00"
+    let formattedValue = amountFormatted;
+    if (!formattedValue.includes(',')) {
+        formattedValue = formattedValue + ',00';
+        console.log(`Valor sem centavos, adicionando: "${amountFormatted}" => "${formattedValue}"`);
+    }
+    
+    let amount = typeof parseFormattedNumber === 'function' 
+        ? parseFormattedNumber(formattedValue) 
+        : parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
+    
+    console.log(`Processando transação: valor formatado "${formattedValue}" => valor numérico ${amount}`);
     
     if (type === 'expense') {
         amount = -Math.abs(amount);
@@ -831,17 +970,10 @@ async function handleTransactionSubmit(e) {
         // Adicionar a nova transação à lista global
         window.transactions = [data, ...window.transactions];
         
-        // Se estiver usando paginação, atualizar
-        if (window.transactionPagination) {
-            const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-            const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-            window.transactionPagination.setTransactions(filteredByPeriod);
-        } else {
-            updateTransactionsList(window.transactions);
-        }
+        // Forçar atualização imediata da UI
+        updateTransactionsListImmediate(window.transactions);
         
-        // Atualizar UI
-        updateUI();
+        // Atualizar UI e gráficos
         updateDashboardUI();
         updateCharts();
         
@@ -853,6 +985,62 @@ async function handleTransactionSubmit(e) {
         console.error('Erro ao salvar transação:', error);
         showNotification('error', 'Erro', 'Erro ao salvar transação');
     }
+}
+
+// Função de atualização imediata (sem delay)
+function updateTransactionsListImmediate(transactions) {
+    // Função similar à updateTransactionsList mas sem animação e delay
+    // para garantir atualização imediata da lista
+    const container = document.getElementById('transactionsList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    const transactionsToShow = transactions || window.transactions;
+
+    if (!transactionsToShow.length) {
+        container.innerHTML = `
+            <div class="no-transactions">
+                <p>Nenhuma transação encontrada.</p>
+                <button class="btn btn-primary" onclick="toggleModal(true)">
+                    <i class="fas fa-plus"></i>
+                    Adicionar Transação
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    transactionsToShow.forEach(transaction => {
+        const div = document.createElement('div');
+        div.className = `transaction-item ${transaction.type}`;
+        div.setAttribute('data-id', transaction.id);
+        
+        const amountClass = transaction.type === 'income' ? 'amount-positive' : 'amount-negative';
+        
+        div.innerHTML = `
+            <div class="transaction-info">
+                <strong>${transaction.description}</strong>
+                <div>${transaction.category}</div>
+                <small>${new Date(transaction.date).toLocaleDateString()}</small>
+            </div>
+            <div class="transaction-amount ${amountClass}">
+                ${formatCurrency(Math.abs(transaction.amount))}
+                <div class="transaction-actions">
+                    <i class="fas fa-edit edit-btn" title="Editar"></i>
+                    <i class="fas fa-trash delete-btn" title="Excluir"></i>
+                </div>
+            </div>
+        `;
+        
+        const editBtn = div.querySelector('.edit-btn');
+        const deleteBtn = div.querySelector('.delete-btn');
+        
+        editBtn.addEventListener('click', () => toggleEditModal(true, transaction));
+        deleteBtn.addEventListener('click', () => handleDeleteTransaction(transaction.id));
+        
+        container.appendChild(div);
+    });
 }
 
 async function handleSettingsSubmit(e) {
@@ -910,7 +1098,54 @@ function toggleModal(show) {
 	const modal = document.getElementById('transactionModal');
 	if (show) {
 		modal.classList.add('active');
+		// Definir a data atual como padrão
 		document.getElementById('date').valueAsDate = new Date();
+		
+		// Inicializar formatação de número para o campo amount
+		const amountInput = document.getElementById('amount');
+		if (amountInput) {
+		    // Garantir que o campo esteja vazio
+		    amountInput.value = '';
+		    
+		    // Converter para tipo text para permitir formatação
+		    if (amountInput.getAttribute('type') !== 'text') {
+		        amountInput.type = 'text';
+		    }
+		    
+		    // Aplicar a máscara de formatação
+		    if (typeof window.applyNumberMask === 'function') {
+		        window.applyNumberMask(amountInput);
+		        console.log('Formatador de número aplicado ao campo de valor da transação');
+		    }
+		    
+		    // Adicionar listener de blur para garantir que valores como "800" sejam formatados corretamente
+		    amountInput.addEventListener('blur', function() {
+		        // Se o valor está vazio, não fazer nada
+		        if (!this.value) return;
+		        
+		        // Número inteiro sem vírgula - adicionar ",00"
+		        if (!this.value.includes(',')) {
+		            const numValue = this.value.replace(/\./g, '');
+		            if (!isNaN(numValue) && numValue !== '') {
+		                // Formatar o número com separadores
+		                if (typeof window.formatNumberToBrazilian === 'function') {
+		                    this.value = window.formatNumberToBrazilian(parseInt(numValue));
+		                    console.log(`Formatando número inteiro: ${numValue} => ${this.value}`);
+		                } else {
+		                    // Adicionar apenas a vírgula e zeros se a função não estiver disponível
+		                    this.value = this.value + ',00';
+		                }
+		            }
+		        }
+		        // Se já tem vírgula mas não tem 2 casas decimais
+		        else if (this.value.includes(',')) {
+		            const parts = this.value.split(',');
+		            if (parts.length === 2 && parts[1].length < 2) {
+		                this.value = parts[0] + ',' + parts[1].padEnd(2, '0');
+		            }
+		        }
+		    });
+		}
 	} else {
 		modal.classList.remove('active');
 		document.getElementById('transactionForm').reset();
@@ -930,6 +1165,7 @@ function updateUI() {
 function updateDashboardUI() {
 	updateCards();
 	updateCharts();
+	updateRecentTransactions();
 }
 
 function updateCards() {
@@ -1049,6 +1285,236 @@ function updateCharts() {
 	updateCashFlowChart(filteredTransactions);
 }
 
+function initializeCharts() {
+	// Expenses by Category Chart
+	const expenseCtx = document.getElementById('expensesByCategory').getContext('2d');
+	window.expensesChart = new Chart(expenseCtx, {
+		type: 'doughnut',
+		data: {
+			labels: [],
+			datasets: [{
+				data: [],
+				backgroundColor: [
+					'#10b981', // Verde
+					'#3b82f6', // Azul
+					'#f59e0b', // Laranja
+					'#8b5cf6', // Roxo
+					'#ec4899', // Rosa
+					'#06b6d4', // Ciano
+					'#ef4444', // Vermelho
+					'#6366f1'  // Indigo
+				],
+				borderWidth: 0,
+				borderRadius: 4,
+				hoverOffset: 15
+			}]
+		},
+		options: {
+			cutout: '70%',
+			responsive: true,
+			maintainAspectRatio: false,
+			layout: {
+				padding: 20
+			},
+			plugins: {
+				legend: {
+					display: true,
+					position: 'right',
+					labels: {
+						padding: 20,
+						usePointStyle: true,
+						pointStyle: 'circle',
+						font: {
+							size: 12,
+							weight: '500'
+						},
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+					}
+				},
+				title: {
+					display: false, // Remover título redundante
+					text: '',
+					padding: 0
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							const value = context.parsed;
+							const total = context.dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = ((value / total) * 100).toFixed(1);
+							return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+						}
+					},
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					padding: 12,
+					titleFont: {
+						size: 14
+					},
+					bodyFont: {
+						size: 14
+					},
+					bodySpacing: 8,
+					boxWidth: 10
+				}
+			},
+			animation: {
+				animateScale: true,
+				animateRotate: true,
+				duration: 1000,
+				easing: 'easeOutCirc'
+			}
+		}
+	});
+
+	// Cash Flow Chart
+	const cashFlowCtx = document.getElementById('cashFlow').getContext('2d');
+	window.cashFlowChart = new Chart(cashFlowCtx, {
+		type: 'bar',
+		data: {
+			labels: [],
+			datasets: [
+				{
+					label: 'Receitas',
+					backgroundColor: '#10b981',
+					borderColor: '#10b981',
+					borderWidth: 0,
+					borderRadius: 6,
+					data: [],
+					barThickness: 16,
+					maxBarThickness: 24
+				},
+				{
+					label: 'Despesas',
+					backgroundColor: '#ef4444',
+					borderColor: '#ef4444',
+					borderWidth: 0,
+					borderRadius: 6,
+					data: [],
+					barThickness: 16,
+					maxBarThickness: 24
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			layout: {
+				padding: {
+					top: 10,
+					right: 25,
+					bottom: 10,
+					left: 10
+				}
+			},
+			plugins: {
+				legend: {
+					position: 'top',
+					align: 'center',
+					labels: {
+						usePointStyle: true,
+						pointStyle: 'rectRounded',
+						padding: 20,
+						font: {
+							size: 12,
+							weight: '500'
+						},
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+					}
+				},
+				title: {
+					display: false, // Remover título redundante
+					text: '',
+					padding: 0
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							const value = context.parsed.y;
+							return `${context.dataset.label}: ${formatCurrency(value)}`;
+						}
+					},
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					padding: 12,
+					titleFont: {
+						size: 14
+					},
+					bodyFont: {
+						size: 14
+					}
+				}
+			},
+			scales: {
+				x: {
+					grid: {
+						display: false
+					},
+					ticks: {
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+						font: {
+							size: 11
+						}
+					}
+				},
+				y: {
+					beginAtZero: true,
+					grid: {
+						color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid'),
+						drawBorder: false
+					},
+					ticks: {
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+						font: {
+							size: 12
+						},
+						callback: function(value) {
+							if (value >= 1000) {
+								return `${value/1000}K`;
+							}
+							return value;
+						}
+					}
+				}
+			},
+			animation: {
+				duration: 1200,
+				easing: 'easeOutQuart'
+			},
+			hover: {
+				mode: 'index',
+				intersect: false
+			},
+			onClick: function(e, elements) {
+				// Permitir interação e drilling nos dados (futuramente)
+				if (elements.length > 0) {
+					const index = elements[0].index;
+					// Ação ao clicar na barra
+					console.log('Período selecionado:', this.data.labels[index]);
+				}
+			}
+		}
+	});
+	
+	// Atualizar cores quando o tema mudar
+	document.addEventListener('themeChanged', function(e) {
+		const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+		const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid');
+		
+		if (window.expensesChart) {
+			window.expensesChart.options.plugins.legend.labels.color = textColor;
+			window.expensesChart.update();
+		}
+		
+		if (window.cashFlowChart) {
+			window.cashFlowChart.options.plugins.legend.labels.color = textColor;
+			window.cashFlowChart.options.scales.x.ticks.color = textColor;
+			window.cashFlowChart.options.scales.y.ticks.color = textColor;
+			
+			window.cashFlowChart.options.scales.y.grid.color = gridColor;
+			window.cashFlowChart.update();
+		}
+	});
+}
+
 function updateExpensesChart(transactions) {
 	const ctx = document.getElementById('expensesByCategory')?.getContext('2d');
 	if (!ctx) return;
@@ -1058,6 +1524,27 @@ function updateExpensesChart(transactions) {
 		window.expensesChart.destroy();
 	}
 
+	// Paleta de cores mais viva e moderna
+	const colors = [
+		'#10b981', // Verde
+		'#3b82f6', // Azul
+		'#f59e0b', // Laranja
+		'#8b5cf6', // Roxo
+		'#ec4899', // Rosa
+		'#06b6d4', // Ciano
+		'#ef4444', // Vermelho
+		'#6366f1'  // Indigo
+	];
+	
+	// Texturas adicionais para categorias além da paleta básica
+	const patternColors = colors.map((color, index) => {
+		if (index < 8) return color;
+		// Criar cores mais claras ou mais escuras para categorias adicionais
+		return index % 2 === 0 
+			? pSBC(0.2, colors[index % 8]) // Mais claro
+			: pSBC(-0.2, colors[index % 8]); // Mais escuro
+	});
+
 	// Criar um novo gráfico
 	window.expensesChart = new Chart(ctx, {
 		type: 'doughnut',
@@ -1065,36 +1552,78 @@ function updateExpensesChart(transactions) {
 			labels: [],
 			datasets: [{
 				data: [],
-				backgroundColor: [
-					'#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-					'#9966FF', '#FF9F40', '#2ECC71', '#E74C3C'
-				],
-				borderWidth: 2,
-				borderColor: '#ffffff'
+				backgroundColor: patternColors,
+				borderWidth: 0,
+				borderRadius: 4,
+				hoverOffset: 15
 			}]
 		},
 		options: {
+			cutout: '70%',
 			responsive: true,
 			maintainAspectRatio: false,
+			layout: {
+				padding: 20
+			},
 			plugins: {
 				legend: {
+					display: true,
 					position: 'right',
 					labels: {
-						color: 'rgb(255, 255, 255)',
 						padding: 20,
-						font: { size: 12 }
-					}
+						usePointStyle: true,
+						pointStyle: 'circle',
+						font: {
+							size: 12,
+							weight: '500'
+						},
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
+					},
+					onClick: function(e, legendItem, legend) {
+                        // Implementar comportamento padrão do Chart.js para mostrar/esconder categorias
+                        const index = legendItem.index;
+                        const ci = legend.chart;
+                        const meta = ci.getDatasetMeta(0);
+                        
+                        // Verificar se o item da legenda está visível
+                        const alreadyHidden = meta.data[index].hidden || false;
+                        
+                        // Mostra ou esconde o item do gráfico
+                        meta.data[index].hidden = !alreadyHidden;
+                        
+                        // Atualizar o gráfico para mostrar a mudança
+                        ci.update();
+                    }
 				},
 				title: {
-					display: true,
-					text: 'Distribuição de Despesas',
-					color: 'rgb(255, 255, 255)',
-					font: {
-						size: 16,
-						weight: 'bold'
+					display: false, // Remover título redundante, já temos no HTML
+					text: '',
+					padding: 0
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							const value = context.parsed;
+							const total = context.dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = ((value / total) * 100).toFixed(1);
+							return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+						}
 					},
-					padding: 20
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					padding: 12,
+					titleFont: {
+						size: 14
+					},
+					bodyFont: {
+						size: 14
+					},
+					bodySpacing: 8
 				}
+			},
+			animation: {
+				animateScale: true,
+				animateRotate: true,
+				duration: 800
 			}
 		}
 	});
@@ -1109,16 +1638,45 @@ function updateExpensesChart(transactions) {
 			categories[t.category] += Math.abs(Number(t.amount));
 		});
 
-	const labels = Object.keys(categories);
-	const data = Object.values(categories);
+	// Ordenar categorias por valor (maior para menor)
+	const sortedCategories = Object.entries(categories)
+		.sort((a, b) => b[1] - a[1])
+		.reduce((acc, [key, value]) => {
+			acc[key] = value;
+			return acc;
+		}, {});
+
+	const labels = Object.keys(sortedCategories);
+	const data = Object.values(sortedCategories);
 
 	window.expensesChart.data.labels = labels;
 	window.expensesChart.data.datasets[0].data = data;
-	window.expensesChart.update('none'); // Atualiza sem animação para melhor performance
+	window.expensesChart.update();
+}
+
+// Função auxiliar para modificar cores (mais claro/escuro)
+// Percent maior que 0 = mais claro, menor que 0 = mais escuro
+function pSBC(percent, colorCode) {
+    let r = parseInt(colorCode.substring(1, 3), 16);
+    let g = parseInt(colorCode.substring(3, 5), 16);
+    let b = parseInt(colorCode.substring(5, 7), 16);
+
+    r = parseInt(r * (1 + percent));
+    g = parseInt(g * (1 + percent));
+    b = parseInt(b * (1 + percent));
+
+    r = Math.min(255, Math.max(0, r)).toString(16).padStart(2, '0');
+    g = Math.min(255, Math.max(0, g)).toString(16).padStart(2, '0');
+    b = Math.min(255, Math.max(0, b)).toString(16).padStart(2, '0');
+
+    return `#${r}${g}${b}`;
 }
 
 function updateCashFlowChart(transactions) {
 	if (!window.cashFlowChart) return;
+	
+	const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+	const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid');
 
 	const periodSelect = document.getElementById('periodSelect');
 	const period = periodSelect?.value || 'month';
@@ -1227,13 +1785,12 @@ function formatCurrency(value) {
 }
 
 function applyTheme(theme) {
-	document.body.setAttribute('data-theme', theme || 'light');
+	document.documentElement.setAttribute('data-theme', theme);
+	localStorage.setItem('theme', theme);
 	
-	// Atualiza o select do tema se existir
-	const themeSelect = document.getElementById('theme');
-	if (themeSelect) {
-		themeSelect.value = theme || 'light';
-	}
+	// Disparar evento personalizado para que componentes possam reagir à mudança de tema
+	const event = new CustomEvent('themeChanged', { detail: { theme } });
+	document.dispatchEvent(event);
 }
 
 // Inicialização dos Gráficos
@@ -1247,39 +1804,73 @@ function initializeCharts() {
 			datasets: [{
 				data: [],
 				backgroundColor: [
-					'#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-					'#9966FF', '#FF9F40', '#2ECC71', '#E74C3C'
+					'#10b981', // Verde
+					'#3b82f6', // Azul
+					'#f59e0b', // Laranja
+					'#8b5cf6', // Roxo
+					'#ec4899', // Rosa
+					'#06b6d4', // Ciano
+					'#ef4444', // Vermelho
+					'#6366f1'  // Indigo
 				],
-				borderWidth: 2,
-				borderColor: '#ffffff'
+				borderWidth: 0,
+				borderRadius: 4,
+				hoverOffset: 15
 			}]
 		},
 		options: {
+			cutout: '70%',
 			responsive: true,
 			maintainAspectRatio: false,
+			layout: {
+				padding: 20
+			},
 			plugins: {
 				legend: {
+					display: true,
 					position: 'right',
 					labels: {
 						padding: 20,
+						usePointStyle: true,
+						pointStyle: 'circle',
 						font: {
-							size: 12
-						}
+							size: 12,
+							weight: '500'
+						},
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
 					}
 				},
 				title: {
-					display: true,
-					text: 'Distribuição de Despesas',
-					font: {
-						size: 16,
-						weight: 'bold'
+					display: false, // Remover título redundante
+					text: '',
+					padding: 0
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							const value = context.parsed;
+							const total = context.dataset.data.reduce((a, b) => a + b, 0);
+							const percentage = ((value / total) * 100).toFixed(1);
+							return `${context.label}: ${formatCurrency(value)} (${percentage}%)`;
+						}
 					},
-					padding: 20
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					padding: 12,
+					titleFont: {
+						size: 14
+					},
+					bodyFont: {
+						size: 14
+					},
+					bodySpacing: 8,
+					boxWidth: 10
 				}
 			},
 			animation: {
 				animateScale: true,
-				animateRotate: true
+				animateRotate: true,
+				duration: 1000,
+				easing: 'easeOutCirc'
 			}
 		}
 	});
@@ -1293,63 +1884,142 @@ function initializeCharts() {
 			datasets: [
 				{
 					label: 'Receitas',
-					backgroundColor: 'rgba(46, 204, 113, 0.7)',
-					borderColor: '#2ecc71',
-					borderWidth: 2,
-					data: []
+					backgroundColor: '#10b981',
+					borderColor: '#10b981',
+					borderWidth: 0,
+					borderRadius: 6,
+					data: [],
+					barThickness: 16,
+					maxBarThickness: 24
 				},
 				{
 					label: 'Despesas',
-					backgroundColor: 'rgba(231, 76, 60, 0.7)',
-					borderColor: '#e74c3c',
-					borderWidth: 2,
-					data: []
+					backgroundColor: '#ef4444',
+					borderColor: '#ef4444',
+					borderWidth: 0,
+					borderRadius: 6,
+					data: [],
+					barThickness: 16,
+					maxBarThickness: 24
 				}
 			]
 		},
 		options: {
 			responsive: true,
 			maintainAspectRatio: false,
+			layout: {
+				padding: {
+					top: 10,
+					right: 25,
+					bottom: 10,
+					left: 10
+				}
+			},
 			plugins: {
 				legend: {
 					position: 'top',
+					align: 'center',
 					labels: {
+						usePointStyle: true,
+						pointStyle: 'rectRounded',
+						padding: 20,
 						font: {
-							size: 12
-						}
+							size: 12,
+							weight: '500'
+						},
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-primary')
 					}
 				},
 				title: {
-					display: true,
-					text: 'Fluxo de Caixa Mensal',
-					font: {
-						size: 16,
-						weight: 'bold'
+					display: false, // Remover título redundante
+					text: '',
+					padding: 0
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							const value = context.parsed.y;
+							return `${context.dataset.label}: ${formatCurrency(value)}`;
+						}
 					},
-					padding: 20
+					backgroundColor: 'rgba(0, 0, 0, 0.7)',
+					padding: 12,
+					titleFont: {
+						size: 14
+					},
+					bodyFont: {
+						size: 14
+					}
 				}
 			},
 			scales: {
 				x: {
 					grid: {
 						display: false
+					},
+					ticks: {
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+						font: {
+							size: 11
+						}
 					}
 				},
 				y: {
 					beginAtZero: true,
 					grid: {
-						color: 'rgba(0, 0, 0, 0.1)'
+						color: getComputedStyle(document.documentElement).getPropertyValue('--chart-grid'),
+						drawBorder: false
+					},
+					ticks: {
+						color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'),
+						font: {
+							size: 12
+						},
+						callback: function(value) {
+							if (value >= 1000) {
+								return `${value/1000}K`;
+							}
+							return value;
+						}
 					}
 				}
 			},
 			animation: {
-				duration: 1000,
-				easing: 'easeInOutQuart'
+				duration: 1200,
+				easing: 'easeOutQuart'
 			},
 			hover: {
 				mode: 'index',
 				intersect: false
+			},
+			onClick: function(e, elements) {
+				// Permitir interação e drilling nos dados (futuramente)
+				if (elements.length > 0) {
+					const index = elements[0].index;
+					// Ação ao clicar na barra
+					console.log('Período selecionado:', this.data.labels[index]);
+				}
 			}
+		}
+	});
+	
+	// Atualizar cores quando o tema mudar
+	document.addEventListener('themeChanged', function(e) {
+		const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary');
+		const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid');
+		
+		if (window.expensesChart) {
+			window.expensesChart.options.plugins.legend.labels.color = textColor;
+			window.expensesChart.update();
+		}
+		
+		if (window.cashFlowChart) {
+			window.cashFlowChart.options.plugins.legend.labels.color = textColor;
+			window.cashFlowChart.options.scales.x.ticks.color = textColor;
+			window.cashFlowChart.options.scales.y.ticks.color = textColor;
+			
+			window.cashFlowChart.options.scales.y.grid.color = gridColor;
+			window.cashFlowChart.update();
 		}
 	});
 }
@@ -1417,29 +2087,24 @@ async function handleDeleteTransaction(id) {
 		const { error } = await supabase
 			.from('transactions')
 			.delete()
-			.eq('id', id)
-			.eq('user_id', currentUser.id);
+			.eq('id', id);
 
 		if (error) throw error;
 
-		// Atualizar a lista global de transações
+		// Remover a transação da lista local
 		window.transactions = window.transactions.filter(t => t.id !== id);
 		
-		// Se estiver usando paginação, atualizar
-		if (window.transactionPagination) {
-			const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-			const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-			window.transactionPagination.setTransactions(filteredByPeriod);
-		}
+		// Atualizar a interface imediatamente
+		updateTransactionsListImmediate(window.transactions);
 		
-		// Atualizar UI
-		updateUI();
+		// Atualizar dashboard e gráficos
 		updateDashboardUI();
+		updateCharts();
 		
 		showNotification('success', 'Sucesso', 'Transação excluída com sucesso!');
 	} catch (error) {
 		console.error('Erro ao excluir transação:', error);
-		showNotification('error', 'Erro', 'Erro ao excluir a transação');
+		showNotification('error', 'Erro', 'Não foi possível excluir a transação');
 	}
 }
 
@@ -1552,11 +2217,51 @@ function setupFilterListeners() {
 // Funções de Edição de Transação
 function toggleEditModal(show, transaction = null) {
 	const modal = document.getElementById('editTransactionModal');
+	
 	if (show && transaction) {
+		// Preencher o formulário com os dados da transação
+		const form = document.getElementById('editTransactionForm');
+		
+		document.getElementById('editTransactionId').value = transaction.id;
+		document.getElementById('editDescription').value = transaction.description;
+		
+		// Formatar o valor para exibição
+		const amountInput = document.getElementById('editAmount');
+		const absAmount = Math.abs(transaction.amount);
+		
+		// Usar formatNumberToBrazilian para garantir exibição com centavos
+		if (typeof window.formatNumberToBrazilian === 'function') {
+		    amountInput.value = formatNumberToBrazilian(absAmount);
+		    // Converter para texto para habilitar formatação
+		    if (amountInput.getAttribute('type') !== 'text') {
+                amountInput.type = 'text';
+                // Aplicar máscara de formatação
+                if (typeof window.applyNumberMask === 'function') {
+                    window.applyNumberMask(amountInput);
+                }
+            }
+		} else {
+		    // Fallback se a função não estiver disponível
+		    amountInput.value = absAmount;
+		}
+		
+		document.getElementById('editType').value = transaction.type;
+		document.getElementById('editCategory').value = transaction.category;
+		
+		// Formatar a data (YYYY-MM-DD)
+		let dateValue = transaction.date;
+		if (dateValue.includes('T')) {
+		    dateValue = dateValue.split('T')[0];
+		}
+		document.getElementById('editDate').value = dateValue;
+		
+		// Mostrar o modal
 		modal.classList.add('active');
-		fillEditForm(transaction);
 	} else {
+		// Fechar o modal
 		modal.classList.remove('active');
+		
+		// Limpar o formulário
 		document.getElementById('editTransactionForm').reset();
 	}
 }
@@ -1571,63 +2276,110 @@ function fillEditForm(transaction) {
 }
 
 async function handleEditTransactionSubmit(e) {
-	e.preventDefault();
-	
-	const form = e.target;
-	const id = form.querySelector('#editTransactionId').value;
-	const type = form.querySelector('#editType').value;
-	let amount = parseFloat(form.querySelector('#editAmount').value);
-	
-	if (type === 'expense') {
-		amount = -Math.abs(amount);
-	}
-
-	const [year, month, day] = form.querySelector('#editDate').value.split('-');
-	const formattedDate = `${year}-${month}-${day}`;
-
-	const transaction = {
-		description: form.querySelector('#editDescription').value,
-		amount,
-		type,
-		category: form.querySelector('#editCategory').value,
-		date: formattedDate
-	};
-
-	try {
-		const { data, error } = await supabase
-			.from('transactions')
-			.update(transaction)
-			.eq('id', id)
-			.select()
-			.single();
-
-		if (error) throw error;
-
-		// Atualizar a transação na lista
-		const index = window.transactions.findIndex(t => t.id === id);
-		if (index !== -1) {
-			window.transactions[index] = data;
-		}
-
-		// Se estiver usando paginação, atualizar
-		if (window.transactionPagination) {
-			const periodFilter = document.getElementById('periodSelect')?.value || 'month';
-			const filteredByPeriod = filterTransactionsByPeriod(window.transactions, periodFilter);
-			window.transactionPagination.setTransactions(filteredByPeriod);
-		} else {
-			await loadTransactions();
-		}
-
-		// Atualizar a UI
-		updateUI();
-		
-		toggleEditModal(false);
-		
-		showNotification('success', 'Sucesso', 'Transação atualizada com sucesso!');
-	} catch (error) {
-		console.error('Erro ao atualizar transação:', error);
-		showNotification('error', 'Erro', 'Erro ao atualizar a transação');
-	}
+    e.preventDefault();
+    
+    try {
+        const form = e.target;
+        const id = form.querySelector('#editTransactionId').value;
+        const type = form.querySelector('#editType').value;
+        
+        // Obter o valor formatado e converter para número
+        const amountFormatted = form.querySelector('#editAmount').value;
+        
+        // Verificar se o valor tem vírgula para separar os centavos
+        // Se não tiver, e for apenas um número inteiro como "8", adicionar ",00"
+        let formattedValue = amountFormatted;
+        if (!formattedValue.includes(',')) {
+            formattedValue = formattedValue + ',00';
+            console.log(`Valor sem centavos, adicionando: "${amountFormatted}" => "${formattedValue}"`);
+        }
+        
+        let amount = typeof parseFormattedNumber === 'function' 
+            ? parseFormattedNumber(formattedValue) 
+            : parseFloat(formattedValue.replace(/\./g, '').replace(',', '.'));
+        
+        console.log(`Editando transação: valor formatado "${formattedValue}" => valor numérico ${amount}`);
+        
+        if (type === 'expense') {
+            amount = -Math.abs(amount);
+        }
+    
+        const transaction = {
+            description: form.querySelector('#editDescription').value,
+            amount,
+            type,
+            category: form.querySelector('#editCategory').value,
+            date: form.querySelector('#editDate').value
+        };
+    
+        const { data, error } = await supabase
+            .from('transactions')
+            .update(transaction)
+            .eq('id', id)
+            .select()
+            .single();
+    
+        if (error) throw error;
+    
+        // Atualizar a transação na lista local
+        const index = window.transactions.findIndex(t => t.id === id);
+        if (index !== -1) {
+            window.transactions[index] = data;
+            console.log(`Transação atualizada no índice ${index}:`, data);
+        }
+        
+        // Atualizar o elemento diretamente no DOM para uma atualização imediata
+        const transactionItem = document.querySelector(`.transaction-item[data-id="${id}"]`);
+        if (transactionItem) {
+            // Atualizando a classe principal
+            transactionItem.className = `transaction-item ${data.type}`;
+            
+            // Atualizando as informações da transação
+            const infoElement = transactionItem.querySelector('.transaction-info');
+            if (infoElement) {
+                infoElement.innerHTML = `
+                    <strong>${data.description}</strong>
+                    <div>${data.category}</div>
+                    <small>${new Date(data.date).toLocaleDateString()}</small>
+                `;
+            }
+            
+            // Atualizando o valor e os botões
+            const amountElement = transactionItem.querySelector('.transaction-amount');
+            if (amountElement) {
+                const amountClass = data.type === 'income' ? 'amount-positive' : 'amount-negative';
+                amountElement.className = `transaction-amount ${amountClass}`;
+                amountElement.innerHTML = `
+                    ${formatCurrency(Math.abs(data.amount))}
+                    <div class="transaction-actions">
+                        <i class="fas fa-edit edit-btn" title="Editar"></i>
+                        <i class="fas fa-trash delete-btn" title="Excluir"></i>
+                    </div>
+                `;
+                
+                // Reconectando event listeners
+                const editBtn = amountElement.querySelector('.edit-btn');
+                const deleteBtn = amountElement.querySelector('.delete-btn');
+                
+                editBtn.addEventListener('click', () => toggleEditModal(true, data));
+                deleteBtn.addEventListener('click', () => handleDeleteTransaction(data.id));
+            }
+        } else {
+            // Se o elemento não estiver no DOM, atualizar toda a lista
+            updateTransactionsListImmediate(window.transactions);
+        }
+    
+        // Atualizar dashboard e gráficos
+        updateDashboardUI();
+        updateCharts();
+        
+        toggleEditModal(false);
+        
+        showNotification('success', 'Sucesso', 'Transação atualizada com sucesso!');
+    } catch (error) {
+        console.error('Erro ao atualizar transação:', error);
+        showNotification('error', 'Erro', 'Erro ao atualizar a transação');
+    }
 }
 
 // Atualizar informações do usuário
@@ -1745,9 +2497,9 @@ function showWelcomeModal() {
 					</div>
 				</form>
 			</div>
-		</div>
-	`;
-	
+                    </div>
+                `;
+                
 	document.body.appendChild(modal);
 	
 	const form = document.getElementById('welcomeForm');
@@ -2540,3 +3292,116 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+// Função para atualizar a lista de transações recentes no dashboard
+function updateRecentTransactions() {
+    const container = document.getElementById('recentTransactionsList');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Ordenar transações pela data (mais recentes primeiro)
+    const sortedTransactions = [...window.transactions].sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+    );
+    
+    // Mostrar apenas as 5 transações mais recentes
+    const recentTransactions = sortedTransactions.slice(0, 5);
+    
+    if (!recentTransactions.length) {
+        container.innerHTML = `
+            <div class="no-transactions">
+                <p>Nenhuma transação encontrada.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    recentTransactions.forEach(transaction => {
+        const div = document.createElement('div');
+        div.className = `transaction-item ${transaction.type}`;
+        div.setAttribute('data-id', transaction.id);
+        
+        const amountClass = transaction.type === 'income' ? 'amount-positive' : 'amount-negative';
+        
+        div.innerHTML = `
+            <div class="transaction-info">
+                <strong>${transaction.description}</strong>
+                <div>${transaction.category}</div>
+                <small>${new Date(transaction.date).toLocaleDateString()}</small>
+            </div>
+            <div class="transaction-amount ${amountClass}">
+                ${formatCurrency(Math.abs(transaction.amount))}
+            </div>
+        `;
+        
+        container.appendChild(div);
+    });
+    
+    // Adicionar evento para "Ver todos" navegar para a página de transações
+    const viewAllLink = document.querySelector('.view-all[data-page="transactions"]');
+    if (viewAllLink) {
+        viewAllLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('transactions');
+            
+            // Atualizar navegação ativa
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector('.nav-item[data-page="transactions"]').classList.add('active');
+            
+            // Também atualizar na navegação móvel se existir
+            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+            if (mobileNavItems.length) {
+                mobileNavItems.forEach(item => item.classList.remove('active'));
+                document.querySelector('.mobile-nav-item[data-page="transactions"]')?.classList.add('active');
+            }
+        });
+    }
+}
+
+// Melhorar o gerenciamento do seletor de período
+function setupPeriodSelector() {
+    const periodSelect = document.getElementById('periodSelect');
+    const customDateRange = document.getElementById('customDateRange');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const applyButton = document.getElementById('applyDateRange');
+    
+    if (!periodSelect) return;
+    
+    // Definir datas iniciais para os campos de data
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    startDateInput.valueAsDate = firstDayOfMonth;
+    endDateInput.valueAsDate = lastDayOfMonth;
+    
+    // Evento de mudança no seletor de período
+    periodSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+        
+        if (selectedValue === 'custom') {
+            customDateRange.style.display = 'flex';
+        } else {
+            customDateRange.style.display = 'none';
+            updateDashboardUI();
+        }
+    });
+    
+    // Botão de aplicar período personalizado
+    applyButton.addEventListener('click', function() {
+        updateDashboardUI();
+    });
+    
+    // Também atualizar ao pressionar Enter nos campos de data
+    [startDateInput, endDateInput].forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                updateDashboardUI();
+            }
+        });
+    });
+}

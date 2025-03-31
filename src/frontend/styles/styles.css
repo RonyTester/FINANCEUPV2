@@ -1,44 +1,55 @@
 :root {
-	/* Light theme */
+	/* Light theme - Paleta de cores melhorada */
 	--bg-primary: #ffffff;
-	--bg-secondary: #f8f9fa;
+	--bg-secondary: #f8f9fc;
 	--text-primary: #2d3436;
 	--text-secondary: #636e72;
-	--border-color: #dfe6e9;
-	--primary-color: #0984e3;
-	--success-color: #00b894;
-	--danger-color: #d63031;
-	--warning-color: #fdcb6e;
-	--error-color: #d63031;
-	--background-color: #f5f6fa;
+	--border-color: #e6ecf5;
+	--primary-color: #4361ee;
+	--success-color: #10b981;
+	--danger-color: #ef4444;
+	--warning-color: #f59e0b;
+	--error-color: #ef4444;
+	--background-color: #f5f7fa;
 	--sidebar-width: 240px;
-	--sidebar-bg: #2d3436;
-	--card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	--sidebar-bg: #2c3e50;
+	--card-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 	--modal-overlay: rgba(0, 0, 0, 0.5);
 	--mobile-sidebar-bg: #ffffff;
 	--mobile-sidebar-text: #2d3436;
 	--mobile-sidebar-border: #e9ecef;
+	--card-income: #10b981;
+	--card-expense: #ef4444;
+	--card-balance: #4361ee;
+	--card-savings: #8b5cf6;
+	--chart-grid: rgba(0, 0, 0, 0.04);
 }
 
 [data-theme="dark"] {
-	--bg-primary: #2d3436;
-	--bg-secondary: #353b48;
-	--text-primary: #dfe6e9;
-	--text-secondary: #b2bec3;
-	--border-color: #636e72;
-	--primary-color: #74b9ff;
-	--success-color: #55efc4;
-	--danger-color: #ff7675;
-	--warning-color: #ffeaa7;
-	--error-color: #ff7675;
-	--background-color: #212529;
+	/* Dark theme - Paleta de cores melhorada */
+	--bg-primary: #111827;
+	--bg-secondary: #1f2937;
+	--text-primary: #f3f4f6;
+	--text-secondary: #d1d5db;
+	--border-color: #374151;
+	--primary-color: #60a5fa;
+	--success-color: #34d399;
+	--danger-color: #f87171;
+	--warning-color: #fbbf24;
+	--error-color: #f87171;
+	--background-color: #0f172a;
 	--sidebar-width: 240px;
-	--sidebar-bg: #2d3436;
-	--card-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	--modal-overlay: rgba(0, 0, 0, 0.5);
-	--mobile-sidebar-bg: #2d3436;
-	--mobile-sidebar-text: #ffffff;
-	--mobile-sidebar-border: #4a4a4a;
+	--sidebar-bg: #1e293b;
+	--card-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+	--modal-overlay: rgba(0, 0, 0, 0.7);
+	--mobile-sidebar-bg: #1f2937;
+	--mobile-sidebar-text: #f3f4f6;
+	--mobile-sidebar-border: #374151;
+	--card-income: #34d399;
+	--card-expense: #f87171;
+	--card-balance: #60a5fa;
+	--card-savings: #a78bfa;
+	--chart-grid: rgba(255, 255, 255, 0.04);
 }
 
 /* Base styles */
@@ -71,7 +82,7 @@ body {
 /* Sidebar styles */
 .sidebar {
 	width: 250px;
-	background: #2c3e50;  /* Azul escuro mais suave */
+	background: var(--sidebar-bg);
 	height: 100vh;
 	padding: 1.5rem;
 	display: flex;
@@ -185,42 +196,77 @@ body {
 
 .card {
 	background-color: var(--bg-secondary);
-	padding: 1.5rem;
-	border-radius: 1rem;
+	padding: 1.8rem;
+	border-radius: 1.2rem;
 	box-shadow: var(--card-shadow);
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: 1.2rem;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	overflow: hidden;
+	position: relative;
+}
+
+.card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 6px;
+	height: 100%;
+	border-radius: 3px 0 0 3px;
+}
+
+.card:nth-child(1)::before {
+	background-color: var(--card-income);
+}
+
+.card:nth-child(2)::before {
+	background-color: var(--card-expense);
+}
+
+.card:nth-child(3)::before {
+	background-color: var(--card-balance);
+}
+
+.card:nth-child(4)::before {
+	background-color: var(--card-savings);
 }
 
 .card-icon {
-	width: 48px;
-	height: 48px;
-	border-radius: 50%;
+	width: 56px;
+	height: 56px;
+	border-radius: 16px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	color: white;
 	font-size: 1.5rem;
 }
 
 .card-icon.income {
-	background-color: rgba(0, 184, 148, 0.1);
-	color: var(--success-color);
+	background-color: var(--card-income);
+	box-shadow: 0 10px 15px rgba(16, 185, 129, 0.2);
 }
 
 .card-icon.expense {
-	background-color: rgba(214, 48, 49, 0.1);
-	color: var(--danger-color);
+	background-color: var(--card-expense);
+	box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
 }
 
 .card-icon.balance {
-	background-color: rgba(9, 132, 227, 0.1);
-	color: var(--primary-color);
+	background-color: var(--card-balance);
+	box-shadow: 0 10px 15px rgba(67, 97, 238, 0.2);
 }
 
 .card-icon.savings {
-	background-color: rgba(253, 203, 110, 0.1);
-	color: var(--warning-color);
+	background-color: var(--card-savings);
+	box-shadow: 0 10px 15px rgba(139, 92, 246, 0.2);
 }
 
 .card-content {
@@ -228,47 +274,46 @@ body {
 }
 
 .card-content h3 {
+	font-size: 0.95rem;
+	font-weight: 600;
 	color: var(--text-secondary);
-	font-size: 0.875rem;
-	margin-bottom: 0.25rem;
+	margin-bottom: 0.5rem;
 }
 
 .card-content p {
 	font-size: 1.5rem;
-	font-weight: 600;
+	font-weight: 700;
 	color: var(--text-primary);
 }
 
 /* Gráficos */
 .charts-container {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-	gap: 1.5rem;
-	margin-top: 2rem;
+	grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+	gap: 1.8rem;
+	margin-bottom: 2rem;
 }
 
 .chart-card {
 	background-color: var(--bg-secondary);
-	padding: 1.5rem;
-	border-radius: 1rem;
+	border-radius: 1.2rem;
 	box-shadow: var(--card-shadow);
-	position: relative;
+	padding: 1.5rem;
+	overflow: hidden;
 }
 
 .chart-card h3 {
-	margin-bottom: 1rem;
-	color: var(--text-primary);
-	font-size: 1.2rem;
+	font-size: 1.1rem;
 	font-weight: 600;
+	margin-bottom: 1.2rem;
+	text-align: center;
+	color: var(--text-primary);
 }
 
 .chart-wrapper {
-	height: 300px;
 	position: relative;
-	margin-top: 1rem;
-	background-color: rgba(45, 52, 54, 0.95);
-	border-radius: 0.5rem;
-	padding: 1rem;
+	height: 340px;
+	margin: 0 -0.5rem -0.5rem -0.5rem;
 }
 
 /* Estilos para os filtros */
@@ -3652,6 +3697,198 @@ body {
     #editFixedExpenseModal .modal-content,
     #fixedExpensePaymentModal .modal-content {
         max-height: 70vh;
+    }
+}
+
+/* Dashboard Container Melhorado */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Período Selector Melhorado */
+.period-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background-color: var(--bg-secondary);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+}
+
+.period-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.period-label i {
+    color: var(--primary-color);
+}
+
+.filter-select {
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.date-range {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.filter-date {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+/* Seção de Transações Recentes */
+.recent-transactions {
+    background-color: var(--bg-secondary);
+    border-radius: 1.2rem;
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.section-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.view-all {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.view-all:hover {
+    text-decoration: underline;
+}
+
+.view-all::after {
+    content: '\f054';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.8rem;
+}
+
+.recent-transactions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.recent-transactions-list .transaction-item {
+    padding: 0.8rem 1rem;
+    border-radius: 0.8rem;
+    border-left: 4px solid transparent;
+}
+
+.recent-transactions-list .transaction-item.income {
+    border-left-color: var(--card-income);
+    background-color: rgba(16, 185, 129, 0.05);
+}
+
+.recent-transactions-list .transaction-item.expense {
+    border-left-color: var(--card-expense);
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+/* Chart Legend Custom */
+.chart-legend-container {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+.chart-legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.chart-legend-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* Botão para período personalizado */
+#applyDateRange {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#applyDateRange:hover {
+    background-color: var(--primary-color);
+    opacity: 0.9;
+}
+
+/* Media queries para responsividade */
+@media (max-width: 768px) {
+    .period-selector {
+        flex-wrap: wrap;
+        padding: 0.6rem;
+    }
+    
+    .date-range {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .filter-date {
+        flex: 1;
+    }
+    
+    .chart-legend {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
