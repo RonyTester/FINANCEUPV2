@@ -326,7 +326,7 @@ function updateFixedExpensesList() {
 			const dueDate = new Date(currentYear, currentMonth, expense.due_day);
 			const isOverdue = !isPaidFull && dueDate < currentDate;
 			const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-			
+
 			let statusClass = isPaidFull ? 'paid' : (isPaidPartial ? 'partial' : (isOverdue ? 'overdue' : ''));
 			let statusText = isPaidFull ? 'Pago' : 
 							(isPaidPartial ? `Pago Parcialmente (${formatCurrency(totalPaid)})` : 
@@ -567,97 +567,6 @@ function showPaymentModal(expenseId, defaultAmount) {
 	};
 	amountInput.addEventListener('input', validateListener);
 	amountInput._validateListener = validateListener;
-}
-
-// Nova função personalizada para aplicar máscara de formatação específica para campos monetários
-// Esta versão resolve o problema da interpretação da vírgula durante a edição
-function applyCustomNumberMask(input) {
-    // Remover eventos anteriores se já estiver configurado
-    if (input._hasCustomMask) {
-        return;
-    }
-    
-    input._hasCustomMask = true;
-    
-    // Registrar o valor original para comparação
-    let previousValue = input.value;
-    
-    // Processar a entrada de forma correta preservando a posição do cursor
-    input.addEventListener('input', function(e) {
-        // Guardar a posição do cursor e o comprimento original
-        const cursorPos = this.selectionStart;
-        const oldLength = this.value.length;
-        
-        // Se o usuário digitar uma vírgula, queremos manter ela na posição correta
-        // e não permitir mais de uma vírgula
-        let value = this.value;
-        
-        // Verificar se há mais de uma vírgula
-        const commaCount = (value.match(/,/g) || []).length;
-        if (commaCount > 1) {
-            // Manter apenas a última vírgula digitada
-            const lastCommaPos = value.lastIndexOf(',');
-            value = value.substring(0, lastCommaPos).replace(/,/g, '') + 
-                   value.substring(lastCommaPos);
-        }
-        
-        // Remover todos os caracteres não numéricos exceto a vírgula
-        value = value.replace(/[^\d,]/g, '');
-        
-        // Verificar se já tem vírgula
-        if (value.includes(',')) {
-            // Separar parte inteira e decimal
-            let [intPart, decPart] = value.split(',');
-            
-            // Limitar a parte decimal a 2 dígitos
-            if (decPart && decPart.length > 2) {
-                decPart = decPart.substring(0, 2);
-            }
-            
-            // Adicionar pontos como separadores de milhar na parte inteira
-            intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            
-            // Reconstruir o valor formatado
-            value = intPart + (decPart ? ',' + decPart : ',');
-        } else {
-            // Se não tem vírgula, apenas formatar com pontos
-            value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-        
-        // Atualizar o valor e ajustar a posição do cursor
-        this.value = value;
-        
-        // Calcular a nova posição do cursor
-        const lengthDiff = value.length - oldLength;
-        const newCursorPos = cursorPos + lengthDiff;
-        
-        // Restaurar a posição do cursor
-        this.setSelectionRange(newCursorPos, newCursorPos);
-        
-        // Armazenar o valor para a próxima comparação
-        previousValue = value;
-    });
-    
-    // Formatar quando o campo perder o foco
-    input.addEventListener('blur', function() {
-        let value = this.value.trim();
-        
-        // Se estiver vazio, sair
-        if (!value) return;
-        
-        // Se não tem vírgula, adicionar
-        if (!value.includes(',')) {
-            value += ',00';
-        } else {
-            // Se tem vírgula, completar com zeros se necessário
-            const parts = value.split(',');
-            if (parts.length > 1 && parts[1].length < 2) {
-                value = parts[0] + ',' + parts[1].padEnd(2, '0');
-            }
-        }
-        
-        this.value = value;
-    });
 }
 
 async function handlePaymentSubmit(event) {
@@ -2266,15 +2175,6 @@ function toggleEditModal(show, transaction = null) {
 	}
 }
 
-function fillEditForm(transaction) {
-	document.getElementById('editTransactionId').value = transaction.id;
-	document.getElementById('editDescription').value = transaction.description;
-	document.getElementById('editAmount').value = Math.abs(transaction.amount);
-	document.getElementById('editType').value = transaction.type;
-	document.getElementById('editCategory').value = transaction.category;
-	document.getElementById('editDate').value = transaction.date.split('T')[0];
-}
-
 async function handleEditTransactionSubmit(e) {
     e.preventDefault();
     
@@ -2318,9 +2218,9 @@ async function handleEditTransactionSubmit(e) {
             .eq('id', id)
             .select()
             .single();
-    
+
         if (error) throw error;
-    
+
         // Atualizar a transação na lista local
         const index = window.transactions.findIndex(t => t.id === id);
         if (index !== -1) {
@@ -2448,9 +2348,19 @@ async function handleDeleteAccount() {
 		if (settingsError) throw settingsError;
 
 		// Por fim, deletar o usuário
-		const { error: userError } = await supabase.auth.admin.deleteUser(currentUser.id);
-		
-		if (userError) throw userError;
+		const { data: { session } } = await supabase.auth.getSession();
+		const response = await fetch('/api/delete-user', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				userId: currentUser.id,
+				access_token: session.access_token
+			})
+		});
+		const result = await response.json();
+		if (!result.success) throw new Error(result.error || 'Erro ao deletar conta');
 
 		// Fazer logout e redirecionar para a página de login
 		await supabase.auth.signOut();
@@ -2531,7 +2441,11 @@ async function handleWelcomeSubmit(e) {
 				.insert([defaultSettings])
 				.select();
 
-			if (insertError) throw insertError;
+			if (insertError) {
+				console.error('Erro ao criar configurações:', insertError);
+				return;
+			}
+
 			userSettings = newSettings[0];
 		} else {
 			// Se já existir, apenas atualiza

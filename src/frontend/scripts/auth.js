@@ -20,6 +20,31 @@ function setupEventListeners() {
     // Formulários
     document.getElementById('loginForm')?.addEventListener('submit', handleLogin);
     document.getElementById('registerForm')?.addEventListener('submit', handleRegister);
+
+    // --- LOGIN COM GOOGLE ---
+    // Ao clicar no botão, inicia o login social via Supabase
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', async () => {
+            try {
+                // Redireciona para o fluxo OAuth do Google
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        redirectTo: window.location.origin + '/'
+                    }
+                });
+                if (error) throw error;
+                // O usuário será redirecionado automaticamente pelo Supabase após o login
+            } catch (error) {
+                const errorElement = document.getElementById('loginError');
+                if (errorElement) {
+                    errorElement.textContent = 'Erro ao fazer login com Google: ' + error.message;
+                    errorElement.style.display = 'block';
+                }
+            }
+        });
+    }
 }
 
 // Mostrar formulário específico
