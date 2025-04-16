@@ -136,6 +136,51 @@
             display: none;
         }
 
+        .google-login-separator {
+            display: flex;
+            align-items: center;
+            margin: 1.2rem 0 1rem 0;
+        }
+        .google-login-separator span {
+            flex: 1;
+            text-align: center;
+            color: #888;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        .google-login-separator:before,
+        .google-login-separator:after {
+            content: '';
+            flex: 2;
+            border-bottom: 1px solid #e0e0e0;
+            margin: 0 8px;
+        }
+        .google-login-btn {
+            width: 100%;
+            background: #fff;
+            color: #444;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 0.7rem 0;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            cursor: pointer;
+            transition: box-shadow 0.2s, border 0.2s;
+            margin-bottom: 1rem;
+        }
+        .google-login-btn:hover {
+            border: 1.5px solid #0984e3;
+            box-shadow: 0 2px 8px rgba(9,132,227,0.12);
+        }
+        .google-login-btn i {
+            font-size: 1.2rem;
+            color: #ea4335;
+        }
+
         /* Ajustes para Desktop (telas maiores que 768px) */
         @media (min-width: 768px) {
             .auth-container {
@@ -221,6 +266,10 @@
                     <input type="password" id="loginPassword" required placeholder="Sua senha">
                 </div>
                 <button type="submit">Entrar</button>
+                <div class="google-login-separator"><span>ou</span></div>
+                <button type="button" id="googleLoginBtn" class="google-login-btn">
+                    <i class="fab fa-google"></i> Entrar com Google
+                </button>
                 <div class="error-message" id="loginError"></div>
             </form>
             <div class="auth-links">
@@ -261,4 +310,4 @@
     </script>
     <script src="/scripts/auth.js"></script>
 </body>
-</html> 
+</html>
