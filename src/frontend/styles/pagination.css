@@ -116,7 +116,55 @@
     border-color: var(--border-color);
 }
 
-/* Responsividade */
+/* Paginação fixa no fim da página (mobile) */
+.fixed-pagination {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 15px;
+    z-index: 100;
+    background: var(--bg-secondary);
+    border-radius: 30px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
+    width: auto;
+    display: inline-flex;
+}
+
+.fixed-pagination .pagination {
+    background: transparent;
+    box-shadow: none;
+}
+
+.fixed-pagination .pagination .page-link {
+    font-size: 0.9rem;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 8px;
+}
+
+.fixed-pagination .pagination .page-item.active .page-link {
+    font-weight: bold;
+}
+
+.fixed-pagination .pagination .page-ellipsis {
+    height: 32px;
+    min-width: 20px;
+    font-size: 0.9rem;
+}
+
+@media (min-width: 769px) {
+    .fixed-pagination {
+        position: static;
+        box-shadow: none;
+        padding: 0;
+        transform: none;
+        left: auto;
+        background: transparent;
+        width: 100%;
+    }
+}
+
 @media (max-width: 768px) {
     .pagination-container {
         flex-direction: row;

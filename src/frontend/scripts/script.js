@@ -8,6 +8,22 @@ let goals = [];
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
+	// Aguardar a inicialização do Supabase antes de verificar autenticação
+	if (!supabase) {
+		console.log('Aguardando inicialização do Supabase...');
+		// Aguardar até que o supabase seja inicializado (máximo 5 segundos)
+		let attempts = 0;
+		while (!supabase && attempts < 50) {
+			await new Promise(resolve => setTimeout(resolve, 100));
+			attempts++;
+		}
+		
+		if (!supabase) {
+			console.error('Supabase não foi inicializado após aguardar');
+			return;
+		}
+	}
+	
 	await checkAuth();
 	setupEventListeners();
 	setupFilterListeners();
@@ -24,12 +40,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Autenticação
 async function checkAuth() {
-	const { data: { session }, error } = await supabase.auth.getSession();
-	if (!session) {
+	try {
+		// Verificar se o Supabase foi inicializado
+		if (!supabase) {
+			console.error('Erro: Supabase não inicializado ao verificar autenticação');
+			window.location.href = '/auth.html';
+			return;
+		}
+		
+		const { data: { session }, error } = await supabase.auth.getSession();
+		if (error) {
+			console.error('Erro ao verificar sessão:', error);
+			window.location.href = '/auth.html';
+			return;
+		}
+		
+		if (!session) {
+			console.log('Sessão não encontrada, redirecionando para login');
+			window.location.href = '/auth.html';
+			return;
+		}
+		
+		currentUser = session.user;
+		console.log('Usuário autenticado:', currentUser.id);
+	} catch (error) {
+		console.error('Erro ao verificar autenticação:', error);
 		window.location.href = '/auth.html';
-		return;
 	}
-	currentUser = session.user;
 }
 
 // Configuração de Event Listeners
@@ -109,7 +146,6 @@ function setupEventListeners() {
 
 	// Event Listeners para Metas
 	document.getElementById('newGoalBtn')?.addEventListener('click', () => toggleGoalModal(true));
-	document.getElementById('goalForm')?.addEventListener('submit', handleGoalSubmit);
 	document.getElementById('contributionForm')?.addEventListener('submit', handleContributionSubmit);
 
 	// Adicionar listeners para fechar o modal de contribuição
@@ -146,7 +182,17 @@ function setupModalTabs() {
 // Carregamento de Dados
 async function loadUserData() {
 	try {
-		if (!currentUser) return;
+		// Verificar se o Supabase foi inicializado
+		if (!supabase) {
+			console.error('Erro: Supabase não inicializado ao carregar dados do usuário');
+			return;
+		}
+		
+		// Verificar se o usuário está autenticado
+		if (!currentUser) {
+			console.warn('Tentativa de carregar dados sem usuário autenticado');
+			return;
+		}
 
 		await loadUserSettings();
 		await loadTransactions();
@@ -164,6 +210,12 @@ async function loadUserData() {
 
 async function loadTransactions() {
 	try {
+		// Verificar se o Supabase foi inicializado
+		if (!supabase) {
+			console.error('Erro: Supabase não inicializado ao carregar transações');
+			return;
+		}
+		
 		let { data: transactions, error } = await supabase
 			.from('transactions')
 			.select('*')
@@ -196,53 +248,59 @@ async function loadTransactions() {
 
 async function loadUserSettings() {
 	try {
+		// Verificar se o Supabase foi inicializado
+		if (!supabase) {
+			console.error('Erro: Supabase não inicializado ao carregar configurações do usuário');
+			return;
+		}
+		
+		// Verificar se o usuário está autenticado
+		if (!currentUser) {
+			console.warn('Tentativa de carregar configurações sem usuário autenticado');
+			return;
+		}
+		
 		const { data, error } = await supabase
 			.from('user_settings')
 			.select('*')
 			.eq('user_id', currentUser.id)
 			.single();
 
-		if (error && error.code !== 'PGRST116') {
-			console.error('Erro ao carregar configurações:', error);
-			return;
+		if (error && error.code !== 'PGRST116') { // PGRST116 é o código para "nenhum resultado encontrado"
+			throw error;
 		}
 
-		if (data) {
-			userSettings = data;
-			isFirstLogin = false;
-		} else {
-			isFirstLogin = true;
-			// Se não existir configurações, criar uma nova
+		// Se não tiver configurações, cria um padrão
+		if (!data) {
 			const defaultSettings = {
+				user_id: currentUser.id,
+				display_name: currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Usuário',
 				currency: 'BRL',
 				theme: 'light',
-				display_name: '', // Garantir que começa vazio
-				user_id: currentUser.id
+				created_at: new Date().toISOString()
 			};
-			
+
 			const { data: newSettings, error: insertError } = await supabase
 				.from('user_settings')
-				.insert([defaultSettings])
-				.select();
+				.insert(defaultSettings)
+				.select()
+				.single();
 
-			if (insertError) {
-				console.error('Erro ao criar configurações:', insertError);
-				return;
-			}
+			if (insertError) throw insertError;
 
-			userSettings = newSettings[0];
+			userSettings = newSettings;
+			isFirstLogin = true;
+		} else {
+			userSettings = data;
 		}
 
-		// Aplica o tema salvo
+		// Aplicar tema salvo
 		applyTheme(userSettings.theme);
 		
-		// Atualiza o formulário com as configurações atuais
+		// Atualizar formulário de configurações
 		updateSettingsForm();
-		
-		// Atualiza as informações do usuário
-		updateUserInfo();
 	} catch (error) {
-		console.error('Erro ao carregar configurações:', error);
+		console.error('Erro ao carregar configurações do usuário:', error);
 	}
 }
 
@@ -699,12 +757,30 @@ function handleNavigation(e) {
 
 async function handleLogout() {
 	try {
+		// Verificar se o Supabase foi inicializado
+		if (!supabase) {
+			console.error('Erro: Supabase não inicializado ao fazer logout');
+			window.location.href = '/auth.html';
+			return;
+		}
+		
 		const { error } = await supabase.auth.signOut();
-		if (error) throw error;
+		if (error) {
+			console.error('Erro ao fazer logout:', error);
+			showNotification('error', 'Erro', 'Não foi possível fazer logout. Tente novamente.');
+			return;
+		}
+		
+		// Limpar dados locais
+		currentUser = null;
+		transactions = [];
+		userSettings = null;
+		
+		// Redirecionar para a página de login
 		window.location.href = '/auth.html';
 	} catch (error) {
 		console.error('Erro ao fazer logout:', error);
-		alert('Erro ao fazer logout. Por favor, tente novamente.');
+		showNotification('error', 'Erro', 'Ocorreu um erro ao fazer logout.');
 	}
 }
 
@@ -1196,7 +1272,7 @@ function updateCharts() {
 
 function initializeCharts() {
 	// Expenses by Category Chart
-	const expenseCtx = document.getElementById('expensesByCategory').getContext('2d');
+	const expenseCtx = document.getElementById('expensesByCategory')?.getContext('2d');
 	window.expensesChart = new Chart(expenseCtx, {
 		type: 'doughnut',
 		data: {
@@ -2175,6 +2251,15 @@ function toggleEditModal(show, transaction = null) {
 	}
 }
 
+function fillEditForm(transaction) {
+	document.getElementById('editTransactionId').value = transaction.id;
+	document.getElementById('editDescription').value = transaction.description;
+	document.getElementById('editAmount').value = Math.abs(transaction.amount);
+	document.getElementById('editType').value = transaction.type;
+	document.getElementById('editCategory').value = transaction.category;
+	document.getElementById('editDate').value = transaction.date.split('T')[0];
+}
+
 async function handleEditTransactionSubmit(e) {
     e.preventDefault();
     
@@ -2331,38 +2416,17 @@ async function handleDeleteAccount() {
 	if (!confirmed) return;
 
 	try {
-		// Primeiro, deletar todas as transações do usuário
-		const { error: transError } = await supabase
-			.from('transactions')
-			.delete()
-			.eq('user_id', currentUser.id);
-		
-		if (transError) throw transError;
-
-		// Deletar as configurações do usuário
-		const { error: settingsError } = await supabase
-			.from('user_settings')
-			.delete()
-			.eq('user_id', currentUser.id);
-		
-		if (settingsError) throw settingsError;
-
-		// Por fim, deletar o usuário
-		const { data: { session } } = await supabase.auth.getSession();
+		// Chamar API backend para deletar usuário na mesma porta do servidor principal
 		const response = await fetch('/api/delete-user', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({
-				userId: currentUser.id,
-				access_token: session.access_token
-			})
+			body: JSON.stringify({ userId: currentUser.id })
 		});
 		const result = await response.json();
-		if (!result.success) throw new Error(result.error || 'Erro ao deletar conta');
+		if (!result.success) throw new Error(result.error);
 
-		// Fazer logout e redirecionar para a página de login
 		await supabase.auth.signOut();
 		window.location.href = '/auth.html';
 	} catch (error) {
@@ -2577,6 +2641,10 @@ function setupMobileNavigation() {
 			<a href="#" class="nav-item" data-page="goals">
 				<i class="fas fa-bullseye"></i>
 				Metas
+			</a>
+			<a href="#" class="nav-item" data-page="credit-cards">
+				<i class="fas fa-credit-card"></i>
+				Cartões
 			</a>
 			<a href="#" class="nav-item" data-page="settings">
 				<i class="fas fa-cog"></i>
@@ -2893,7 +2961,12 @@ function showGoalDetails(goalId) {
 		</div>
 	`;
 
-	showNotification('info', 'Detalhes da Meta', detailsHtml, 15000);
+	showNotification(
+		'info',
+		`Detalhes da Meta`,
+		detailsHtml,
+		15000
+	);
 }
 
 // Modificar a função toggleGoalModal
@@ -3025,6 +3098,7 @@ async function handleContributionSubmit(e) {
 		showNotification('success', 'Sucesso', 'Contribuição adicionada com sucesso!');
 		document.getElementById('contributionModal').classList.remove('active');
 		document.getElementById('contributionForm').reset();
+		
 		await loadGoals();
 	} catch (error) {
 		console.error('Erro ao adicionar contribuição:', error);

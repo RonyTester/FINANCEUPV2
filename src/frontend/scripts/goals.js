@@ -82,7 +82,7 @@ function hideLoader() {
     }
 }
 
-// Função para mostrar toast de notificação
+// Funções para mostrar toast de notificação
 function showToast(message, type = 'info', title = null) {
     // Verifica se o container de notificações existe
     let notificationsContainer = document.getElementById('notifications-container');
@@ -162,43 +162,57 @@ function showToast(message, type = 'info', title = null) {
 
 // Função para configurar as abas do modal de metas
 function setupGoalModalTabs() {
-    const tabBtns = document.querySelectorAll('#goalModal .tab-btn');
-    const tabPanes = document.querySelectorAll('#goalModal .tab-pane');
+    console.log('Configurando abas do modal de metas...');
+    
+    const modal = document.getElementById('goalModal');
+    if (!modal) {
+        console.error('Modal de metas não encontrado!');
+        return;
+    }
+    
+    const tabBtns = modal.querySelectorAll('.tab-btn');
+    const tabPanes = modal.querySelectorAll('.tab-pane');
 
-    console.log('Configurando abas do modal de metas...'); // Debug
-    console.log('Botões encontrados:', tabBtns.length); // Debug
-    console.log('Painéis encontrados:', tabPanes.length); // Debug
+    console.log('Botões de abas encontrados:', tabBtns.length);
+    console.log('Painéis de abas encontrados:', tabPanes.length);
 
     // Remover listeners antigos para evitar duplicação
     tabBtns.forEach(btn => {
+        // Clonar o botão para remover todos os event listeners
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
-    });
-
-    // Adicionar novos listeners
-    document.querySelectorAll('#goalModal .tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            console.log('Tab clicked:', btn.dataset.target); // Debug
+        
+        // Adicionar o novo listener
+        newBtn.addEventListener('click', () => {
+            const targetSelector = newBtn.getAttribute('data-target');
+            console.log('Tab clicada:', targetSelector);
             
-            // Remove active class from all buttons and panes
-            document.querySelectorAll('#goalModal .tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('#goalModal .tab-pane').forEach(p => p.classList.remove('active'));
+            if (!targetSelector) {
+                console.error('Tab sem atributo data-target!');
+                return;
+            }
+            
+            // Remover a classe active de todos os botões e painéis
+            modal.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            modal.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
 
-            // Add active class to clicked button and corresponding pane
-            btn.classList.add('active');
-            const targetPane = document.querySelector(btn.dataset.target);
+            // Adicionar a classe active ao botão clicado
+            newBtn.classList.add('active');
+            
+            // Adicionar a classe active ao painel correspondente
+            const targetPane = modal.querySelector(targetSelector);
             if (targetPane) {
                 targetPane.classList.add('active');
-                console.log('Activated pane:', btn.dataset.target); // Debug
+                console.log('Painel ativado:', targetSelector);
             } else {
-                console.log('Target pane not found:', btn.dataset.target); // Debug
+                console.error('Painel alvo não encontrado:', targetSelector);
             }
         });
     });
 
-    // Activate first tab by default if none is active
-    if (!document.querySelector('#goalModal .tab-btn.active') && tabBtns.length > 0) {
-        console.log('Activating first tab by default'); // Debug
+    // Ativar a primeira aba por padrão
+    if (tabBtns.length > 0 && !modal.querySelector('.tab-btn.active')) {
+        console.log('Ativando a primeira aba por padrão');
         tabBtns[0].click();
     }
 }
@@ -239,19 +253,55 @@ document.addEventListener('DOMContentLoaded', () => {
     setupGoalModalTabs();
 });
 
+// Remover listeners duplicados do botão Salvar Meta
+// Agora o submit é tratado apenas pelo formulário
+// document.addEventListener('DOMContentLoaded', function() {
+//     const saveGoalBtn = document.querySelector('#goalModal .save-goal');
+//     if (saveGoalBtn) {
+//         saveGoalBtn.replaceWith(saveGoalBtn.cloneNode(true));
+//         const newSaveGoalBtn = document.querySelector('#goalModal .save-goal');
+//         newSaveGoalBtn.addEventListener('click', handleGoalSubmit);
+//     }
+// });
+
+// Melhorar a função toggleGoalModal para garantir que os campos sejam exibidos corretamente
 function toggleGoalModal(show = null) {
+    console.log('toggleGoalModal chamada com show =', show);
+    
     const modal = document.getElementById('goalModal');
-    if (!modal) return;
+    if (!modal) {
+        console.error('Modal não encontrado!');
+        return;
+    }
 
     if (show === null) {
         show = !modal.classList.contains('active');
     }
 
     if (show) {
+        console.log('Abrindo modal de meta');
+        
+        // Garantir que o modal esteja visível
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
-        setupGoalModalTabs(); // Chamar novamente ao abrir o modal
-
+        
+        // Configurar as abas
+        setupGoalModalTabs();
+        
+        // Garantir que a primeira aba esteja ativa
+        const firstTab = modal.querySelector('.tab-btn');
+        const firstTabPane = modal.querySelector('.tab-pane');
+        
+        if (firstTab && firstTabPane) {
+            // Remover classe active de todas as abas
+            modal.querySelectorAll('.tab-btn').forEach(tab => tab.classList.remove('active'));
+            modal.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            
+            // Ativar a primeira aba
+            firstTab.classList.add('active');
+            firstTabPane.classList.add('active');
+        }
+        
         // Configurar estado inicial dos campos de notificação
         const notificationType = document.getElementById('notificationType');
         const postponeDaysGroup = document.getElementById('postponeDaysGroup');
@@ -260,46 +310,37 @@ function toggleGoalModal(show = null) {
                 notificationType.value === 'postpone' ? 'block' : 'none';
         }
         
+        // Configurar data mínima para hoje
+        const deadlineInput = document.getElementById('deadline');
+        if (deadlineInput) {
+            const today = new Date().toISOString().split('T')[0];
+            deadlineInput.min = today;
+        }
+        
         // Adicionar listeners aos botões de fechar e cancelar
         const closeButton = modal.querySelector('.close-modal');
         const cancelButton = modal.querySelector('.cancel-modal');
         
         if (closeButton) {
-            closeButton.addEventListener('click', () => toggleGoalModal(false));
+            closeButton.onclick = () => toggleGoalModal(false);
         }
         
         if (cancelButton) {
-            cancelButton.addEventListener('click', () => toggleGoalModal(false));
+            cancelButton.onclick = () => toggleGoalModal(false);
         }
     } else {
+        console.log('Fechando modal de meta');
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
+        
         // Limpa os campos do formulário
-        const goalNameInput = document.getElementById('goalName');
-        if (goalNameInput) {
-            goalNameInput.value = '';
-        }
-        const targetAmountInput = document.getElementById('targetAmount');
-        if (targetAmountInput) {
-            targetAmountInput.value = '';
-        }
-        const deadlineInput = document.getElementById('deadline');
-        if (deadlineInput) {
-            deadlineInput.value = '';
-        }
-        const notificationDaysInput = document.getElementById('notificationDays');
-        if (notificationDaysInput) {
-            notificationDaysInput.value = '7';
-        }
-        const notificationTypeInput = document.getElementById('notificationType');
-        if (notificationTypeInput) {
-            notificationTypeInput.value = 'notify';
-        }
-        const postponeDaysInput = document.getElementById('postponeDays');
-        if (postponeDaysInput) {
-            postponeDaysInput.value = '30';
+        const goalForm = document.getElementById('goalForm');
+        if (goalForm) {
+            goalForm.reset();
         }
     }
+    
+    console.log('Modal estado após toggle:', modal.classList.contains('active') ? 'ativo' : 'inativo');
 }
 
 // Função para verificar metas e enviar notificações
@@ -374,20 +415,41 @@ setInterval(checkGoalsForNotifications, 60 * 60 * 1000); // Verificar uma vez po
 async function handleGoalSubmit(e) {
     e.preventDefault();
     
+    // Log para depuração
+    console.log('[DEBUG] handleGoalSubmit chamado', new Date().toISOString());
+    
+    // Impedir múltiplos envios
+    const submitButton = document.querySelector('#goalForm button[type="submit"]');
+    if (submitButton) {
+        if (submitButton.disabled) {
+            console.log('Formulário já está sendo enviado, ignorando clique adicional');
+            return;
+        }
+        submitButton.disabled = true;
+    }
+    
     try {
         showLoader();
         
-        // Obter valores do formulário
-        const name = document.getElementById('goalName').value;
-        // Usar parseFormattedNumber para garantir conversão correta do valor formatado
-        const targetAmount = parseFormattedNumber(document.getElementById('targetAmount').value);
-        const deadline = document.getElementById('deadline').value;
-        const category = document.getElementById('goalCategory').value;
-        const notificationDays = parseInt(document.getElementById('notificationDays').value);
-        const postponeDays = parseInt(document.getElementById('postponeDays').value);
+        // Obter valores do formulário de forma segura
+        const nameInput = document.getElementById('goalName');
+        const targetAmountInput = document.getElementById('targetAmount');
+        const deadlineInput = document.getElementById('deadline');
+        const notificationDaysInput = document.getElementById('notificationDays');
+        const postponeDaysInput = document.getElementById('postponeDays');
+
+        if (!nameInput || !targetAmountInput || !deadlineInput || !notificationDaysInput || !postponeDaysInput) {
+            throw new Error('Um ou mais campos do formulário não foram encontrados.');
+        }
+
+        const name = nameInput.value;
+        const targetAmount = parseFormattedNumber(targetAmountInput.value);
+        const deadline = deadlineInput.value;
+        const notificationDays = parseInt(notificationDaysInput.value);
+        const postponeDays = parseInt(postponeDaysInput.value);
 
         // Validações
-        if (!name || !targetAmount || !deadline || !category) {
+        if (!name || !targetAmount || !deadline) {
             throw new Error('Todos os campos obrigatórios devem ser preenchidos');
         }
         
@@ -401,6 +463,8 @@ async function handleGoalSubmit(e) {
             throw new Error('Usuário não autenticado');
         }
         
+        console.log('Criando meta para usuário:', userId);
+        
         // Criar nova meta
         const { data, error } = await supabase
             .from('financial_goals')
@@ -408,7 +472,6 @@ async function handleGoalSubmit(e) {
                 name,
                 target_amount: targetAmount,
                 deadline,
-                category,
                 notification_days: notificationDays,
                 postpone_days: postponeDays,
                 user_id: userId
@@ -420,7 +483,7 @@ async function handleGoalSubmit(e) {
         toggleGoalModal(false);
         showToast('Meta criada com sucesso!', 'success', 'Sucesso');
         
-        // Recarregar metas
+        // Recarregar metas apenas uma vez
         await loadGoals();
         
     } catch (error) {
@@ -428,6 +491,10 @@ async function handleGoalSubmit(e) {
         showToast(error.message || 'Erro ao criar meta', 'error', 'Erro');
     } finally {
         hideLoader();
+        // Reativar o botão após o processamento
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
     }
 }
 
@@ -725,7 +792,7 @@ function renderGoalsList() {
                         <button onclick="showGoalDetails(${goal.id})" class="btn btn-secondary btn-sm" title="Histórico">
                             <i class="fas fa-clock-rotate-left"></i>
                         </button>
-                        <button onclick="handleDeleteGoal(${goal.id})" class="btn btn-danger btn-sm" title="Excluir">
+                        <button onclick="deleteGoal(${goal.id})" class="btn btn-danger btn-sm" title="Excluir">
                             <i class="fas fa-circle-xmark"></i>
                         </button>
                     </div>
@@ -792,13 +859,26 @@ function updateOverallProgress() {
 // Modificar a função loadGoals para chamar updateOverallProgress
 async function loadGoals() {
     try {
+        console.log('Carregando metas...');
+        
+        // Verificar se currentUser existe
+        if (!window.currentUser || !window.currentUser.id) {
+            console.warn('Usuário não autenticado, não é possível carregar metas');
+            return;
+        }
+        
+        const userId = window.currentUser.id;
+        console.log('Carregando metas para o usuário:', userId);
+        
         // Primeiro, carregar as metas
         const { data: goalsData, error: goalsError } = await supabase
             .from('financial_goals')
             .select('*')
-            .eq('user_id', currentUser.id);
+            .eq('user_id', userId);
 
         if (goalsError) throw goalsError;
+        
+        console.log('Metas carregadas:', goalsData?.length || 0);
 
         // Depois, carregar as contribuições para cada meta
         const { data: contributionsData, error: contributionsError } = await supabase
@@ -819,16 +899,11 @@ async function loadGoals() {
         updateOverallProgress();
     } catch (error) {
         console.error('Erro ao carregar metas:', error);
-        showNotification('error', 'Erro', 'Não foi possível carregar as metas.');
+        showToast('Não foi possível carregar as metas.', 'error', 'Erro');
     }
 }
 
-// Adicionar ao início do arquivo, após as definições de funções
-document.addEventListener('DOMContentLoaded', () => {
-    if (currentUser) {
-        loadGoals();
-    }
-});
+
 
 function showGoalDetails(goalId) {
     // Fechar qualquer painel existente antes de abrir um novo
@@ -1072,11 +1147,22 @@ async function deleteContribution(contributionId, goalId) {
         // Atualizar o histórico e o progresso
         await updateContributionHistory(goalId);
         await loadGoals();
-        
-        showNotification('success', 'Sucesso', 'Contribuição excluída com sucesso!');
+
+        // Reabrir o painel de detalhes no mobile
+        if (window.innerWidth <= 768) {
+            const lastGoalId = sessionStorage.getItem('lastOpenGoalId');
+            if (lastGoalId) {
+                setTimeout(() => {
+                    showGoalDetails(lastGoalId);
+                    sessionStorage.removeItem('lastOpenGoalId');
+                }, 300);
+            }
+        }
+
+        showToast('Contribuição excluída com sucesso!', 'success', 'Sucesso');
     } catch (error) {
         console.error('Erro ao excluir contribuição:', error);
-        showNotification('error', 'Erro', 'Não foi possível excluir a contribuição.');
+        showToast('Não foi possível excluir a contribuição', 'error', 'Erro');
     }
 }
 
@@ -1165,8 +1251,8 @@ async function handleEditContributionSubmit(e) {
 
         // Atualizar a interface
         await updateContributionHistory(goalId);
-        await loadGoals();
-
+        await loadGoals(); // Atualiza a lista geral de metas uma única vez
+        
         // Reabrir o painel de detalhes no mobile
         if (window.innerWidth <= 768) {
             const lastGoalId = sessionStorage.getItem('lastOpenGoalId');
@@ -1216,7 +1302,7 @@ function initGoalTabs() {
             // Remover classe active de todas as abas e botões
             document.querySelectorAll('.goals-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.goals-tabs .tab-pane').forEach(pane => pane.classList.remove('active'));
-            
+
             // Adicionar classe active ao botão e painel clicado
             button.classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
@@ -1328,25 +1414,57 @@ function setupSharedGoalsEventListeners() {
 async function loadSharedGoals() {
     try {
         showLoader();
+
+        // Obter o ID do usuário atual
+        if (!window.currentUser || !window.currentUser.id) {
+            console.error("Usuário não autenticado");
+            showToast('Usuário não autenticado. Faça login para ver metas compartilhadas.', 'error', 'Erro');
+            hideLoader();
+            return;
+        }
         
-        // Buscar metas onde o usuário é criador ou participante
-        const { data: sharedGoalsData, error: sharedGoalsError } = await supabase
+        const userId = window.currentUser.id;
+        console.log("Usuário autenticado com ID:", userId);
+        
+        // Buscar IDs das metas em que o usuário é participante
+        const { data: participations, error: participationsError } = await supabase
+            .from('shared_goal_participants')
+            .select('shared_goal_id')
+            .eq('user_id', userId);
+
+        if (participationsError) throw participationsError;
+
+        // Extrair os IDs das metas compartilhadas
+        const sharedGoalIds = participations ? participations.map(p => p.shared_goal_id) : [];
+        console.log("IDs de metas em que o usuário é participante:", sharedGoalIds);
+
+        // Criar a consulta para buscar metas onde o usuário é criador OU participante
+        let query = supabase
             .from('shared_goals')
-            .select('*')
-            .order('created_at', { ascending: false });
+            .select('*');
+            
+        // Adicionar filtro para o usuário ser criador ou participante
+        if (sharedGoalIds.length > 0) {
+            query = query.or(`creator_id.eq.${userId},id.in.(${sharedGoalIds.join(',')})`);
+        } else {
+            query = query.eq('creator_id', userId);
+        }
         
+        // Executar a consulta
+        const { data: sharedGoalsData, error: sharedGoalsError } = await query.order('created_at', { ascending: false });
+
         if (sharedGoalsError) throw sharedGoalsError;
 
         console.log("Metas compartilhadas carregadas:", sharedGoalsData);
-        
+
         // Para cada meta, buscar participantes e contribuições
         const goalsWithData = await Promise.all(sharedGoalsData.map(async (goal) => {
-            // Buscar participantes - removendo a junção direta com user
+            // Buscar participantes
             const { data: participants, error: participantsError } = await supabase
                 .from('shared_goal_participants')
                 .select('*')
                 .eq('shared_goal_id', goal.id);
-            
+
             if (participantsError) throw participantsError;
             
             console.log(`Participantes da meta ${goal.id}:`, participants);
@@ -1367,23 +1485,22 @@ async function loadSharedGoals() {
                         }
                     } catch (userError) {
                         console.warn('Erro ao buscar dados do usuário:', userError);
-                        // Continuar mesmo com erro, para não bloquear a carga das metas
                     }
                 }
             }
-            
-            // Buscar contribuições - removendo a junção direta com user
+
+            // Buscar contribuições
             const { data: contributions, error: contributionsError } = await supabase
                 .from('shared_goal_contributions')
                 .select('*')
                 .eq('shared_goal_id', goal.id)
                 .order('date', { ascending: false });
-            
+
             if (contributionsError) throw contributionsError;
             
             console.log(`Contribuições da meta ${goal.id}:`, contributions);
             
-            // Adicionar dados de usuário para cada contribuição usando a função RPC melhorada
+            // Adicionar dados de usuário para cada contribuição
             if (contributions && contributions.length > 0) {
                 for (let contribution of contributions) {
                     try {
@@ -1399,20 +1516,19 @@ async function loadSharedGoals() {
                         }
                     } catch (userError) {
                         console.warn('Erro ao buscar dados do usuário para contribuição:', userError);
-                        // Continuar mesmo com erro
                     }
                 }
             }
-            
+
             // Calcular valor total contribuído
             const totalContributed = contributions.reduce((sum, c) => sum + Number(c.amount), 0);
             const remaining = Math.max(0, goal.target_amount - totalContributed);
             const progress = (totalContributed / goal.target_amount) * 100;
-            
+
             // Armazenar os dados em cache
             sharedGoalParticipants[goal.id] = participants;
             sharedGoalContributions[goal.id] = contributions;
-            
+
             // Retornar meta com dados calculados
             return {
                 ...goal,
@@ -1423,11 +1539,10 @@ async function loadSharedGoals() {
                 progress: progress
             };
         }));
-        
+
         sharedGoals = goalsWithData;
         console.log("Metas processadas com dados completos:", sharedGoals);
         renderSharedGoals();
-        
     } catch (error) {
         console.error('Erro ao carregar metas compartilhadas:', error);
         showToast('Não foi possível carregar as metas compartilhadas', 'error', 'Erro');
@@ -2372,6 +2487,12 @@ async function deleteSharedGoal(goalId) {
 // Função para obter o ID do usuário atual usando Supabase v2
 async function getCurrentUserId() {
     try {
+        // Verificar se o cliente Supabase já foi inicializado
+        if (!supabase) {
+            console.warn("Cliente Supabase não inicializado ao tentar obter ID do usuário");
+            return null;
+        }
+        
         // Para Supabase v2, a forma de obter o usuário mudou
         const { data: { session } } = await supabase.auth.getSession();
         
@@ -2396,11 +2517,14 @@ function getCurrentUserIdSync() {
         return window.currentUser.id;
     }
     
+    // Verificar se o cliente Supabase está inicializado
+    if (!supabase) {
+        console.warn("Cliente Supabase não inicializado ao tentar obter ID do usuário sincronamente");
+        return null;
+    }
+    
     // Fallback: tentar obter direto de supabase.auth
     try {
-        const user = supabase.auth.user?.() || null;
-        if (user) return user.id;
-        
         // Nova API do Supabase v2
         const session = supabase.auth.session?.() || null;
         if (session && session.user) return session.user.id;
@@ -2417,10 +2541,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         console.log('DOM carregado, inicializando módulo de metas...');
         
-        // Verificar autenticação e inicializar usuário
-        await checkAuth();
-        await initCurrentUser();
-        
         // Inicializar o tema atual
         if (typeof initTheme === 'function') initTheme();
         
@@ -2433,6 +2553,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             toggleGoalButtonsVisibility(activeTab.getAttribute('data-tab'));
         }
         
+        // Configurar os event listeners dos formulários (apenas uma vez)
+        setupGoalEventListeners();
+        
         // Inicializar funcionalidades de metas
         setupGoalModalTabs();
         setupSharedGoalsEventListeners();
@@ -2440,8 +2563,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         initSharedGoalDetailsTabs();
         initContributionModal();
         
-        // Carregar dados iniciais
-        loadGoals();
+        // Aguardar a inicialização do Supabase
+        // O supabase é inicializado no script embutido na página index.html
+        if (!supabase) {
+            console.log('Aguardando inicialização do Supabase...');
+            // Aguardar até que o supabase seja inicializado (máximo 5 segundos)
+            let attempts = 0;
+            while (!supabase && attempts < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                attempts++;
+            }
+            
+            if (!supabase) {
+                console.error('Supabase não foi inicializado após aguardar');
+                return;
+            }
+            
+            console.log('Supabase inicializado após aguardar');
+        }
+        
+        // Verificar autenticação e inicializar usuário
+        if (typeof checkAuth === 'function') {
+            await checkAuth();
+        }
+        
+        // Inicializar o usuário atual antes de carregar as metas
+        const userId = await initCurrentUser();
+        console.log('Usuário inicializado:', userId);
+        
+        if (userId) {
+            // Carregar dados iniciais somente se o usuário estiver autenticado
+            loadGoals();
+            loadSharedGoals();
+            console.log('Carregando metas para o usuário:', userId);
+        } else {
+            console.warn('Usuário não autenticado, metas não serão carregadas');
+        }
         
         // Expor funções para o escopo global
         exposeGlobalFunctions();
@@ -2455,6 +2612,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Inicializar o usuário atual no carregamento
 async function initCurrentUser() {
     try {
+        // Verificar se o cliente Supabase já foi inicializado
+        if (!supabase) {
+            console.warn("Cliente Supabase não inicializado ao tentar inicializar usuário");
+            return null;
+        }
+        
         // Para Supabase v2
         const { data: { session } } = await supabase.auth.getSession();
         
@@ -2576,6 +2739,9 @@ function exposeGlobalFunctions() {
     window.handleGoalSubmit = handleGoalSubmit;
     window.handleGoalContributionSubmit = handleGoalContributionSubmit;
     window.deleteGoal = deleteGoal;
+    window.showContributionModal = showContributionModal;
+    window.showGoalDetails = showGoalDetails;
+    window.closeGoalDetails = closeGoalDetails;
     window.navigateToPage = navigateToPage;
     window.handleCategoryFilter = handleCategoryFilter;
     window.toggleFilterMenu = toggleFilterMenu;
@@ -2778,7 +2944,7 @@ function initContributionModal() {
     });
 }
 
-// Configurar botões de ação com base em permissões
+// Função para configurar botões de ação com base em permissões
 async function setupSharedGoalActionButtons(goal) {
     // Verificar se o usuário está logado
     const userId = await getCurrentUserId();
@@ -2806,14 +2972,351 @@ async function setupSharedGoalActionButtons(goal) {
     }
 }
 
+// Variável para controlar se os event listeners já foram configurados
+let goalEventListenersInitialized = false;
+
 function setupGoalEventListeners() {
+    // Evitar configuração duplicada
+    if (goalEventListenersInitialized) {
+        console.log('Event listeners das metas já foram configurados, ignorando chamada duplicada');
+        return;
+    }
+    
+    console.log('Configurando event listeners para os modais');
+    
     // Event listeners para o modal de Meta individual
-    const saveGoalButton = document.querySelector('#goalModal .save-goal');
-    if (saveGoalButton) {
-        saveGoalButton.addEventListener('click', (event) => {
-            handleGoalSubmit(event);
+    const goalForm = document.getElementById('goalForm');
+    if (goalForm) {
+        console.log('Configurando formulário de metas');
+        // Remover event listeners antigos
+        const newForm = goalForm.cloneNode(true);
+        goalForm.parentNode.replaceChild(newForm, goalForm);
+        
+        // Adicionar novo event listener
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Formulário de metas submetido via setupGoalEventListeners');
+            handleGoalSubmit(e);
+        });
+        
+        // Garantir que o botão de salvar meta também dispare o evento
+        const saveGoalBtn = document.querySelector('#goalModal .save-goal');
+        if (saveGoalBtn) {
+            console.log('Botão salvar meta encontrado, adicionando event listener');
+            saveGoalBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Botão salvar meta clicado');
+                // Dispara o evento de submit no formulário
+                const submitEvent = new Event('submit', {
+                    'bubbles': true,
+                    'cancelable': true
+                });
+                newForm.dispatchEvent(submitEvent);
+            });
+        }
+    }
+    
+    // Event listeners para o modal de contribuição
+    const contributionForm = document.getElementById('contributionForm');
+    if (contributionForm) {
+        // Remover event listeners antigos
+        const newForm = contributionForm.cloneNode(true);
+        contributionForm.parentNode.replaceChild(newForm, contributionForm);
+        
+        // Adicionar novo event listener
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleGoalContributionSubmit(e);
         });
     }
     
-    // ... existing code ...
+    // Adicionar event listeners para os botões de fechar modal
+    const closeButtons = document.querySelectorAll('.close-modal, .cancel-modal');
+    closeButtons.forEach(button => {
+        const modalParent = button.closest('.modal');
+        if (modalParent) {
+            const modalId = modalParent.id;
+            if (modalId === 'goalModal') {
+                button.addEventListener('click', () => toggleGoalModal(false));
+            } else if (modalId === 'contributionModal') {
+                button.addEventListener('click', () => toggleGoalContributionModal(false));
+            }
+        }
+    });
+    
+    // Marcar como inicializado
+    goalEventListenersInitialized = true;
+    console.log('Event listeners das metas configurados com sucesso');
+}
+
+// Função para deletar uma meta
+async function deleteGoal(goalId) {
+    if (!goalId) {
+        showToast('ID da meta não especificado', 'error', 'Erro');
+        return;
+    }
+    
+    // Confirmar a exclusão
+    const confirmed = await showConfirmation('Excluir Meta', 'Tem certeza que deseja excluir esta meta? Esta ação não pode ser desfeita.');
+    if (!confirmed) return;
+    
+    try {
+        showLoader();
+        
+        // Excluir primeiro as contribuições relacionadas à meta
+        const { error: contributionsError } = await supabase
+            .from('goal_contributions')
+            .delete()
+            .eq('goal_id', goalId);
+            
+        if (contributionsError) {
+            throw contributionsError;
+        }
+        
+        // Excluir a meta
+        const { error } = await supabase
+            .from('financial_goals')
+            .delete()
+            .eq('id', goalId);
+            
+        if (error) {
+            throw error;
+        }
+        
+        // Atualizar a UI
+        showToast('Meta excluída com sucesso!', 'success', 'Sucesso');
+        
+        // Recarregar metas
+        await loadGoals();
+        
+    } catch (error) {
+        console.error('Erro ao excluir meta:', error);
+        showToast('Erro ao excluir meta', 'error', 'Erro');
+    } finally {
+        hideLoader();
+    }
+}
+
+// Função para mostrar o modal de contribuição para uma meta individual
+function showContributionModal(goalId) {
+    if (!goalId) {
+        showToast('ID da meta não especificado', 'error', 'Erro');
+        return;
+    }
+    
+    // Abrir o modal de contribuição
+    toggleGoalContributionModal(goalId, true);
+}
+
+// Função para mostrar diálogo de confirmação
+function showConfirmation(title, message) {
+    return new Promise(resolve => {
+        // Verificar se já existe um modal de confirmação
+        let confirmationModal = document.getElementById('confirmationModal');
+        
+        // Se não existir, criar um novo
+        if (!confirmationModal) {
+            confirmationModal = document.createElement('div');
+            confirmationModal.id = 'confirmationModal';
+            confirmationModal.className = 'modal confirmation-modal';
+            confirmationModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="confirmationTitle"></h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="confirmationMessage"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="confirmCancel" class="btn btn-secondary">Cancelar</button>
+                        <button id="confirmConfirm" class="btn btn-primary">Confirmar</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmationModal);
+        }
+        
+        // Configurar o conteúdo do modal
+        document.getElementById('confirmationTitle').textContent = title;
+        document.getElementById('confirmationMessage').textContent = message;
+        
+        // Mostrar o modal
+        confirmationModal.classList.add('active');
+        
+        // Configurar handlers
+        const handleConfirm = () => {
+            confirmationModal.classList.remove('active');
+            removeEventListeners();
+            resolve(true);
+        };
+        
+        const handleCancel = () => {
+            confirmationModal.classList.remove('active');
+            removeEventListeners();
+            resolve(false);
+        };
+        
+        const handleClickOutside = (e) => {
+            if (e.target === confirmationModal) {
+                confirmationModal.classList.remove('active');
+                removeEventListeners();
+                resolve(false);
+            }
+        };
+        
+        // Adicionar event listeners
+        const confirmBtn = document.getElementById('confirmConfirm');
+        const cancelBtn = document.getElementById('confirmCancel');
+        const closeBtn = confirmationModal.querySelector('.close-modal');
+        
+        confirmBtn.addEventListener('click', handleConfirm);
+        cancelBtn.addEventListener('click', handleCancel);
+        closeBtn.addEventListener('click', handleCancel);
+        confirmationModal.addEventListener('click', handleClickOutside);
+        
+        // Função para remover os event listeners
+        function removeEventListeners() {
+            confirmBtn.removeEventListener('click', handleConfirm);
+            cancelBtn.removeEventListener('click', handleCancel);
+            closeBtn.removeEventListener('click', handleCancel);
+            confirmationModal.removeEventListener('click', handleClickOutside);
+        }
+    });
+}
+
+// Funções de navegação e filtro (stubs para compatibilidade)
+function navigateToPage(page) {
+    console.warn("Função navigateToPage chamada, mas não implementada");
+}
+
+function handleCategoryFilter(category) {
+    console.warn("Função handleCategoryFilter chamada, mas não implementada");
+}
+
+function toggleFilterMenu(show) {
+    console.warn("Função toggleFilterMenu chamada, mas não implementada");
+}
+
+function handleDatesFilter(from, to) {
+    console.warn("Função handleDatesFilter chamada, mas não implementada");
+}
+
+function resetFilters() {
+    console.warn("Função resetFilters chamada, mas não implementada");
+}
+
+function handleFilterForm(e) {
+    if (e) e.preventDefault();
+    console.warn("Função handleFilterForm chamada, mas não implementada");
+}
+
+// No início do arquivo, adicionar evento para o formulário de metas
+document.addEventListener('DOMContentLoaded', function() {
+    // Removido o event listener duplicado aqui
+    // O setupGoalEventListeners será chamado no carregamento do módulo
+});
+
+function setupGoalEventListeners() {
+    console.log('Configurando event listeners para os modais');
+    
+    // Event listeners para o modal de Meta individual
+    const goalForm = document.getElementById('goalForm');
+    if (goalForm) {
+        console.log('Configurando formulário de metas');
+        // Remover event listeners antigos
+        const newForm = goalForm.cloneNode(true);
+        goalForm.parentNode.replaceChild(newForm, goalForm);
+        
+        // Adicionar novo event listener
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Formulário de metas submetido via setupGoalEventListeners');
+            handleGoalSubmit(e);
+        });
+        
+        // Garantir que o botão de salvar meta também dispare o evento
+        const saveGoalBtn = document.querySelector('#goalModal .save-goal');
+        if (saveGoalBtn) {
+            console.log('Botão salvar meta encontrado, adicionando event listener');
+            saveGoalBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Botão salvar meta clicado');
+                // Dispara o evento de submit no formulário
+                const submitEvent = new Event('submit', {
+                    'bubbles': true,
+                    'cancelable': true
+                });
+                newForm.dispatchEvent(submitEvent);
+            });
+        }
+    }
+    
+    // Event listeners para o modal de contribuição
+    const contributionForm = document.getElementById('contributionForm');
+    if (contributionForm) {
+        // Remover event listeners antigos
+        const newForm = contributionForm.cloneNode(true);
+        contributionForm.parentNode.replaceChild(newForm, contributionForm);
+        
+        // Adicionar novo event listener
+        newForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleGoalContributionSubmit(e);
+        });
+    }
+    
+    // Adicionar event listeners para os botões de fechar modal
+    const closeButtons = document.querySelectorAll('.close-modal, .cancel-modal');
+    closeButtons.forEach(button => {
+        const modalParent = button.closest('.modal');
+        if (modalParent) {
+            const modalId = modalParent.id;
+            if (modalId === 'goalModal') {
+                button.addEventListener('click', () => toggleGoalModal(false));
+            } else if (modalId === 'contributionModal') {
+                button.addEventListener('click', () => toggleGoalContributionModal(false));
+            }
+        }
+    });
+}
+
+// Função para abrir/fechar o modal de contribuição para uma meta específica
+function toggleGoalContributionModal(goalId = null, show = null) {
+    const modal = document.getElementById('contributionModal');
+    if (!modal) return;
+
+    if (show === null) {
+        show = !modal.classList.contains('active');
+    }
+
+    if (show) {
+        // Configurar o ID da meta atual
+        if (goalId) {
+            const goalIdInput = document.getElementById('goalId');
+            if (goalIdInput) {
+                goalIdInput.value = goalId;
+            }
+        }
+        
+        // Resetar o formulário quando abrir o modal
+        const form = document.getElementById('contributionForm');
+        if (form) {
+            form.reset();
+            
+            // Definir a data atual como padrão
+            const dateInput = document.getElementById('date');
+            if (dateInput) {
+                dateInput.valueAsDate = new Date();
+            }
+        }
+        
+        // Exibir o modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    } else {
+        // Esconder o modal
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
 }

@@ -1,0 +1,2645 @@
+/* Estilos para tela de boas-vindas (empty state) */
+.empty-credit-cards {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2.5rem 1.5rem 2.2rem 1.5rem;
+    max-width: 600px;
+    margin: 2rem auto;
+    background: var(--bg-secondary, #1f2937);
+    border-radius: 28px;
+    box-shadow: var(--card-shadow, 0 8px 32px rgba(0,0,0,0.12));
+    gap: 0.5rem;
+}
+.empty-credit-cards h3, .empty-credit-cards-title, .empty-credit-cards-title span {
+    color: var(--title-color, var(--primary-color, #60a5fa));
+    font-size: 1.65rem;
+    font-weight: 900;
+    margin-bottom: 1.1rem;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 12px #0002;
+    text-align: center;
+    line-height: 1.2;
+}
+.empty-credit-cards p {
+    color: var(--text-secondary, #d1d5db);
+    margin-bottom: 2rem;
+    max-width: 480px;
+    line-height: 1.6;
+    font-size: 1.08rem;
+    font-weight: 400;
+}
+.empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+    background: var(--primary-color, #60a5fa);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+    box-shadow: 0 4px 16px 0 rgba(96,165,250,0.14);
+    border: none;
+}
+.empty-icon i, .empty-icon svg {
+    font-size: 2.2rem;
+    color: #fff;
+    filter: none;
+}
+.suggestion-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem 1.1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 320px;
+}
+.suggestion-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 120px;
+    height: 95px;
+    background: var(--bg-primary, #111827);
+    border-radius: 14px;
+    padding: 1.1rem 0.6rem 0.9rem 0.6rem;
+    cursor: pointer;
+    transition: all 0.16s;
+    box-shadow: 0 2px 8px 0 rgba(96,165,250,0.08);
+    border: 1.5px solid var(--border-color, #374151);
+    gap: 0.2rem;
+}
+.suggestion-item i, .suggestion-item svg {
+    font-size: 2.2rem;
+    color: var(--primary-color, #60a5fa);
+    margin-bottom: 0.3rem;
+    margin-top: 0.1rem;
+    display: block;
+    align-self: center;
+}
+.suggestion-item span {
+    font-size: 1.01rem;
+    color: var(--text-secondary, #d1d5db);
+    text-align: center;
+    font-weight: 500;
+    line-height: 1.22;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+.suggestion-item:hover {
+    background: var(--primary-color, #60a5fa);
+    color: #fff;
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 6px 18px 0 rgba(96,165,250,0.16);
+    border-color: var(--primary-color, #60a5fa);
+}
+.suggestion-item:hover i, .suggestion-item:hover svg {
+    color: #fff;
+}
+.suggestion-item:hover span {
+    color: #fff;
+}
+
+/* Estilos base para a página de cartões de crédito */
+.credit-cards-wrapper {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.credit-cards-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+.credit-cards-header h2 {
+    color: var(--title-color, var(--text-primary, #f3f4f6)) !important;
+    font-size: 1.45rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    letter-spacing: 0.01em;
+    justify-content: flex-start;
+    text-align: left;
+    font-family: inherit;
+}
+.credit-cards-header i {
+    color: var(--primary-color, #4f8cff) !important;
+    font-size: 1.5rem;
+    margin-right: 0.3rem;
+}
+.card-form-container {
+    background: var(--bg-secondary, #f6f8fa);
+    border-radius: 8px;
+    padding: 1.5rem 1rem 1rem 1rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--card-shadow, 0 1px 8px 0 rgba(0,0,0,0.04));
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.credit-card-form .form-row {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+.credit-card-form label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--text-primary, #222);
+}
+.credit-card-form input,
+.credit-card-form select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border-color, #e6ecf5);
+    border-radius: 5px;
+    font-size: 1rem;
+    background: var(--bg-primary, #fff);
+    color: var(--text-primary, #222);
+    outline: none;
+    transition: border 0.2s;
+}
+.credit-card-form input:focus,
+.credit-card-form select:focus {
+    border-color: var(--primary-color, #4f8cff);
+    background: var(--bg-primary, #fff);
+    color: var(--text-primary, #222);
+}
+.credit-card-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cards-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 2.2rem 2.5rem;
+    margin-bottom: 1.5rem;
+    padding-left: 2vw;
+    padding-right: 2vw;
+    background: none;
+}
+
+.cards-carousel {
+    display: none;
+    overflow-x: auto;
+    gap: 1.2rem;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.cards-carousel .credit-card-visual {
+    scroll-snap-align: start;
+    min-width: 260px;
+    max-width: 340px;
+}
+.cards-carousel::-webkit-scrollbar {
+    height: 8px;
+    background: var(--bg-secondary, #eaeaea);
+    border-radius: 8px;
+}
+.cards-carousel::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #c6d6fa);
+    border-radius: 8px;
+}
+
+.cards-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+}
+.cards-pagination button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-secondary, #d3e3fd);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.cards-pagination button.active {
+    background: var(--primary-color, #4f8cff);
+}
+
+.credit-card-item {
+    display: flex;
+    align-items: center;
+    background: var(--bg-secondary, #f6f8fa);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow, 0 1px 8px 0 rgba(0,0,0,0.04));
+    padding: 1rem;
+    gap: 1.3rem;
+    transition: box-shadow 0.2s;
+}
+.credit-card-item:hover {
+    box-shadow: 0 2px 12px 0 rgba(79,140,255,0.10);
+}
+.credit-card-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-primary, #fff);
+    box-shadow: 0 0 0 2px var(--primary-color, #4f8cff44);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.credit-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.credit-card-info .card-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+.credit-card-info .card-brand {
+    font-size: 0.96rem;
+    color: var(--primary-color, #4f8cff);
+    font-weight: 500;
+}
+.credit-card-info .card-limit {
+    font-size: 0.98rem;
+    color: var(--text-secondary, #555);
+}
+.credit-card-info .card-due {
+    font-size: 0.92rem;
+    color: var(--text-secondary, #888);
+}
+.credit-card-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+.credit-card-actions button {
+    background: none;
+    border: none;
+    color: var(--primary-color, #4f8cff);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.credit-card-actions button:hover {
+    color: var(--text-error, #ff4f4f);
+}
+
+.credit-card-visual {
+    background: var(--bg-primary, #fff);
+    color: var(--text-primary, #222);
+    border-radius: 18px;
+    border: 1.5px solid var(--border-color, #e0eaff);
+    box-shadow: var(--card-shadow, 0 2px 12px 0 rgba(79,140,255,0.08));
+    padding: 1.3rem 1.5rem 1.1rem 1.5rem;
+    margin-bottom: 0;
+    min-width: 270px;
+    max-width: 320px;
+    width: 100%;
+    position: relative;
+    transition: box-shadow 0.2s, border 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.credit-card-visual .brand {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.2rem;
+    font-size: 1.2rem;
+    color: var(--primary-color, #4f8cff);
+    opacity: 0.85;
+}
+.credit-card-visual .card-name {
+    font-size: 1.08rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: var(--text-primary, #222);
+}
+.credit-card-visual .card-limit,
+.credit-card-visual .card-due {
+    font-size: 0.99rem;
+    margin-bottom: 0.2rem;
+    color: var(--primary-color, #4f8cff);
+    font-weight: 500;
+}
+.credit-card-visual .progress-bar {
+    margin-top: 0.8rem;
+    background: var(--chart-grid, #eaf1ff);
+    border-radius: 6px;
+    height: 12px;
+    width: 100%;
+    overflow: hidden;
+}
+.credit-card-visual .progress {
+    background: var(--primary-color, #4f8cff);
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s;
+}
+.credit-card-visual .credit-card-actions {
+    margin-top: 0.7rem;
+    display: flex;
+    gap: 0.7rem;
+}
+.credit-card-visual .credit-card-actions button {
+    background: var(--bg-secondary, #f6f8fa);
+    color: var(--primary-color, #4f8cff);
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    font-size: 1.08rem;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    outline: none;
+}
+.credit-card-visual .credit-card-actions button:hover {
+    background: var(--primary-color, #4f8cff);
+    color: var(--bg-secondary, #fff);
+}
+.credit-card-visual .used-info {
+    font-size: 0.93rem;
+    margin-top: 0.3rem;
+    color: var(--text-primary, #222);
+}
+
+.realistic-card {
+    border-radius: 20px;
+    box-shadow: var(--card-shadow, 0 4px 28px 0 rgba(0,0,0,0.10));
+    min-width: 340px;
+    max-width: 420px;
+    width: 100%;
+    aspect-ratio: 1.58/1;
+    padding: 1.5rem 2.1rem 1.2rem 2.1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    position: relative;
+    margin-bottom: 0;
+    color: var(--text-primary, #23272f);
+    overflow: hidden;
+    background: var(--bg-secondary, #f6f8fa) !important;
+    border: 1.5px solid var(--border-color, #e0eaff);
+}
+
+.card-bank-icon {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.4rem;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    opacity: 0.93;
+}
+.chip {
+    position: absolute;
+    left: 1.3rem;
+    top: 1.3rem;
+    width: 39px;
+    height: 28px;
+    background: url('/assets/banks/chip.svg') no-repeat center/cover;
+    opacity: 0.95;
+}
+.contactless {
+    position: absolute;
+    right: 1.4rem;
+    bottom: 1.2rem;
+    width: 33px;
+    height: 33px;
+    background: url('/assets/banks/contactless.svg') no-repeat center/contain;
+    opacity: 0.75;
+}
+.realistic-card .card-name {
+    font-size: 1.13rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: var(--text-primary, #23272f);
+    text-shadow: 0 1px 6px #0004;
+}
+.realistic-card .card-limit,
+.realistic-card .card-due {
+    font-size: 0.98rem;
+    margin-bottom: 0.14rem;
+    color: var(--text-primary, #23272f);
+    opacity: 0.93;
+    text-shadow: 0 1px 6px #0002;
+}
+.realistic-card .progress-bar {
+    margin-top: 0.7rem;
+    background: var(--chart-grid, #fff2);
+    border-radius: 6px;
+    height: 12px;
+    width: 100%;
+    overflow: hidden;
+}
+.realistic-card .progress {
+    background: var(--bg-primary, #fff);
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s;
+}
+.realistic-card .used-info {
+    font-size: 0.93rem;
+    margin-top: 0.3rem;
+    color: var(--text-primary, #23272f);
+    text-shadow: 0 1px 6px #0002;
+}
+.realistic-card .credit-card-actions {
+    margin-top: 0.7rem;
+    display: flex;
+    gap: 0.7rem;
+}
+.realistic-card .credit-card-actions button {
+    background: var(--bg-primary, #fff3);
+    color: var(--text-primary, #23272f);
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    font-size: 1.08rem;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    outline: none;
+}
+.realistic-card .credit-card-actions button:hover {
+    background: var(--bg-primary, #fff);
+    color: var(--text-primary, #222);
+}
+
+.cards-actions-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.2rem;
+}
+.cards-actions-header .btn-primary {
+    background: var(--primary-color, #4f8cff) !important;
+    color: var(--bg-primary, #fff) !important;
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: var(--card-shadow, 0 2px 8px 0 rgba(79,140,255,0.07));
+    border: none;
+    transition: background 0.18s;
+}
+.cards-actions-header .btn-primary:hover {
+    background: var(--primary-color, #2563eb) !important;
+}
+
+@media (max-width: 900px) {
+    .realistic-card {
+        min-width: 96vw;
+        max-width: 99vw;
+        padding: 1.1rem 0.7rem 0.9rem 0.7rem;
+    }
+    .cards-list-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.1rem 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .cards-list-container {
+        display: none;
+    }
+    .cards-carousel {
+        display: flex;
+    }
+    .credit-cards-wrapper {
+        padding: 1rem 0.2rem;
+    }
+    .credit-cards-header h2 {
+        font-size: 1.1rem;
+    }
+    .card-form-container {
+        padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+    }
+    .credit-card-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+    }
+    #creditCardIntroModal .modal-content, #creditCardModal .modal-content {
+        padding: 1rem 0.3rem 1rem 0.3rem;
+    }
+    .credit-card-visual {
+        min-width: 210px;
+        max-width: 98vw;
+        padding: 1rem 0.8rem 0.8rem 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .cards-list-container,
+    .cards-carousel {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 auto;
+    }
+    .cards-carousel > * {
+        width: 100%;
+        max-width: 98vw;
+        margin-bottom: 1rem;
+        margin: 0 auto;
+    }
+    .credit-card-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        width: 100%;
+    }
+    #creditCardIntroModal .modal-content,
+    #creditCardModal .modal-content {
+        max-width: 95vw;
+        width: 95%;
+        margin: 0 auto;
+        box-sizing: border-box;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1100;
+        padding: 1.2rem;
+        max-height: 90vh;
+        overflow-y: auto;
+        border-radius: 16px;
+    }
+    #creditCardIntroModal .modal,
+    #creditCardModal .modal {
+        align-items: center !important;
+        justify-content: center;
+    }
+    #creditCardModal .form-row {
+        margin-bottom: 1.2rem;
+    }
+    #creditCardModal .form-row label {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+    #creditCardModal .form-row input,
+    #creditCardModal .form-row select {
+        padding: 0.8rem 1rem;
+        font-size: 0.95rem;
+    }
+    #creditCardModal .modal-footer {
+        margin-top: 1.2rem;
+        padding-top: 1.2rem;
+        flex-direction: row;
+        gap: 0.8rem;
+        justify-content: space-between;
+    }
+    #creditCardModal .modal-footer .btn {
+        flex: 1;
+        padding: 1rem 0;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    #creditCardModal .modal-footer .btn-secondary {
+        background: transparent;
+        color: #666;
+    }
+    #creditCardModal .modal-footer {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        flex-direction: row;
+        gap: 0.8rem;
+        justify-content: space-between;
+    }
+    #creditCardModal .modal-footer .btn {
+        flex: 1;
+        padding: 0.9rem 0;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+    #creditCardModal .modal-footer .btn-primary {
+        background: var(--primary-color, #4f8cff);
+        color: white;
+        box-shadow: 0 4px 10px rgba(79,140,255,0.2);
+    }
+    #creditCardModal .modal-footer .btn-secondary {
+        background: var(--bg-secondary, #f5f7fa);
+        color: var(--text-secondary, #555);
+        border: 1px solid var(--border-color, #eee);
+    }
+}
+
+/* Modal explicativo inicial */
+#creditCardIntroModal .modal-content {
+    max-width: 420px;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 16px;
+    background: var(--bg-secondary, #f6f8fa);
+    box-shadow: var(--card-shadow, 0 10px 40px 0 rgba(79,140,255,0.15));
+    text-align: center;
+}
+#creditCardIntroModal .modal-header {
+    position: relative;
+    padding: 1.8rem 1.8rem 0.8rem 1.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: none;
+}
+#creditCardIntroModal .modal-header h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color, #4f8cff);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    width: 100%;
+}
+#creditCardIntroModal .close-modal {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    background: var(--bg-secondary, #f6f8fa);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    line-height: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary, #666);
+    transition: all 0.2s;
+    z-index: 2;
+}
+#creditCardIntroModal .close-modal:hover {
+    background: var(--primary-color, #e0eaff);
+    color: var(--primary-color, #4f8cff);
+}
+#creditCardIntroModal .modal-body {
+    padding: 0.5rem 1.2rem 1.2rem;
+}
+#creditCardIntroModal .modal-body p {
+    color: var(--text-secondary, #555);
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: center;
+}
+#creditCardIntroModal .intro-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    text-align: left;
+}
+#creditCardIntroModal .intro-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1rem;
+    color: var(--text-secondary, #444);
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+#creditCardIntroModal .intro-features li:hover {
+    background: rgba(79,140,255,0.05);
+}
+#creditCardIntroModal .intro-features i {
+    color: var(--primary-color, #4f8cff);
+    font-size: 1.15rem;
+    min-width: 20px;
+    text-align: center;
+}
+#creditCardIntroModal .modal-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.2rem;
+    border-top: none;
+    padding-top: 0;
+}
+#creditCardIntroModal .btn-primary {
+    padding: 0.9rem 2rem;
+    font-size: 1.05rem;
+    border-radius: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(79,140,255,0.2);
+}
+#creditCardIntroModal .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(79,140,255,0.3);
+}
+
+/* Modal de cadastro/edição de cartão */
+#creditCardModal .modal-content {
+    max-width: 580px;
+    width: 95%;
+    padding: 2rem;
+    border-radius: 16px;
+    background: var(--bg-secondary, #1f2937);
+    box-shadow: var(--card-shadow, 0 10px 40px 0 rgba(0,0,0,0.3));
+    margin: 0 auto;
+    color: var(--text-primary, #f3f4f6);
+}
+
+#creditCardModal .modal-header {
+    position: relative;
+    padding: 0 0 1.2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border-color, #374151);
+    margin-bottom: 1.5rem;
+}
+
+#creditCardModal .modal-header h3 {
+    font-size: 1.25rem;
+    color: var(--primary-color, #4f8cff);
+    font-weight: 700;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+#creditCardModal .close-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--bg-primary, #111827);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    line-height: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-secondary, #d1d5db);
+    transition: all 0.2s;
+}
+
+#creditCardModal .close-modal:hover {
+    background: var(--primary-color, #4f8cff);
+    color: #fff;
+}
+
+#creditCardModal .form-row {
+    margin-bottom: 1.5rem;
+}
+
+#creditCardModal .form-row label {
+    display: block;
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--text-secondary, #d1d5db);
+}
+
+#creditCardModal .form-row input,
+#creditCardModal .form-row select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid var(--border-color, #374151);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: var(--bg-primary, #111827);
+    color: var(--text-primary, #f3f4f6);
+}
+
+#creditCardModal .form-row input:focus,
+#creditCardModal .form-row select:focus {
+    border-color: var(--primary-color, #4f8cff);
+    box-shadow: 0 0 0 2px rgba(79,140,255,0.1);
+}
+
+#creditCardModal .modal-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color, #f0f0f0);
+}
+
+#creditCardModal .modal-footer .btn {
+    flex: 1;
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    transition: all 0.3s;
+}
+
+#creditCardModal .modal-footer .btn-primary {
+    background: var(--primary-color, #4f8cff);
+    color: var(--bg-primary, #fff);
+    box-shadow: 0 4px 12px rgba(79,140,255,0.2);
+}
+
+#creditCardModal .modal-footer .btn-primary:hover {
+    background: var(--primary-color, #3a7cf0);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(79,140,255,0.25);
+}
+
+#creditCardModal .modal-footer .btn-secondary {
+    background: var(--bg-secondary, #f5f7fa);
+    color: var(--text-secondary, #555);
+    border: 1px solid var(--border-color, #eee);
+}
+
+#creditCardModal .modal-footer .btn-secondary:hover {
+    background: var(--bg-secondary, #e9ecf1);
+    color: var(--text-secondary, #333);
+}
+
+@media (max-width: 768px) {
+    .cards-list-container,
+    .cards-carousel {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100%;
+        max-width: 100vw;
+        box-sizing: border-box;
+        margin: 0 auto;
+    }
+    .cards-carousel > * {
+        width: 100%;
+        max-width: 98vw;
+        margin-bottom: 1rem;
+        margin: 0 auto;
+    }
+    .credit-card-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+        width: 100%;
+    }
+    #creditCardIntroModal .modal-content,
+    #creditCardModal .modal-content {
+        max-width: 92vw;
+        width: 100%;
+        margin: 0 auto 80px auto; /* Espaço para a barra inferior */
+        box-sizing: border-box;
+        position: fixed;
+        left: 50%;
+        top: auto;
+        bottom: 50%;
+        transform: translate(-50%, 50%);
+        z-index: 1100;
+        padding: 1.2rem;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    #creditCardIntroModal .modal,
+    #creditCardModal .modal {
+        align-items: center !important;
+        justify-content: center;
+    }
+    
+    #creditCardModal .form-row {
+        margin-bottom: 0.8rem;
+    }
+    
+    #creditCardModal .form-row label {
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+    }
+    
+    #creditCardModal .form-row input,
+    #creditCardModal .form-row select {
+        padding: 0.6rem 0.7rem;
+        font-size: 0.85rem;
+    }
+    
+    #creditCardModal .modal-footer {
+        margin-top: 0.8rem;
+        padding-top: 0.8rem;
+    }
+    
+    #creditCardModal .modal-footer .btn {
+        padding: 0.6rem 0;
+        font-size: 0.9rem;
+    }
+}
+
+/* Modal de histórico de gastos */
+#cardExpensesModal .modal-content {
+    max-width: 800px;
+    background: var(--bg-secondary, #1f2937);
+    border-radius: 16px;
+    color: var(--text-primary, #f3f4f6);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.card-expenses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color, #374151);
+}
+
+.fatura-info {
+    display: flex;
+    gap: 30px;
+}
+
+.fatura-atual, .fatura-fechamento {
+    display: flex;
+    flex-direction: column;
+}
+
+.fatura-atual span, .fatura-fechamento span {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #d1d5db);
+}
+
+.fatura-atual strong, .fatura-fechamento strong {
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.add-expense-modal-btn {
+    padding: 8px 16px;
+    font-weight: 500;
+    background-color: var(--primary-color, #4f8cff);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.add-expense-modal-btn:hover {
+    background-color: var(--primary-color-dark, #3a7cf0);
+    transform: translateY(-2px);
+}
+
+/* Estilos das abas no modal de despesas */
+.expenses-tabs {
+    display: flex;
+    background: var(--bg-primary, #111827);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 15px;
+    gap: 2px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.expenses-tabs .cc-tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary, #d1d5db);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.expenses-tabs .cc-tab-btn:hover {
+    background: rgba(79,140,255,0.1);
+    color: var(--primary-color, #4f8cff);
+}
+
+.expenses-tabs .cc-tab-btn.active {
+    background: var(--primary-color, #4f8cff);
+    color: white;
+}
+
+/* Modificando os seletores para serem mais específicos */
+#cardExpensesModal .cc-tab-contents {
+    position: relative;
+}
+
+#cardExpensesModal .cc-tab-content {
+    display: none;
+}
+
+#cardExpensesModal .cc-tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Removendo classes genéricas que causam conflitos */
+.credit-cards-tab-content {
+    display: none;
+}
+
+.credit-cards-tab-content.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+/* Estilo dos botões de ação nos itens de despesa */
+.expense-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.btn-pay, .btn-advance {
+    background: var(--primary-color, #4f8cff);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-pay:hover, .btn-advance:hover {
+    background: var(--primary-color-dark, #3672e0);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+.btn-pay i, .btn-advance i {
+    font-size: 0.9rem;
+}
+
+.beautiful-expense {
+    background: var(--bg-primary, #111827);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color, #374151);
+}
+
+.beautiful-expense:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    border-color: var(--primary-color, #4f8cff);
+}
+
+.beautiful-expense .expense-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+.beautiful-expense .expense-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.beautiful-expense .expense-date {
+    color: var(--text-secondary, #d1d5db);
+    font-size: 0.85rem;
+}
+
+.beautiful-expense .expense-description {
+    color: var(--text-primary, #f3f4f6);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.beautiful-expense .expense-amount {
+    color: var(--primary-color, #4f8cff);
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* Estado vazio */
+.empty-expenses {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    color: var(--text-secondary, #d1d5db);
+}
+
+.empty-expenses i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.7;
+    color: var(--primary-color, #4f8cff);
+}
+
+.empty-expenses p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+/* Cartão de despesa estilizado */
+.beautiful-expense {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: var(--bg-primary, #111827);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s;
+    border-left: 3px solid var(--primary-color, #4f8cff);
+}
+
+.beautiful-expense:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: translateY(-2px);
+    background-color: var(--bg-primary-light, #1a2234);
+}
+
+.expense-content {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expense-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.expense-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #d1d5db);
+    margin-bottom: 5px;
+}
+
+.expense-description {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.installment-badge {
+    background-color: var(--primary-color, #4f8cff);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    margin-left: 8px;
+}
+.expense-amount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color, #4f8cff);
+}
+
+.expense-actions {
+    display: flex;
+    margin-left: 15px;
+}
+
+.btn-pay, .btn-advance {
+    background-color: var(--primary-color, #4f8cff);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.btn-pay:hover, .btn-advance:hover {
+    background-color: var(--primary-color-dark, #3a7cf0);
+    transform: translateY(-2px);
+}
+
+.btn-advance {
+    background-color: var(--secondary-color, #3a7cf0);
+}
+
+.expense-group {
+    margin-bottom: 25px;
+    border: 1px solid var(--border-color, #374151);
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: var(--bg-primary, #111827);
+}
+
+.expense-group-header {
+    background-color: var(--bg-primary-light, #1a2234);
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.expense-group-items {
+    padding: 10px;
+}
+
+.future-item {
+    border-bottom: 1px solid var(--border-light, #2a3548);
+    box-shadow: none;
+    margin-bottom: 0;
+    padding: 12px 5px;
+}
+
+.future-item:last-child {
+    border-bottom: none;
+}
+
+.paid-item {
+    opacity: 0.7;
+    border-left-color: #28a745;
+}
+
+.payment-status {
+    color: #28a745;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.paid-group .expense-group-header {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* Status de despesa */
+.expense-item.overdue {
+    border-left: 3px solid #dc3545;
+}
+
+/* Modal de Adicionar Despesa - Estilização melhorada */
+#addExpenseModal .modal-content {
+    max-width: 500px;
+    background: var(--bg-secondary, #1f2937);
+    border-radius: 16px;
+    color: var(--text-primary, #f3f4f6);
+}
+
+#addExpenseModal .modal-header {
+    border-bottom: 1px solid var(--border-color, #374151);
+    padding: 15px 20px;
+}
+
+#addExpenseModal .modal-header h3 {
+    color: var(--primary-color, #4f8cff);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+#addExpenseModal .modal-body {
+    padding: 20px;
+}
+
+#addExpenseModal .form-row {
+    margin-bottom: 18px;
+}
+
+#addExpenseModal .form-row label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary, #d1d5db);
+    font-weight: 500;
+}
+
+#addExpenseModal .form-row input,
+#addExpenseModal .form-row select {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-primary, #111827);
+    border: 1px solid var(--border-color, #374151);
+    border-radius: 8px;
+    color: var(--text-primary, #f3f4f6);
+    font-size: 1rem;
+}
+
+#addExpenseModal .form-row input:focus,
+#addExpenseModal .form-row select:focus {
+    border-color: var(--primary-color, #4f8cff);
+    outline: none;
+}
+
+#addExpenseModal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color, #374151);
+}
+
+#addExpenseModal .btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+#addExpenseModal .btn-primary {
+    background: var(--primary-color, #4f8cff);
+    color: white;
+    border: none;
+}
+
+#addExpenseModal .btn-primary:hover {
+    background: var(--primary-color-dark, #3a7cf0);
+    transform: translateY(-2px);
+}
+
+#addExpenseModal .btn-secondary {
+    background: var(--bg-primary, #111827);
+    color: var(--text-secondary, #d1d5db);
+    border: 1px solid var(--border-color, #374151);
+}
+
+#addExpenseModal .btn-secondary:hover {
+    background: var(--primary-color, #374151);
+    color: var(--bg-primary, #fff);
+}
+
+/* Responsividade para os modais */
+@media (max-width: 768px) {
+    #cardExpensesModal .modal-content,
+    #addExpenseModal .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 0 auto;
+    }
+    
+    .card-expenses-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .fatura-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .add-expense-modal-btn {
+        align-self: flex-end;
+    }
+    
+    .expenses-tabs {
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+    
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .expense-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .expense-amount {
+        margin-top: 5px;
+    }
+    
+    .expense-actions {
+        margin-top: 10px;
+        margin-left: 0;
+    }
+}
+
+/* Esconder botão de novo cartão quando não há cartões */
+.hidden {
+    display: none !important;
+}
+
+.modal .modal-title,
+#creditCardModal .modal-title,
+#creditCardModal h2,
+#creditCardModal h3 {
+    color: var(--title-color, var(--text-primary, #f3f4f6));
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.modal .form-row input,
+.modal .form-row select {
+    background: var(--bg-primary, #111827);
+    color: var(--text-primary, #f3f4f6);
+    border: 1.5px solid var(--border-color, #374151);
+}
+
+.modal .form-row input:focus,
+.modal .form-row select:focus {
+    border-color: var(--primary-color, #60a5fa);
+    background: var(--bg-primary, #111827);
+    color: var(--text-primary, #f3f4f6);
+}
+
+.modal .form-row input::placeholder {
+    color: var(--text-secondary, #d1d5db);
+    opacity: 1;
+}
+
+#creditCardIntroModal .modal-content {
+    background: var(--bg-secondary, #1f2937);
+    color: var(--text-primary, #f3f4f6);
+    box-shadow: var(--card-shadow, 0 1px 8px 0 rgba(0,0,0,0.10));
+    border: 1.5px solid var(--border-color, #374151);
+    transition: box-shadow 0.25s, border 0.25s;
+}
+
+#creditCardIntroModal .modal-header h3 {
+    color: var(--primary-color, #60a5fa);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+#creditCardIntroModal .btn-primary {
+    background: var(--primary-color, #60a5fa);
+    color: var(--bg-primary, #fff);
+    border-radius: 8px;
+    font-weight: 700;
+    box-shadow: var(--card-shadow, 0 2px 8px 0 rgba(79,140,255,0.11));
+    border: none;
+    transition: background 0.18s;
+}
+#creditCardIntroModal .btn-primary:hover {
+    background: var(--primary-color, #2563eb);
+    color: var(--bg-primary, #fff);
+    box-shadow: 0 6px 16px rgba(79,140,255,0.18);
+}
+
+#creditCardIntroModal .modal-body p {
+    color: var(--text-secondary, #d1d5db);
+    margin-bottom: 1.5rem;
+    font-size: 1.08rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+#creditCardIntroModal .intro-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    font-size: 1rem;
+    color: var(--text-secondary, #d1d5db);
+    margin-bottom: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    background: rgba(79,140,255,0.04);
+}
+#creditCardIntroModal .intro-features i {
+    color: var(--primary-color, #60a5fa);
+    font-size: 1.15rem;
+    min-width: 20px;
+    text-align: center;
+}
+
+#creditCardIntroModal .modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.2rem;
+    background: var(--bg-secondary, #1f2937);
+    border-radius: 0 0 18px 18px;
+    box-shadow: none;
+    padding: 2rem 0 1.5rem 0;
+    margin: 0 2.5rem;
+    position: relative;
+    min-height: 90px;
+}
+#creditCardIntroModal .modal-footer:before {
+    display: none;
+}
+#creditCardIntroModal .modal-footer > * {
+    z-index: 1;
+}
+#creditCardIntroModal .btn-secondary {
+    background: var(--bg-secondary, #1f2937);
+    color: var(--text-secondary, #d1d5db);
+    border-radius: 8px;
+    font-weight: 700;
+    border: 1.5px solid var(--border-color, #374151);
+    transition: background 0.18s;
+}
+#creditCardIntroModal .btn-secondary:hover {
+    background: var(--primary-color, #374151);
+    color: var(--bg-primary, #fff);
+}
+
+.modal .modal-header h2,
+.modal .modal-header h3,
+#creditCardModal .modal-title {
+    color: var(--title-color, var(--text-primary, #f3f4f6));
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.modal .modal-footer {
+    background: none !important;
+    box-shadow: none !important;
+    border-top: 1px solid var(--border-color, #374151);
+}
+
+#creditCardModal .modal-footer {
+    background: none !important;
+    box-shadow: none !important;
+    border-top: 1px solid var(--border-color, #374151);
+}
+
+.modal .btn,
+#creditCardModal .btn {
+    background: var(--primary-color, #4f8cff);
+    color: var(--bg-primary, #fff);
+    border-radius: 8px;
+    font-weight: 700;
+    border: none;
+    transition: background 0.18s;
+}
+.modal .btn-secondary,
+#creditCardModal .btn-secondary {
+    background: var(--bg-secondary, #1f2937);
+    color: var(--text-secondary, #d1d5db);
+    border-radius: 8px;
+    font-weight: 700;
+    border: 1.5px solid var(--border-color, #374151);
+    transition: background 0.18s;
+}
+.modal .btn-secondary:hover,
+#creditCardModal .btn-secondary:hover {
+    background: var(--primary-color, #374151);
+    color: var(--bg-primary, #fff);
+}
+
+/* Estilos para modais de pagamento */
+.payment-options-modal .modal-body {
+    padding: 20px;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--bg-primary, #111827);
+    border: 1px solid var(--border-color, #374151);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.payment-option:hover {
+    background-color: var(--bg-primary-light, #1a2234);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.payment-option i {
+    font-size: 1.5rem;
+    color: var(--primary-color, #4f8cff);
+}
+
+.expense-payment-header {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.expense-payment-header strong {
+    color: var(--primary-color, #4f8cff);
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.installment-selection {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.installment-option {
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--bg-primary, #111827);
+    transition: background-color 0.2s ease;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.installment-option:hover {
+    background-color: var(--bg-primary-light, #1a2234);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.installment-info {
+    flex: 1;
+    color: var(--text-primary, #f3f4f6);
+}
+
+.installment-details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.installment-amount {
+    color: var(--primary-color, #4f8cff);
+    font-weight: bold;
+}
+
+.installment-date {
+    font-size: 0.85rem;
+    color: var(--text-secondary, #d1d5db);
+}
+
+.payment-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+/* Checkmark personalizado */
+.checkmark {
+    height: 20px;
+    width: 20px;
+    background-color: var(--bg-secondary, #1f2937);
+    border: 2px solid var(--primary-color, #4f8cff);
+    border-radius: 4px;
+    margin-right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: rgba(79, 140, 255, 0.1);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color, #4f8cff);
+}
+
+.checkmark:after {
+    content: "";
+    display: none;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Lista de despesas */
+.expenses-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.expenses-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.expenses-list::-webkit-scrollbar-track {
+    background: var(--bg-primary, #111827);
+    border-radius: 4px;
+}
+
+.expenses-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color, #4f8cff);
+    border-radius: 4px;
+}
+
+/* Outros estilos para a lista de despesas */
+.expense-group {
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color, #374151);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--bg-secondary, #1f2937);
+}
+
+.expense-group-header {
+    padding: 12px 15px;
+    background: var(--bg-primary, #111827);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color, #374151);
+}
+
+.expense-group-header .expense-description {
+    font-weight: 600;
+    color: var(--primary-color, #4f8cff);
+}
+
+.expense-group-header .expense-total {
+    color: var(--text-secondary, #d1d5db);
+    font-size: 0.9rem;
+}
+
+.expense-group-items {
+    padding: 10px;
+}
+
+.empty-expenses {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    color: var(--text-secondary, #d1d5db);
+    text-align: center;
+}
+
+.empty-expenses i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--border-color, #374151);
+}
+
+.empty-expenses p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.installment-badge {
+    background: var(--primary-color, #4f8cff);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+/* Personalização para dispositivos móveis */
+@media (max-width: 767px) {
+    /* Layout principal */
+    .credit-cards-wrapper {
+        padding: 0.5rem !important;
+    }
+    
+    .credit-cards-header {
+        padding: 0.8rem 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .credit-cards-header h2 {
+        font-size: 1.25rem;
+        gap: 0.5rem;
+    }
+    
+    /* Cards de crédito */
+    .cards-list-container {
+        gap: 1rem;
+        padding: 0 0.5rem;
+    }
+    
+    .credit-card-visual {
+        min-width: 100%;
+        max-width: 100%;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 14px;
+    }
+    
+    .realistic-card {
+        min-width: 100%;
+        max-width: 100%;
+        padding: 1.2rem 1rem;
+        border-radius: 16px;
+    }
+    
+    /* Ajustes para cartões visuais */
+    .card-name {
+        font-size: 1rem;
+    }
+    
+    .card-limit, .card-due {
+        font-size: 0.9rem;
+    }
+    
+    .credit-card-visual .credit-card-actions {
+        margin-top: 0.5rem;
+    }
+    
+    .credit-card-visual .credit-card-actions button {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Ajustes para modais */
+    #creditCardModal .modal-content,
+    #cardExpensesModal .modal-content,
+    #addExpenseModal .modal-content,
+    #creditCardIntroModal .modal-content {
+        width: 95%;
+        max-width: 95%;
+        padding: 1rem;
+        border-radius: 14px;
+        max-height: 85vh;
+        margin: 0 auto;
+    }
+    
+    #creditCardModal .modal-header,
+    #cardExpensesModal .modal-header,
+    #addExpenseModal .modal-header {
+        padding: 0.5rem 0;
+    }
+    
+    #creditCardModal .modal-header h3,
+    #cardExpensesModal .modal-header h3,
+    #addExpenseModal .modal-header h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #creditCardModal .form-row {
+        margin-bottom: 0.7rem;
+    }
+    
+    #creditCardModal .form-row input,
+    #creditCardModal .form-row select {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Ajustes para despesas */
+    .beautiful-expense {
+        padding: 0.8rem;
+        margin-bottom: 0.6rem;
+    }
+    
+    .expense-content {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .expense-info {
+        flex: 1;
+        min-width: 60%;
+    }
+    
+    .expense-description {
+        font-size: 0.9rem;
+    }
+    
+    .expense-amount {
+        font-size: 0.95rem;
+    }
+    
+    .expense-actions {
+        width: 100%;
+        justify-content: flex-end;
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    
+    .btn-pay, .btn-advance {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tabs no modal de despesas */
+    .expenses-tabs {
+        margin-bottom: 0.7rem;
+    }
+    
+    .expenses-tabs .cc-tab-btn {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Estado vazio */
+    .empty-credit-cards {
+        padding: 2rem 1rem;
+        margin: 1rem auto;
+        border-radius: 20px;
+    }
+    
+    .empty-credit-cards h3 {
+        font-size: 1.4rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .empty-credit-cards p {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .suggestion-items {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 0.8rem;
+    }
+    
+    .suggestion-item {
+        padding: 0.8rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.8rem;
+        height: auto;
+        text-align: left;
+    }
+    
+    .suggestion-item i {
+        margin-bottom: 0;
+        font-size: 1.8rem;
+    }
+    
+    /* Fatura info */
+    .fatura-info {
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+    
+    .fatura-atual, .fatura-fechamento {
+        width: 100%;
+    }
+    
+    /* Melhorias específicas para o modal de despesas do cartão */
+    #cardExpensesModal .modal-content {
+        padding: 1.2rem 1rem;
+        margin-bottom: 4rem;
+        border-radius: 16px;
+        max-height: 80vh;
+    }
+    
+    #cardExpensesModal .close-modal {
+        top: 1rem;
+        right: 1rem;
+    }
+    
+    #cardExpensesModal .modal-header h3 {
+        font-size: 1.2rem;
+        margin-top: 0.3rem;
+        text-align: center;
+        width: 100%;
+    }
+    
+    /* Melhorias na exibição de valores de fatura */
+    .fatura-atual, .fatura-fechamento {
+        padding: 0.8rem 1rem;
+        background: var(--bg-primary, #111827);
+        border-radius: 12px;
+        margin-bottom: 0.8rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        width: 100%;
+    }
+    
+    .fatura-atual span, .fatura-fechamento span {
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+    
+    .fatura-atual strong, .fatura-fechamento strong {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    /* Melhorias nas abas */
+    .expenses-tabs {
+        margin: 1rem 0;
+        border-radius: 10px;
+    }
+    
+    .expenses-tabs .cc-tab-btn {
+        padding: 0.7rem 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    /* Melhorias nos itens de despesa */
+    .beautiful-expense {
+        border-radius: 12px;
+        margin-bottom: 0.8rem;
+    }
+    
+    .expense-description {
+        font-weight: 600;
+        line-height: 1.2;
+    }
+    
+    .installment-badge {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        border-radius: 20px;
+    }
+    
+    /* Ajustes para o indicador de grupo de despesas */
+    .expense-group {
+        margin-bottom: 1.5rem;
+        border-radius: 14px;
+        background: var(--bg-primary, #111827);
+        overflow: hidden;
+        border: 1px solid var(--border-color, #374151);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .expense-group-header {
+        padding: 1rem;
+        background: var(--bg-primary-light, #1a2234);
+        border-bottom: 1px solid var(--border-color, #374151);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .expense-group-header .expense-description {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--primary-color, #4f8cff);
+    }
+    
+    .expense-group-header .expense-total {
+        font-weight: 700;
+        font-size: 1.05rem;
+        color: var(--text-primary, #f3f4f6);
+    }
+    
+    .expense-group-items {
+        padding: 1rem;
+    }
+    
+    /* Item de parcela */
+    .expense-item {
+        background: var(--bg-secondary, #1f2937);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.8rem;
+        border-left: 3px solid var(--primary-color, #4f8cff);
+    }
+    
+    .expense-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .expense-date {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-primary, #f3f4f6);
+    }
+    
+    .expense-installment {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--text-secondary, #d1d5db);
+        margin-top: 0.3rem;
+    }
+    
+    /* Botão de adiantar */
+    .btn-advance {
+        background: var(--primary-color, #4f8cff);
+        color: white;
+        border: none;
+        padding: 0.8rem 1.2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 0.8rem;
+        box-shadow: 0 2px 8px rgba(79,140,255,0.25);
+        width: 100%;
+        transition: all 0.2s;
+    }
+    
+    .btn-advance:hover, 
+    .btn-advance:focus {
+        background: var(--primary-color-dark, #3a7cf0);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79,140,255,0.3);
+    }
+    
+    .btn-advance i {
+        font-size: 1rem;
+    }
+    
+    /* Ajustes nos botões das tabs */
+    .expenses-tabs {
+        display: flex;
+        background: var(--bg-primary, #111827);
+        border-radius: 12px;
+        padding: 0.3rem;
+        margin: 1.2rem 0;
+        gap: 0.3rem;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    
+    .expenses-tabs .cc-tab-btn {
+        flex: 1;
+        padding: 0.9rem 0;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary, #d1d5db);
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        border-radius: 10px;
+    }
+    
+    .expenses-tabs .cc-tab-btn:hover {
+        background: rgba(79,140,255,0.1);
+        color: var(--primary-color, #4f8cff);
+    }
+    
+    .expenses-tabs .cc-tab-btn.active {
+        background: var(--primary-color, #4f8cff);
+        color: white;
+    }
+    
+    /* Valor grande da fatura */
+    .fatura-atual strong, 
+    .fatura-fechamento strong {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: block;
+        margin-top: 0.3rem;
+        color: var(--primary-color, #4f8cff);
+    }
+    
+    /* Botão de fechar */
+    .btn-fechar {
+        display: block;
+        width: 100%;
+        padding: 1rem;
+        background: var(--bg-secondary, #1f2937);
+        color: var(--text-secondary, #d1d5db);
+        border: 1px solid var(--border-color, #374151);
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 1.5rem;
+        transition: all 0.2s;
+    }
+    
+    .btn-fechar:hover,
+    .btn-fechar:focus {
+        background: var(--bg-primary-light, #1a2234);
+        color: var(--text-primary, #f3f4f6);
+    }
+}
+
+/* Ajustes específicos para dispositivos muito pequenos */
+@media (max-width: 360px) {
+    .credit-card-visual .card-name {
+        font-size: 0.9rem;
+    }
+    
+    .credit-card-visual .card-limit,
+    .credit-card-visual .card-due {
+        font-size: 0.8rem;
+    }
+    
+    .expense-description {
+        font-size: 0.85rem;
+    }
+    
+    .installment-badge {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+    }
+    
+    .expense-amount {
+        font-size: 0.9rem;
+    }
+    
+    /* Ajustes adicionais para o modal de despesas */
+    #cardExpensesModal .modal-content {
+        padding: 1rem 0.8rem;
+    }
+    
+    .fatura-atual strong, .fatura-fechamento strong {
+        font-size: 1.5rem;
+    }
+    
+    .expenses-tabs .cc-tab-btn {
+        padding: 0.7rem 0;
+        font-size: 0.85rem;
+    }
+}
+
+/* Estilos para o sistema de notificações */
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+    pointer-events: none;
+}
+
+#notifications-container .notification {
+    pointer-events: auto;
+    background: var(--bg-secondary, #1f2937);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+    animation: slideIn 0.3s ease forwards;
+    border: 1px solid var(--border-color, #374151);
+    max-width: 100%;
+}
+
+/* Estilos específicos para notificações de confirmação */
+#notifications-container .notification.warning {
+    background: var(--bg-primary, #111827);
+    border: 2px solid var(--primary-color, #4f8cff);
+    padding: 16px;
+}
+
+#notifications-container .notification .notification-content {
+    flex: 1;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+#notifications-container .notification .notification-title {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-primary, #f3f4f6);
+    font-size: 1rem;
+}
+
+#notifications-container .notification .notification-message {
+    color: var(--text-secondary, #d1d5db);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+/* Estilos para os botões dentro das notificações de confirmação */
+#notifications-container .notification .notification-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: flex-end;
+}
+
+#notifications-container .notification .notification-actions button {
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#notifications-container .notification .notification-actions .btn-primary {
+    background: var(--primary-color, #4f8cff);
+    color: white;
+    border: none;
+}
+
+#notifications-container .notification .notification-actions .btn-primary:hover {
+    background: var(--primary-color-dark, #3a7cf0);
+    transform: translateY(-2px);
+}
+
+#notifications-container .notification .notification-actions .btn-secondary {
+    background: var(--bg-secondary, #1f2937);
+    color: var(--text-secondary, #d1d5db);
+    border: 1px solid var(--border-color, #374151);
+}
+
+#notifications-container .notification .notification-actions .btn-secondary:hover {
+    background: var(--border-color, #374151);
+    color: var(--text-primary, #f3f4f6);
+}
+
+#notifications-container .notification.success {
+    border-left: 4px solid #10b981;
+}
+
+#notifications-container .notification.error {
+    border-left: 4px solid #ef4444;
+}
+
+#notifications-container .notification.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+#notifications-container .notification.info {
+    border-left: 4px solid #3b82f6;
+}
+
+#notifications-container .notification i {
+    font-size: 1.2rem;
+}
+
+#notifications-container .notification.success i {
+    color: #10b981;
+}
+
+#notifications-container .notification.error i {
+    color: #ef4444;
+}
+
+#notifications-container .notification.warning i {
+    color: #f59e0b;
+}
+
+#notifications-container .notification.info i {
+    color: #3b82f6;
+}
+
+#notifications-container .notification .notification-close {
+    color: var(--text-secondary, #d1d5db);
+    cursor: pointer;
+    margin-left: auto;
+    padding: 5px;
+}
+
+#notifications-container .notification .notification-close:hover {
+    color: var(--text-primary, #f3f4f6);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Responsividade para notificações em dispositivos móveis */
+@media (max-width: 480px) {
+    #notifications-container {
+        top: auto;
+        bottom: 20px;
+        left: 10px;
+        right: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    #notifications-container .notification {
+        width: 100%;
+    }
+}
+
+/* Modais e componentes de cartões de crédito - Compatibilidade com tema claro/escuro */
+
+/* Estilos para modais de despesas de cartão */
+#cardExpensesModal .modal-content,
+#addExpenseModal .modal-content,
+#paymentOptionsModal .modal-content,
+#advancedPaymentModal .modal-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+#cardExpensesModal .modal-header,
+#addExpenseModal .modal-header,
+#paymentOptionsModal .modal-header,
+#advancedPaymentModal .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+#cardExpensesModal .modal-header h3,
+#addExpenseModal .modal-header h3,
+#paymentOptionsModal .modal-header h3,
+#advancedPaymentModal .modal-header h3 {
+    color: var(--text-primary);
+}
+
+/* Melhorias nas abas de despesas */
+.expenses-tabs {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.expenses-tabs .cc-tab-btn {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-bottom: none;
+}
+
+.expenses-tabs .cc-tab-btn:hover:not(.active) {
+    background-color: var(--bg-primary);
+}
+
+.cc-tab-content {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* Despesas e itens de lista */
+.beautiful-expense,
+.expense-item {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.beautiful-expense:hover,
+.expense-item:hover {
+    background-color: var(--bg-primary);
+    border-color: var(--primary-color);
+}
+
+.expense-description,
+.expense-date,
+.expense-installment {
+    color: var(--text-primary);
+}
+
+.expense-amount {
+    color: var(--text-primary);
+}
+
+/* Grupos de despesas */
+.expense-group-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.expense-group-items {
+    background-color: var(--bg-secondary);
+}
+
+/* Status de despesas */
+.expense-item.overdue {
+    border-left: 4px solid var(--danger-color);
+}
+
+.payment-status {
+    color: var(--success-color);
+}
+
+.expense-paid-date {
+    color: var(--text-secondary);
+}
+
+/* Opções de pagamento */
+.payment-options .payment-option {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.payment-options .payment-option:hover {
+    background-color: var(--bg-primary);
+    border-color: var(--primary-color);
+}
+
+.payment-option i {
+    color: var(--primary-color);
+}
+
+/* Opções de parcela para pagamento */
+.installment-option {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.installment-option:hover {
+    background-color: var(--bg-primary);
+}
+
+/* Informações de parcela */
+.installment-info {
+    color: var(--text-primary);
+}
+
+.installment-number {
+    color: var(--text-primary);
+}
+
+.installment-amount {
+    color: var(--text-primary);
+}
+
+.installment-date {
+    color: var(--text-secondary);
+}
+
+/* Estado vazio para despesas */
+.empty-expenses {
+    color: var(--text-secondary);
+}
+
+.empty-expenses i {
+    color: var(--text-secondary);
+}
+
+/* Checkbox estilizado */
+.checkmark {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: var(--bg-primary);
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: var(--primary-color);
+}
+
+/* Badges e elementos decorativos */
+.installment-badge {
+    background-color: var(--primary-color);
+    color: white;
+}
+

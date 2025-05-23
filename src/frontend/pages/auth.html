@@ -136,49 +136,34 @@
             display: none;
         }
 
-        .google-login-separator {
-            display: flex;
-            align-items: center;
-            margin: 1.2rem 0 1rem 0;
-        }
-        .google-login-separator span {
-            flex: 1;
-            text-align: center;
-            color: #888;
-            font-size: 0.95rem;
-            position: relative;
-        }
-        .google-login-separator:before,
-        .google-login-separator:after {
-            content: '';
-            flex: 2;
-            border-bottom: 1px solid #e0e0e0;
-            margin: 0 8px;
-        }
         .google-login-btn {
-            width: 100%;
             background: #fff;
             color: #444;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #ddd;
             border-radius: 5px;
-            padding: 0.7rem 0;
-            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 1.08rem;
             font-weight: 500;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
             gap: 0.7rem;
+            margin: 0 auto;
             cursor: pointer;
-            transition: box-shadow 0.2s, border 0.2s;
-            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            transition: background 0.2s, box-shadow 0.2s;
         }
         .google-login-btn:hover {
-            border: 1.5px solid #0984e3;
-            box-shadow: 0 2px 8px rgba(9,132,227,0.12);
+            background: #f7f7f7;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
         }
-        .google-login-btn i {
-            font-size: 1.2rem;
-            color: #ea4335;
+        .google-icon-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        .google-icon {
+            width: 26px;
+            height: 26px;
+            margin-right: 0.2rem;
         }
 
         /* Ajustes para Desktop (telas maiores que 768px) */
@@ -266,10 +251,6 @@
                     <input type="password" id="loginPassword" required placeholder="Sua senha">
                 </div>
                 <button type="submit">Entrar</button>
-                <div class="google-login-separator"><span>ou</span></div>
-                <button type="button" id="googleLoginBtn" class="google-login-btn">
-                    <i class="fab fa-google"></i> Entrar com Google
-                </button>
                 <div class="error-message" id="loginError"></div>
             </form>
             <div class="auth-links">
@@ -299,14 +280,51 @@
                 <a onclick="showForm('loginForm')">Já tem uma conta? Faça login</a>
             </div>
         </div>
+
+        <div style="text-align:center; margin-top: 2rem; margin-bottom: 0;">
+            <button id="google-login-btn" type="button" class="google-login-btn">
+                <span class="google-icon-wrapper">
+                    <svg class="google-icon" xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 48 48"><g><path fill="#4285F4" d="M24 9.5c3.54 0 6.44 1.22 8.48 3.23l6.32-6.32C34.58 2.82 29.74 0 24 0 14.84 0 6.73 5.48 2.69 13.44l7.74 6.02C12.14 13.04 17.61 9.5 24 9.5z"/><path fill="#34A853" d="M46.1 24.5c0-1.64-.15-3.22-.42-4.74H24v9.02h12.42c-.54 2.84-2.18 5.24-4.66 6.88l7.2 5.59C43.68 37.02 46.1 31.2 46.1 24.5z"/><path fill="#FBBC05" d="M10.43 28.47A14.49 14.49 0 0 1 9.5 24c0-1.56.27-3.07.76-4.47l-7.74-6.02A23.91 23.91 0 0 0 0 24c0 3.85.92 7.49 2.54 10.49l7.89-6.02z"/><path fill="#EA4335" d="M24 48c6.48 0 11.92-2.14 15.89-5.83l-7.2-5.59c-2 1.36-4.54 2.17-8.69 2.17-6.39 0-11.86-3.54-13.57-8.47l-7.89 6.02C6.73 42.52 14.84 48 24 48z"/></g></svg>
+                </span>
+                Entrar com Google
+            </button>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Inicializar o cliente Supabase
-        const supabaseUrl = 'https://jzamtjaxrxtbhzvdzqfq.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6YW10amF4cnh0Ymh6dmR6cWZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxNjQyNTksImV4cCI6MjA1Mzc0MDI1OX0.iGjb1X9sk5Auz3fTYAe-85vM5-xOhkFexu6onRfnW4k';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        let supabase;
+        
+        // Função para obter as credenciais do Supabase do backend
+        async function initSupabase() {
+            try {
+                const response = await fetch('/api/supabase-config');
+                if (!response.ok) {
+                    throw new Error('Falha ao obter configuração do Supabase');
+                }
+                
+                const config = await response.json();
+                supabase = window.supabase.createClient(config.url, config.key);
+                console.log('Cliente Supabase inicializado');
+                
+                // Verificar autenticação após inicializar o cliente
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Erro ao inicializar Supabase:', error);
+                document.getElementById('loginError').textContent = 'Erro ao conectar com o servidor. Tente novamente mais tarde.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+        
+        // Inicializar o Supabase ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            initSupabase();
+            setupEventListeners();
+        });
     </script>
     <script src="/scripts/auth.js"></script>
 </body>
