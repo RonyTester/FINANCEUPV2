@@ -3319,3 +3319,10 @@ function toggleGoalContributionModal(goalId = null, show = null) {
         document.body.style.overflow = 'auto';
     }
 }
+
+try {
+    supabase = await waitForSupabase();
+} catch (error) {
+    console.error('Erro ao aguardar Supabase:', error);
+    return;
+}
