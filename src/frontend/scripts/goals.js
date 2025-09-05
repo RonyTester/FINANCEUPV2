@@ -2564,21 +2564,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         initContributionModal();
         
         // Aguardar a inicialização do Supabase
-        if (!supabase) {
-            console.log('Aguardando inicialização do Supabase...');
-            // Aguardar até que o supabase seja inicializado (máximo 5 segundos)
-            let attempts = 0;
-            while (!supabase && attempts < 50) {
-                await new Promise(resolve => setTimeout(resolve, 100));
-                attempts++;
-            }
-            
-            if (!supabase) {
-                console.error('Supabase não foi inicializado após aguardar');
-                return;
-            }
-            
-            console.log('Supabase inicializado após aguardar');
+        try {
+            supabase = await waitForSupabase();
+        } catch (error) {
+            console.error('Erro ao aguardar Supabase:', error);
+            return;
         }
         
         // Verificar autenticação e inicializar usuário
@@ -3318,11 +3308,4 @@ function toggleGoalContributionModal(goalId = null, show = null) {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
-}
-
-try {
-    supabase = await waitForSupabase();
-} catch (error) {
-    console.error('Erro ao aguardar Supabase:', error);
-    return;
 }
