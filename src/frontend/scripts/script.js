@@ -9,19 +9,11 @@ let goals = [];
 // Inicialização
 document.addEventListener('DOMContentLoaded', async () => {
 	// Aguardar a inicialização do Supabase antes de verificar autenticação
-	if (!supabase) {
-		console.log('Aguardando inicialização do Supabase...');
-		// Aguardar até que o supabase seja inicializado (máximo 5 segundos)
-		let attempts = 0;
-		while (!supabase && attempts < 50) {
-			await new Promise(resolve => setTimeout(resolve, 100));
-			attempts++;
-		}
-		
-		if (!supabase) {
-			console.error('Supabase não foi inicializado após aguardar');
-			return;
-		}
+	try {
+		supabase = await waitForSupabase();
+	} catch (error) {
+		console.error('Erro ao aguardar Supabase:', error);
+		return;
 	}
 	
 	await checkAuth();

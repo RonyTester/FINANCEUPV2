@@ -2564,7 +2564,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         initContributionModal();
         
         // Aguardar a inicialização do Supabase
-        // O supabase é inicializado no script embutido na página index.html
         if (!supabase) {
             console.log('Aguardando inicialização do Supabase...');
             // Aguardar até que o supabase seja inicializado (máximo 5 segundos)

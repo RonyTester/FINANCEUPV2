@@ -1001,43 +1001,74 @@
 	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<script>
-		// Inicializar o cliente Supabase
-		let supabase;
+    // Configuração global do Supabase
+    let supabase = null;
+    let supabaseInitialized = false;
+    
+    // Função para obter as credenciais do Supabase do backend
+    async function initSupabase() {
+        if (supabaseInitialized) return supabase;
         
-        // Função para obter as credenciais do Supabase do backend
-        async function initSupabase() {
-            try {
-                const response = await fetch('/api/supabase-config');
-                if (!response.ok) {
-                    throw new Error('Falha ao obter configuração do Supabase');
-                }
-                
-                const config = await response.json();
-                supabase = window.supabase.createClient(config.url, config.key);
-                console.log('Cliente Supabase inicializado');
-                
-                // Verificar autenticação após inicializar
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    // Redirecionar para a página de login se não estiver autenticado
-                    window.location.href = '/auth.html';
-                }
-            } catch (error) {
-                console.error('Erro ao inicializar Supabase:', error);
-                alert('Erro ao conectar com o servidor. Tente novamente mais tarde.');
+        try {
+            console.log('Inicializando Supabase...');
+            const response = await fetch('/api/supabase-config');
+            if (!response.ok) {
+                throw new Error('Falha ao obter configuração do Supabase');
             }
+            
+            const config = await response.json();
+            supabase = window.supabase.createClient(config.url, config.key);
+            supabaseInitialized = true;
+            console.log('Cliente Supabase inicializado com sucesso');
+            
+            // Disparar evento customizado para notificar outros scripts
+            window.dispatchEvent(new CustomEvent('supabaseReady', { detail: supabase }));
+            
+            return supabase;
+        } catch (error) {
+            console.error('Erro ao inicializar Supabase:', error);
+            throw error;
         }
+    }
+    
+    // Função para aguardar a inicialização do Supabase
+    async function waitForSupabase() {
+        if (supabaseInitialized) return supabase;
         
-        // Inicializar o Supabase ao carregar a página
-        document.addEventListener('DOMContentLoaded', () => {
-            initSupabase();
+        return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+                reject(new Error('Timeout ao aguardar inicialização do Supabase'));
+            }, 10000);
+            
+            window.addEventListener('supabaseReady', (event) => {
+                clearTimeout(timeout);
+                resolve(event.detail);
+            }, { once: true });
         });
-	</script>
-	<script src="/scripts/mobile-modal.js"></script>
-	<script src="/scripts/pagination.js"></script>
-	<script src="/scripts/script.js"></script>
-	<script src="/scripts/goals.js"></script>
-	<script src="/scripts/setupNumberFormatter.js"></script>
-	<script src="/scripts/credit-cards.js"></script>
+    }
+    
+    // Inicializar automaticamente quando a página carregar
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            await initSupabase();
+            
+            // Verificar autenticação após inicializar
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                // Redirecionar para a página de login se não estiver autenticado
+                window.location.href = '/auth.html';
+            }
+        } catch (error) {
+            console.error('Erro na inicialização automática do Supabase:', error);
+            alert('Erro ao conectar com o servidor. Tente novamente mais tarde.');
+        }
+    });
+</script>
+<script src="/scripts/mobile-modal.js"></script>
+<script src="/scripts/pagination.js"></script>
+<script src="/scripts/script.js"></script>
+<script src="/scripts/goals.js"></script>
+<script src="/scripts/setupNumberFormatter.js"></script>
+<script src="/scripts/credit-cards.js"></script>
 </body>
 </html>
