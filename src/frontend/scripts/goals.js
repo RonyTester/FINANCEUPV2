@@ -861,12 +861,6 @@ async function loadGoals() {
     try {
         console.log('Carregando metas...');
         
-        // Aguardar inicialização do Supabase se necessário
-        if (!supabase) {
-            console.log('Aguardando inicialização do Supabase...');
-            await waitForSupabase();
-        }
-        
         // Verificar se currentUser existe
         if (!window.currentUser || !window.currentUser.id) {
             console.warn('Usuário não autenticado, não é possível carregar metas');
@@ -2488,22 +2482,6 @@ async function deleteSharedGoal(goalId) {
     } finally {
         hideLoader();
     }
-}
-
-// Função para aguardar a inicialização do Supabase
-async function waitForSupabase() {
-    if (window.supabase) return window.supabase;
-    
-    return new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-            reject(new Error('Timeout ao aguardar inicialização do Supabase'));
-        }, 10000);
-        
-        window.addEventListener('supabaseReady', (event) => {
-            clearTimeout(timeout);
-            resolve(event.detail);
-        }, { once: true });
-    });
 }
 
 // Função para obter o ID do usuário atual usando Supabase v2

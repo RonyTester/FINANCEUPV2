@@ -1062,27 +1062,17 @@
     document.addEventListener('DOMContentLoaded', async () => {
         try {
             await initSupabase();
-            
-            // Verificar autenticação após inicializar
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                // Redirecionar para a página de login se não estiver autenticado
-                window.location.href = '/auth.html';
-            }
         } catch (error) {
             console.error('Erro na inicialização automática do Supabase:', error);
             alert('Erro ao conectar com o servidor. Tente novamente mais tarde.');
         }
     });
 </script>
-<!-- Load critical scripts first -->
-<script src="/scripts/setupNumberFormatter.js" defer></script>
-<script src="/scripts/script.js" defer></script>
-<script src="/scripts/goals.js" defer></script>
-<script src="/scripts/credit-cards.js" defer></script>
-
-<!-- Load non-critical scripts with async -->
-<script src="/scripts/mobile-modal.js" async></script>
-<script src="/scripts/pagination.js" async></script>
+<script src="/scripts/mobile-modal.js"></script>
+<script src="/scripts/pagination.js"></script>
+<script src="/scripts/script.js"></script>
+<script src="/scripts/goals.js"></script>
+<script src="/scripts/setupNumberFormatter.js"></script>
+<script src="/scripts/credit-cards.js"></script>
 </body>
 </html>
