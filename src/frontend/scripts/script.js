@@ -749,30 +749,41 @@ function handleNavigation(e) {
 
 async function handleLogout() {
 	try {
+		// Limpar dados locais primeiro
+		currentUser = null;
+		transactions = [];
+		userSettings = null;
+		
 		// Verificar se o Supabase foi inicializado
 		if (!supabase) {
-			console.error('Erro: Supabase não inicializado ao fazer logout');
+			console.log('Supabase não inicializado, redirecionando diretamente');
 			window.location.href = '/auth.html';
 			return;
 		}
 		
-		const { error } = await supabase.auth.signOut();
-		if (error) {
-			console.error('Erro ao fazer logout:', error);
-			showNotification('error', 'Erro', 'Não foi possível fazer logout. Tente novamente.');
-			return;
+		// Tentar fazer logout do Supabase
+		try {
+			const { error } = await supabase.auth.signOut();
+			if (error) {
+				console.warn('Erro no logout do Supabase:', error);
+				// Mesmo com erro, continuar com o logout local
+			}
+		} catch (supabaseError) {
+			console.warn('Erro ao conectar com Supabase para logout:', supabaseError);
+			// Mesmo com erro, continuar com o logout local
 		}
 		
-		// Limpar dados locais
-		currentUser = null;
-		transactions = [];
-		userSettings = null;
+		// Limpar localStorage
+		localStorage.removeItem('supabase.auth.token');
+		localStorage.removeItem('userSettings');
+		localStorage.removeItem('transactions');
 		
 		// Redirecionar para a página de login
 		window.location.href = '/auth.html';
 	} catch (error) {
 		console.error('Erro ao fazer logout:', error);
-		showNotification('error', 'Erro', 'Ocorreu um erro ao fazer logout.');
+		// Mesmo com erro, tentar redirecionar
+		window.location.href = '/auth.html';
 	}
 }
 

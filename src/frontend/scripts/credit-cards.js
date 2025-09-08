@@ -138,8 +138,6 @@ function renderCardVisual(card, idx) {
     return `
         <div class="credit-card-visual realistic-card">
             <img class="card-bank-icon" src="/assets/banks/${card.icon}" alt="${card.bank}" title="${card.bank}" />
-            <div class="chip"></div>
-            <div class="contactless"></div>
             <div class="card-name">${card.name}</div>
             <div class="card-limit">Limite: R$ ${Number(card.limit).toLocaleString('pt-BR', {minimumFractionDigits:2})}</div>
             <div class="card-due">Vencimento: dia ${card.due_day}</div>

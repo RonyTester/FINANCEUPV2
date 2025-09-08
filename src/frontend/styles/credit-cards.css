@@ -281,6 +281,8 @@
 }
 .credit-card-actions {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 0.6rem;
 }
 .credit-card-actions button {
@@ -350,6 +352,8 @@
 .credit-card-visual .credit-card-actions {
     margin-top: 0.7rem;
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 0.7rem;
 }
 .credit-card-visual .credit-card-actions button {
@@ -383,7 +387,8 @@
     padding: 1.5rem 2.1rem 1.2rem 2.1rem;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
     justify-content: flex-end;
     position: relative;
     margin-bottom: 0;
@@ -401,24 +406,7 @@
     height: 48px;
     object-fit: contain;
     opacity: 0.93;
-}
-.chip {
-    position: absolute;
-    left: 1.3rem;
-    top: 1.3rem;
-    width: 39px;
-    height: 28px;
-    background: url('/assets/banks/credit-card.svg') no-repeat center/cover;
-    opacity: 0.95;
-}
-.contactless {
-    position: absolute;
-    right: 1.4rem;
-    bottom: 1.2rem;
-    width: 33px;
-    height: 33px;
-    background: url('/assets/banks/credit-card.svg') no-repeat center/contain;
-    opacity: 0.75;
+    align-self: flex-end;
 }
 .realistic-card .card-name {
     font-size: 1.13rem;
@@ -458,6 +446,8 @@
 .realistic-card .credit-card-actions {
     margin-top: 0.7rem;
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 0.7rem;
 }
 .realistic-card .credit-card-actions button {

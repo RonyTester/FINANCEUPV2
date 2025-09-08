@@ -703,8 +703,56 @@ function renderGoals() {
         <div class="goals-list" id="goalsList">
             ${renderGoalsList()}
         </div>
+        ${goals && goals.length > itemsPerPage ? renderPagination() : ''}
     `;
 }
+
+// Função para renderizar controles de paginação (formato original)
+function renderPagination() {
+    if (totalPages <= 1) return '';
+    
+    let paginationHTML = '<div class="pagination-container">';
+    paginationHTML += '<div class="pagination">';
+    
+    // Botão anterior
+    if (currentPage > 1) {
+        paginationHTML += `<button class="pagination-btn" onclick="goToPage(${currentPage - 1})">
+            <i class="fas fa-chevron-left"></i>
+        </button>`;
+    }
+    
+    // Números das páginas
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        paginationHTML += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+            onclick="goToPage(${i})">${i}</button>`;
+    }
+    
+    // Botão próximo
+    if (currentPage < totalPages) {
+        paginationHTML += `<button class="pagination-btn" onclick="goToPage(${currentPage + 1})">
+            <i class="fas fa-chevron-right"></i>
+        </button>`;
+    }
+    
+    paginationHTML += '</div>';
+    paginationHTML += `<div class="pagination-info">
+        Página ${currentPage} de ${totalPages} • ${goals.length} metas no total
+    </div>`;
+    paginationHTML += '</div>';
+    
+    return paginationHTML;
+}
+
+// Função para navegar para uma página específica
+function goToPage(page) {
+    if (page < 1 || page > totalPages) return;
+    currentPage = page;
+    renderGoals();
+}
+
 
 // Funções auxiliares para cálculos
 function getCompletedGoalsCount() {
@@ -766,7 +814,13 @@ function renderGoalsList() {
         `;
     }
 
-    return goals.map(goal => {
+    // Calcular paginação
+    totalPages = Math.ceil(goals.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedGoals = goals.slice(startIndex, endIndex);
+
+    return paginatedGoals.map(goal => {
         const contributions = goal.contributions || [];
         const totalContributed = contributions.reduce((sum, contrib) => sum + contrib.amount, 0);
         const progress = (totalContributed / goal.target_amount) * 100;
@@ -1290,6 +1344,11 @@ function toggleEditContributionModal(show) {
 let sharedGoals = [];
 let sharedGoalParticipants = {};
 let sharedGoalContributions = {};
+
+// Variáveis de paginação
+let currentPage = 1;
+let itemsPerPage = 6; // 6 metas por página
+let totalPages = 1;
 let currentSharedGoalId = null;
 
 // Inicialização das abas
