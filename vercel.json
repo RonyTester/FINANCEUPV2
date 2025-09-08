@@ -28,8 +28,8 @@
       "dest": "src/frontend/assets/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "src/frontend/pages/$1"
+      "src": "/auth.html",
+      "dest": "src/frontend/pages/auth.html"
     },
     {
       "src": "/(.*)",

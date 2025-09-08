@@ -19,7 +19,7 @@ const BANKS = {
     'next':     { color: '#00ff5f', icon: 'next.svg', label: 'Next' },
     'pagbank':  { color: '#00C244', icon: 'pagbank.svg', label: 'PagBank' },
     'picpay':   { color: '#21C25E', icon: 'picpay.svg', label: 'PicPay' },
-    'outro':    { color: '#4F8CFF', icon: 'generic-bank.svg', label: 'Outro' }
+    'outro':    { color: '#4F8CFF', icon: 'credit-card.svg', label: 'Outro' }
 };
 
 // Função para renderizar a lista de cartões
@@ -793,7 +793,7 @@ async function handleCardFormSubmit(event) {
         limit: parseFloat(form.cardLimit.value),
         due_day: parseInt(form.cardDueDay.value),
         color: BANKS[form.cardBank.value]?.color || '#4F8CFF',
-        icon: BANKS[form.cardBank.value]?.icon || 'generic-bank.svg'
+        icon: BANKS[form.cardBank.value]?.icon || 'credit-card.svg'
     };
 
     try {

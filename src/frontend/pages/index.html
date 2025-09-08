@@ -4,8 +4,19 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Finance - Controle Financeiro</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<link rel="stylesheet" href="/styles/styles.css">
+	
+	<!-- Preload critical resources -->
+	<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<link rel="preload" href="/styles/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js" as="script">
+	
+	<!-- Fallback for non-JS browsers -->
+	<noscript>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+		<link rel="stylesheet" href="/styles/styles.css">
+	</noscript>
+	
+	<!-- Non-critical CSS -->
 	<link rel="stylesheet" href="/styles/pagination.css">
 	<link rel="stylesheet" href="/styles/goals.css">
 	<link rel="stylesheet" href="/styles/credit-cards.css">
@@ -1064,11 +1075,14 @@
         }
     });
 </script>
-<script src="/scripts/mobile-modal.js"></script>
-<script src="/scripts/pagination.js"></script>
-<script src="/scripts/script.js"></script>
-<script src="/scripts/goals.js"></script>
-<script src="/scripts/setupNumberFormatter.js"></script>
-<script src="/scripts/credit-cards.js"></script>
+<!-- Load critical scripts first -->
+<script src="/scripts/setupNumberFormatter.js" defer></script>
+<script src="/scripts/script.js" defer></script>
+
+<!-- Load non-critical scripts with async -->
+<script src="/scripts/mobile-modal.js" async></script>
+<script src="/scripts/pagination.js" async></script>
+<script src="/scripts/goals.js" async></script>
+<script src="/scripts/credit-cards.js" async></script>
 </body>
 </html>

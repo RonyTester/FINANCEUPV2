@@ -408,7 +408,7 @@
     top: 1.3rem;
     width: 39px;
     height: 28px;
-    background: url('/assets/banks/chip.svg') no-repeat center/cover;
+    background: url('/assets/banks/credit-card.svg') no-repeat center/cover;
     opacity: 0.95;
 }
 .contactless {
@@ -417,7 +417,7 @@
     bottom: 1.2rem;
     width: 33px;
     height: 33px;
-    background: url('/assets/banks/contactless.svg') no-repeat center/contain;
+    background: url('/assets/banks/credit-card.svg') no-repeat center/contain;
     opacity: 0.75;
 }
 .realistic-card .card-name {
